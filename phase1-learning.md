@@ -81,4 +81,100 @@ public class HelloController {
 
 ---
 
+---
+
+### 5. Spring Security を開発用に設定する
+
+デフォルトでは Spring Security が自動でログイン画面を表示する。
+開発中は邪魔なので、すべてのリクエストを許可する設定にする。
+
+`src/main/java/com/example/db_management/SecurityConfig.java` を新規作成：
+
+```java
+package com.example.db_management;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().permitAll()
+            )
+            .csrf(csrf -> csrf.disable())
+            .headers(headers -> headers
+                .frameOptions(frame -> frame.disable())
+            );
+        return http.build();
+    }
+}
+```
+
+**ポイント**：
+- `@Configuration` → このクラスが設定クラスであることを示す
+- `@EnableWebSecurity` → Spring Security の設定を有効化
+- `anyRequest().permitAll()` → すべてのリクエストを認証なしで許可
+- `csrf.disable()` → REST APIでは不要なCSRF保護を無効化
+- `frameOptions.disable()` → H2コンソール（フレーム使用）を使えるようにする
+
+アプリ再起動後、`http://localhost:8080/hello` がログインなしで表示されればOK。
+
+---
+
+### 6. H2データベースを接続する
+
+H2 はインメモリDB（アプリ起動中のみ存在）。
+ローカル開発に最適で、別途インストール不要。
+
+#### pom.xml に依存関係を追加
+
+`<dependencies>` の中に追加：
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+#### application.properties に設定を追記
+
+```properties
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+```
+
+**ポイント**：
+- `mem:testdb` → アプリ起動中のみ存在するインメモリDB
+- `ddl-auto=create-drop` → 起動時にテーブル自動生成、停止時に削除
+- `h2-console.enabled=true` → ブラウザからDBを操作できる管理画面を有効化
+
+#### 動作確認
+
+アプリ再起動後、`http://localhost:8080/h2-console` にアクセス。
+- JDBC URL: `jdbc:h2:mem:testdb`
+- User Name: `sa`
+- Password: （空欄）
+
+「Connect」を押して管理画面が開けばOK。
+
+---
+
 *次のステップは phase1-learning.md に追記していく*
