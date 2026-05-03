@@ -1,0 +1,101 @@
+ENV_ID,APP_ID,ENV_NAME,SERVER,URL,DB_NAME,STATUS,REMARKS
+ENV-001,APP-047,開発,server01.example.com,https://app-001.example.com,H2 (in-memory),構築中,備考1
+ENV-002,APP-001,ステージング,server02.example.com,https://app-002.example.com,PostgreSQL 15,稼働中,備考2
+ENV-003,APP-078,開発,server03.example.com,https://app-003.example.com,MySQL 8.0,稼働中,備考3
+ENV-004,APP-046,開発,server04.example.com,https://app-004.example.com,H2 (in-memory),構築中,
+ENV-005,APP-084,開発,server05.example.com,https://app-005.example.com,MySQL 8.0,停止中,備考5
+ENV-006,APP-040,本番,server06.example.com,https://app-006.example.com,H2 (in-memory),構築中,備考6
+ENV-007,APP-005,テスト,server07.example.com,https://app-007.example.com,SQL Server 2019,停止中,備考7
+ENV-008,APP-078,開発,server08.example.com,https://app-008.example.com,,稼働中,
+ENV-009,APP-008,開発,server09.example.com,https://app-009.example.com,Oracle 19c,停止中,備考9
+ENV-010,APP-019,本番,server10.example.com,https://app-010.example.com,Oracle 19c,稼働中,備考10
+ENV-011,APP-028,ステージング,server11.example.com,https://app-011.example.com,PostgreSQL 15,稼働中,備考11
+ENV-012,APP-092,開発,server12.example.com,https://app-012.example.com,,稼働中,
+ENV-013,APP-080,ステージング,server13.example.com,https://app-013.example.com,Oracle 19c,構築中,備考13
+ENV-014,APP-029,テスト,server14.example.com,https://app-014.example.com,,構築中,備考14
+ENV-015,APP-061,テスト,server15.example.com,https://app-015.example.com,,稼働中,備考15
+ENV-016,APP-017,ステージング,server16.example.com,https://app-016.example.com,,構築中,
+ENV-017,APP-024,本番,server17.example.com,https://app-017.example.com,PostgreSQL 15,稼働中,備考17
+ENV-018,APP-042,テスト,server18.example.com,https://app-018.example.com,,構築中,備考18
+ENV-019,APP-043,開発,server19.example.com,https://app-019.example.com,,構築中,備考19
+ENV-020,APP-099,ステージング,server20.example.com,https://app-020.example.com,SQL Server 2019,構築中,
+ENV-021,APP-080,テスト,server21.example.com,https://app-021.example.com,PostgreSQL 15,停止中,備考21
+ENV-022,APP-060,テスト,server22.example.com,https://app-022.example.com,MySQL 8.0,停止中,備考22
+ENV-023,APP-066,ステージング,server23.example.com,https://app-023.example.com,SQL Server 2019,停止中,備考23
+ENV-024,APP-087,ステージング,server24.example.com,https://app-024.example.com,,構築中,
+ENV-025,APP-065,本番,server25.example.com,https://app-025.example.com,SQL Server 2019,稼働中,備考25
+ENV-026,APP-067,本番,server26.example.com,https://app-026.example.com,MySQL 8.0,稼働中,備考26
+ENV-027,APP-073,テスト,server27.example.com,https://app-027.example.com,Oracle 19c,稼働中,備考27
+ENV-028,APP-044,ステージング,server28.example.com,https://app-028.example.com,,稼働中,
+ENV-029,APP-067,本番,server29.example.com,https://app-029.example.com,,稼働中,備考29
+ENV-030,APP-066,本番,server30.example.com,https://app-030.example.com,Oracle 19c,稼働中,備考30
+ENV-031,APP-032,テスト,server31.example.com,https://app-031.example.com,,構築中,備考31
+ENV-032,APP-010,開発,server32.example.com,https://app-032.example.com,,稼働中,
+ENV-033,APP-084,テスト,server33.example.com,https://app-033.example.com,,構築中,備考33
+ENV-034,APP-065,開発,server34.example.com,https://app-034.example.com,MySQL 8.0,停止中,備考34
+ENV-035,APP-083,本番,server35.example.com,https://app-035.example.com,H2 (in-memory),構築中,備考35
+ENV-036,APP-065,テスト,server36.example.com,https://app-036.example.com,PostgreSQL 15,稼働中,
+ENV-037,APP-002,開発,server37.example.com,https://app-037.example.com,PostgreSQL 15,停止中,備考37
+ENV-038,APP-033,テスト,server38.example.com,https://app-038.example.com,Oracle 19c,停止中,備考38
+ENV-039,APP-006,テスト,server39.example.com,https://app-039.example.com,,構築中,備考39
+ENV-040,APP-001,ステージング,server40.example.com,https://app-040.example.com,,稼働中,
+ENV-041,APP-097,テスト,server41.example.com,https://app-041.example.com,Oracle 19c,稼働中,備考41
+ENV-042,APP-053,本番,server42.example.com,https://app-042.example.com,,稼働中,備考42
+ENV-043,APP-088,テスト,server43.example.com,https://app-043.example.com,MySQL 8.0,停止中,備考43
+ENV-044,APP-021,本番,server44.example.com,https://app-044.example.com,MySQL 8.0,稼働中,
+ENV-045,APP-055,テスト,server45.example.com,https://app-045.example.com,,稼働中,備考45
+ENV-046,APP-014,本番,server46.example.com,https://app-046.example.com,Oracle 19c,構築中,備考46
+ENV-047,APP-013,開発,server47.example.com,https://app-047.example.com,SQL Server 2019,稼働中,備考47
+ENV-048,APP-041,本番,server48.example.com,https://app-048.example.com,PostgreSQL 15,停止中,
+ENV-049,APP-095,開発,server49.example.com,https://app-049.example.com,H2 (in-memory),稼働中,備考49
+ENV-050,APP-099,本番,server50.example.com,https://app-050.example.com,MySQL 8.0,稼働中,備考50
+ENV-051,APP-060,ステージング,server51.example.com,https://app-051.example.com,,稼働中,備考51
+ENV-052,APP-099,本番,server52.example.com,https://app-052.example.com,Oracle 19c,停止中,
+ENV-053,APP-023,ステージング,server53.example.com,https://app-053.example.com,,構築中,備考53
+ENV-054,APP-026,本番,server54.example.com,https://app-054.example.com,Oracle 19c,稼働中,備考54
+ENV-055,APP-039,ステージング,server55.example.com,https://app-055.example.com,H2 (in-memory),稼働中,備考55
+ENV-056,APP-020,開発,server56.example.com,https://app-056.example.com,Oracle 19c,稼働中,
+ENV-057,APP-080,本番,server57.example.com,https://app-057.example.com,,停止中,備考57
+ENV-058,APP-062,開発,server58.example.com,https://app-058.example.com,,停止中,備考58
+ENV-059,APP-026,ステージング,server59.example.com,https://app-059.example.com,SQL Server 2019,稼働中,備考59
+ENV-060,APP-062,開発,server60.example.com,https://app-060.example.com,H2 (in-memory),稼働中,
+ENV-061,APP-034,テスト,server61.example.com,https://app-061.example.com,Oracle 19c,停止中,備考61
+ENV-062,APP-012,開発,server62.example.com,https://app-062.example.com,,稼働中,備考62
+ENV-063,APP-040,本番,server63.example.com,https://app-063.example.com,PostgreSQL 15,稼働中,備考63
+ENV-064,APP-089,ステージング,server64.example.com,https://app-064.example.com,Oracle 19c,稼働中,
+ENV-065,APP-093,ステージング,server65.example.com,https://app-065.example.com,MySQL 8.0,稼働中,備考65
+ENV-066,APP-035,ステージング,server66.example.com,https://app-066.example.com,,停止中,備考66
+ENV-067,APP-041,テスト,server67.example.com,https://app-067.example.com,,構築中,備考67
+ENV-068,APP-084,テスト,server68.example.com,https://app-068.example.com,MySQL 8.0,稼働中,
+ENV-069,APP-024,開発,server69.example.com,https://app-069.example.com,,停止中,備考69
+ENV-070,APP-036,ステージング,server70.example.com,https://app-070.example.com,,構築中,備考70
+ENV-071,APP-051,開発,server71.example.com,https://app-071.example.com,,稼働中,備考71
+ENV-072,APP-075,ステージング,server72.example.com,https://app-072.example.com,,稼働中,
+ENV-073,APP-057,ステージング,server73.example.com,https://app-073.example.com,H2 (in-memory),稼働中,備考73
+ENV-074,APP-019,本番,server74.example.com,https://app-074.example.com,,停止中,備考74
+ENV-075,APP-003,開発,server75.example.com,https://app-075.example.com,MySQL 8.0,停止中,備考75
+ENV-076,APP-030,テスト,server76.example.com,https://app-076.example.com,,稼働中,
+ENV-077,APP-011,ステージング,server77.example.com,https://app-077.example.com,SQL Server 2019,停止中,備考77
+ENV-078,APP-017,本番,server78.example.com,https://app-078.example.com,PostgreSQL 15,稼働中,備考78
+ENV-079,APP-015,ステージング,server79.example.com,https://app-079.example.com,Oracle 19c,稼働中,備考79
+ENV-080,APP-040,テスト,server80.example.com,https://app-080.example.com,H2 (in-memory),構築中,
+ENV-081,APP-072,テスト,server81.example.com,https://app-081.example.com,,構築中,備考81
+ENV-082,APP-025,ステージング,server82.example.com,https://app-082.example.com,,停止中,備考82
+ENV-083,APP-031,ステージング,server83.example.com,https://app-083.example.com,,稼働中,備考83
+ENV-084,APP-064,本番,server84.example.com,https://app-084.example.com,MySQL 8.0,稼働中,
+ENV-085,APP-082,開発,server85.example.com,https://app-085.example.com,PostgreSQL 15,構築中,備考85
+ENV-086,APP-025,ステージング,server86.example.com,https://app-086.example.com,SQL Server 2019,稼働中,備考86
+ENV-087,APP-059,テスト,server87.example.com,https://app-087.example.com,,稼働中,備考87
+ENV-088,APP-037,開発,server88.example.com,https://app-088.example.com,H2 (in-memory),構築中,
+ENV-089,APP-060,テスト,server89.example.com,https://app-089.example.com,,稼働中,備考89
+ENV-090,APP-089,開発,server90.example.com,https://app-090.example.com,MySQL 8.0,稼働中,備考90
+ENV-091,APP-006,開発,server91.example.com,https://app-091.example.com,H2 (in-memory),構築中,備考91
+ENV-092,APP-035,開発,server92.example.com,https://app-092.example.com,,稼働中,
+ENV-093,APP-064,ステージング,server93.example.com,https://app-093.example.com,H2 (in-memory),稼働中,備考93
+ENV-094,APP-019,本番,server94.example.com,https://app-094.example.com,,稼働中,備考94
+ENV-095,APP-072,開発,server95.example.com,https://app-095.example.com,H2 (in-memory),停止中,備考95
+ENV-096,APP-084,テスト,server96.example.com,https://app-096.example.com,SQL Server 2019,停止中,
+ENV-097,APP-071,テスト,server97.example.com,https://app-097.example.com,,停止中,備考97
+ENV-098,APP-022,開発,server98.example.com,https://app-098.example.com,,稼働中,備考98
+ENV-099,APP-058,テスト,server99.example.com,https://app-099.example.com,PostgreSQL 15,稼働中,備考99
+ENV-100,APP-028,テスト,server100.example.com,https://app-100.example.com,Oracle 19c,稼働中,

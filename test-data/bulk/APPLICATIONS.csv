@@ -1,0 +1,101 @@
+APP_ID,YOKEN_ID,APP_NAME,VERSION,TECHNOLOGY,REPOSITORY_URL,STATUS,REMARKS
+APP-001,YKN-083,アプリケーション001,1.4.8,FastAPI / Python,https://github.com/example/app-001,開発中,備考1
+APP-002,YKN-084,アプリケーション002,1.1.7,Spring Boot 3 / JPA,https://github.com/example/app-002,リリース済,備考2
+APP-003,YKN-028,アプリケーション003,1.8.4,Vue 3 / Vite,https://github.com/example/app-003,リリース済,備考3
+APP-004,YKN-049,アプリケーション004,1.4.8,Spring Boot 3 / JPA,https://github.com/example/app-004,リリース済,
+APP-005,YKN-042,アプリケーション005,1.4.6,Flutter / Dart,https://github.com/example/app-005,リリース済,備考5
+APP-006,YKN-017,アプリケーション006,1.7.1,Vue 3 / Vite,https://github.com/example/app-006,廃止,備考6
+APP-007,YKN-091,アプリケーション007,1.6.7,Rails / PostgreSQL,https://github.com/example/app-007,リリース済,備考7
+APP-008,YKN-048,アプリケーション008,1.8.8,Kotlin / Android,https://github.com/example/app-008,リリース済,
+APP-009,YKN-039,アプリケーション009,1.1.7,React / TypeScript,https://github.com/example/app-009,リリース済,備考9
+APP-010,YKN-012,アプリケーション010,1.0.7,React / TypeScript,https://github.com/example/app-010,廃止,備考10
+APP-011,YKN-025,アプリケーション011,1.9.5,Laravel / MySQL,https://github.com/example/app-011,リリース済,備考11
+APP-012,YKN-082,アプリケーション012,1.8.7,Laravel / MySQL,https://github.com/example/app-012,廃止,
+APP-013,YKN-014,アプリケーション013,1.1.7,Laravel / MySQL,https://github.com/example/app-013,開発中,備考13
+APP-014,YKN-093,アプリケーション014,1.9.0,Django / PostgreSQL,https://github.com/example/app-014,リリース済,備考14
+APP-015,YKN-100,アプリケーション015,1.3.7,Kotlin / Android,https://github.com/example/app-015,開発中,備考15
+APP-016,YKN-088,アプリケーション016,1.5.4,Rails / PostgreSQL,https://github.com/example/app-016,リリース済,
+APP-017,YKN-013,アプリケーション017,1.2.4,Vue 3 / Vite,https://github.com/example/app-017,リリース済,備考17
+APP-018,YKN-040,アプリケーション018,1.7.5,Flutter / Dart,https://github.com/example/app-018,リリース済,備考18
+APP-019,YKN-039,アプリケーション019,1.1.9,Django / PostgreSQL,https://github.com/example/app-019,リリース済,備考19
+APP-020,YKN-099,アプリケーション020,1.9.8,Flutter / Dart,https://github.com/example/app-020,リリース済,
+APP-021,YKN-023,アプリケーション021,1.2.0,Flutter / Dart,https://github.com/example/app-021,開発中,備考21
+APP-022,YKN-079,アプリケーション022,1.6.1,FastAPI / Python,https://github.com/example/app-022,廃止,備考22
+APP-023,YKN-085,アプリケーション023,1.5.0,React / TypeScript,https://github.com/example/app-023,開発中,備考23
+APP-024,YKN-044,アプリケーション024,1.5.9,FastAPI / Python,https://github.com/example/app-024,開発中,
+APP-025,YKN-024,アプリケーション025,1.3.7,Django / PostgreSQL,https://github.com/example/app-025,リリース済,備考25
+APP-026,YKN-022,アプリケーション026,1.6.3,React / TypeScript,https://github.com/example/app-026,リリース済,備考26
+APP-027,YKN-086,アプリケーション027,1.3.8,FastAPI / Python,https://github.com/example/app-027,開発中,備考27
+APP-028,YKN-027,アプリケーション028,1.5.1,Spring Boot 3 / JPA,https://github.com/example/app-028,リリース済,
+APP-029,YKN-029,アプリケーション029,1.8.8,Django / PostgreSQL,https://github.com/example/app-029,リリース済,備考29
+APP-030,YKN-027,アプリケーション030,1.1.6,Rails / PostgreSQL,https://github.com/example/app-030,リリース済,備考30
+APP-031,YKN-088,アプリケーション031,1.5.6,Django / PostgreSQL,https://github.com/example/app-031,リリース済,備考31
+APP-032,YKN-076,アプリケーション032,1.5.0,Django / PostgreSQL,https://github.com/example/app-032,リリース済,
+APP-033,YKN-085,アプリケーション033,1.4.2,FastAPI / Python,https://github.com/example/app-033,廃止,備考33
+APP-034,YKN-089,アプリケーション034,1.5.1,Vue 3 / Vite,https://github.com/example/app-034,開発中,備考34
+APP-035,YKN-022,アプリケーション035,1.4.9,Rails / PostgreSQL,https://github.com/example/app-035,リリース済,備考35
+APP-036,YKN-092,アプリケーション036,1.0.8,Rails / PostgreSQL,https://github.com/example/app-036,開発中,
+APP-037,YKN-093,アプリケーション037,1.9.8,Spring Boot 3 / JPA,https://github.com/example/app-037,廃止,備考37
+APP-038,YKN-030,アプリケーション038,1.6.5,FastAPI / Python,https://github.com/example/app-038,リリース済,備考38
+APP-039,YKN-099,アプリケーション039,1.4.8,Kotlin / Android,https://github.com/example/app-039,開発中,備考39
+APP-040,YKN-011,アプリケーション040,1.0.3,React / TypeScript,https://github.com/example/app-040,開発中,
+APP-041,YKN-040,アプリケーション041,1.4.2,Laravel / MySQL,https://github.com/example/app-041,リリース済,備考41
+APP-042,YKN-061,アプリケーション042,1.0.1,FastAPI / Python,https://github.com/example/app-042,廃止,備考42
+APP-043,YKN-085,アプリケーション043,1.0.4,Vue 3 / Vite,https://github.com/example/app-043,リリース済,備考43
+APP-044,YKN-094,アプリケーション044,1.1.4,Laravel / MySQL,https://github.com/example/app-044,廃止,
+APP-045,YKN-015,アプリケーション045,1.3.2,Next.js / Prisma,https://github.com/example/app-045,廃止,備考45
+APP-046,YKN-013,アプリケーション046,1.7.6,Next.js / Prisma,https://github.com/example/app-046,開発中,備考46
+APP-047,YKN-046,アプリケーション047,1.9.2,Spring Boot 3 / JPA,https://github.com/example/app-047,リリース済,備考47
+APP-048,YKN-074,アプリケーション048,1.5.8,Flutter / Dart,https://github.com/example/app-048,廃止,
+APP-049,YKN-073,アプリケーション049,1.3.2,React / TypeScript,https://github.com/example/app-049,リリース済,備考49
+APP-050,YKN-061,アプリケーション050,1.5.7,Rails / PostgreSQL,https://github.com/example/app-050,リリース済,備考50
+APP-051,YKN-051,アプリケーション051,1.9.8,Rails / PostgreSQL,https://github.com/example/app-051,廃止,備考51
+APP-052,YKN-082,アプリケーション052,1.5.0,Django / PostgreSQL,https://github.com/example/app-052,リリース済,
+APP-053,YKN-073,アプリケーション053,1.3.3,FastAPI / Python,https://github.com/example/app-053,開発中,備考53
+APP-054,YKN-077,アプリケーション054,1.9.9,React / TypeScript,https://github.com/example/app-054,開発中,備考54
+APP-055,YKN-085,アプリケーション055,1.6.2,React / TypeScript,https://github.com/example/app-055,廃止,備考55
+APP-056,YKN-041,アプリケーション056,1.7.9,Rails / PostgreSQL,https://github.com/example/app-056,リリース済,
+APP-057,YKN-016,アプリケーション057,1.5.9,Next.js / Prisma,https://github.com/example/app-057,リリース済,備考57
+APP-058,YKN-088,アプリケーション058,1.3.2,Next.js / Prisma,https://github.com/example/app-058,廃止,備考58
+APP-059,YKN-091,アプリケーション059,1.4.3,Spring Boot 3 / JPA,https://github.com/example/app-059,廃止,備考59
+APP-060,YKN-058,アプリケーション060,1.4.4,Spring Boot 3 / JPA,https://github.com/example/app-060,開発中,
+APP-061,YKN-056,アプリケーション061,1.6.0,Vue 3 / Vite,https://github.com/example/app-061,開発中,備考61
+APP-062,YKN-069,アプリケーション062,1.4.5,Vue 3 / Vite,https://github.com/example/app-062,開発中,備考62
+APP-063,YKN-083,アプリケーション063,1.6.2,Kotlin / Android,https://github.com/example/app-063,開発中,備考63
+APP-064,YKN-073,アプリケーション064,1.4.3,Vue 3 / Vite,https://github.com/example/app-064,廃止,
+APP-065,YKN-003,アプリケーション065,1.2.9,Spring Boot 3 / JPA,https://github.com/example/app-065,開発中,備考65
+APP-066,YKN-032,アプリケーション066,1.5.3,Spring Boot 3 / JPA,https://github.com/example/app-066,廃止,備考66
+APP-067,YKN-052,アプリケーション067,1.8.9,Vue 3 / Vite,https://github.com/example/app-067,開発中,備考67
+APP-068,YKN-095,アプリケーション068,1.4.9,Vue 3 / Vite,https://github.com/example/app-068,リリース済,
+APP-069,YKN-080,アプリケーション069,1.6.7,Spring Boot 3 / JPA,https://github.com/example/app-069,リリース済,備考69
+APP-070,YKN-063,アプリケーション070,1.4.4,Laravel / MySQL,https://github.com/example/app-070,開発中,備考70
+APP-071,YKN-008,アプリケーション071,1.5.2,Rails / PostgreSQL,https://github.com/example/app-071,廃止,備考71
+APP-072,YKN-092,アプリケーション072,1.9.5,React / TypeScript,https://github.com/example/app-072,開発中,
+APP-073,YKN-098,アプリケーション073,1.8.5,Next.js / Prisma,https://github.com/example/app-073,開発中,備考73
+APP-074,YKN-053,アプリケーション074,1.1.5,Flutter / Dart,https://github.com/example/app-074,開発中,備考74
+APP-075,YKN-013,アプリケーション075,1.3.8,Spring Boot 3 / JPA,https://github.com/example/app-075,廃止,備考75
+APP-076,YKN-008,アプリケーション076,1.6.5,Rails / PostgreSQL,https://github.com/example/app-076,リリース済,
+APP-077,YKN-067,アプリケーション077,1.4.8,Laravel / MySQL,https://github.com/example/app-077,リリース済,備考77
+APP-078,YKN-003,アプリケーション078,1.7.1,Next.js / Prisma,https://github.com/example/app-078,廃止,備考78
+APP-079,YKN-075,アプリケーション079,1.0.1,Vue 3 / Vite,https://github.com/example/app-079,開発中,備考79
+APP-080,YKN-011,アプリケーション080,1.8.7,Spring Boot 3 / JPA,https://github.com/example/app-080,リリース済,
+APP-081,YKN-090,アプリケーション081,1.1.5,Rails / PostgreSQL,https://github.com/example/app-081,廃止,備考81
+APP-082,YKN-078,アプリケーション082,1.7.2,Next.js / Prisma,https://github.com/example/app-082,開発中,備考82
+APP-083,YKN-048,アプリケーション083,1.2.4,Flutter / Dart,https://github.com/example/app-083,廃止,備考83
+APP-084,YKN-002,アプリケーション084,1.5.7,Spring Boot 3 / JPA,https://github.com/example/app-084,廃止,
+APP-085,YKN-100,アプリケーション085,1.6.9,FastAPI / Python,https://github.com/example/app-085,リリース済,備考85
+APP-086,YKN-003,アプリケーション086,1.2.3,Django / PostgreSQL,https://github.com/example/app-086,リリース済,備考86
+APP-087,YKN-034,アプリケーション087,1.5.5,Next.js / Prisma,https://github.com/example/app-087,リリース済,備考87
+APP-088,YKN-089,アプリケーション088,1.9.5,Spring Boot 3 / JPA,https://github.com/example/app-088,開発中,
+APP-089,YKN-064,アプリケーション089,1.4.3,FastAPI / Python,https://github.com/example/app-089,リリース済,備考89
+APP-090,YKN-007,アプリケーション090,1.9.4,Spring Boot 3 / JPA,https://github.com/example/app-090,リリース済,備考90
+APP-091,YKN-073,アプリケーション091,1.0.4,Laravel / MySQL,https://github.com/example/app-091,リリース済,備考91
+APP-092,YKN-041,アプリケーション092,1.0.5,Laravel / MySQL,https://github.com/example/app-092,リリース済,
+APP-093,YKN-034,アプリケーション093,1.0.5,Django / PostgreSQL,https://github.com/example/app-093,廃止,備考93
+APP-094,YKN-057,アプリケーション094,1.0.5,Vue 3 / Vite,https://github.com/example/app-094,開発中,備考94
+APP-095,YKN-064,アプリケーション095,1.1.0,Next.js / Prisma,https://github.com/example/app-095,開発中,備考95
+APP-096,YKN-010,アプリケーション096,1.8.4,Laravel / MySQL,https://github.com/example/app-096,リリース済,
+APP-097,YKN-069,アプリケーション097,1.6.9,React / TypeScript,https://github.com/example/app-097,廃止,備考97
+APP-098,YKN-067,アプリケーション098,1.5.3,React / TypeScript,https://github.com/example/app-098,リリース済,備考98
+APP-099,YKN-039,アプリケーション099,1.0.2,Laravel / MySQL,https://github.com/example/app-099,廃止,備考99
+APP-100,YKN-003,アプリケーション100,1.0.6,React / TypeScript,https://github.com/example/app-100,廃止,

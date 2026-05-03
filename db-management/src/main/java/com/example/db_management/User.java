@@ -1,5 +1,6 @@
 package com.example.db_management;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,12 +15,19 @@ public class User {
     private String email;
     private String role;
 
+    @JsonIgnore
+    private String password;
+
     public Long getId() { return id; }
     public String getUsername() { return username; }
     public String getEmail() { return email; }
     public String getRole() { return role; }
 
+    @JsonIgnore
+    public String getPassword() { return password; }
+
     public void setUsername(String username) { this.username = username; }
     public void setEmail(String email) { this.email = email; }
     public void setRole(String role) { this.role = role; }
+    public void setPassword(String password) { this.password = password; }
 }

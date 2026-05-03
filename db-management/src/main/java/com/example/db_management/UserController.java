@@ -21,12 +21,18 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userRepository.save(user);
+    public ResponseEntity<?> createUser(@RequestBody User user) {
+        if ("VIEWER".equals(SecurityUtils.getCurrentRole())) {
+            return ResponseEntity.status(403).build();
+        }
+        return ResponseEntity.ok(userRepository.save(user));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+        if ("VIEWER".equals(SecurityUtils.getCurrentRole())) {
+            return ResponseEntity.status(403).build();
+        }
         return userRepository.findById(id)
             .map(user -> {
                 user.setUsername(userDetails.getUsername());
@@ -39,6 +45,9 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        if (!"ADMIN".equals(SecurityUtils.getCurrentRole())) {
+            return ResponseEntity.status(403).build();
+        }
         return userRepository.findById(id)
             .map(user -> {
                 userRepository.delete(user);

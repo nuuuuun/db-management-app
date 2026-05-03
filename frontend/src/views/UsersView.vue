@@ -2,8 +2,8 @@
   <div class="users">
     <h1>ユーザー一覧</h1>
 
-    <!-- 追加フォーム -->
-    <div class="form-section">
+    <!-- 追加フォーム（VIEWER は非表示） -->
+    <div v-if="userRole !== 'VIEWER'" class="form-section">
       <h2>{{ editingUser ? 'ユーザー編集' : 'ユーザー追加' }}</h2>
       <form @submit.prevent="editingUser ? updateUser() : createUser()">
         <input v-model="form.username" placeholder="ユーザー名" required />
@@ -40,8 +40,8 @@
           <td>{{ user.email }}</td>
           <td>{{ user.role }}</td>
           <td>
-            <button class="btn-edit" @click="startEdit(user)">編集</button>
-            <button class="btn-delete" @click="deleteUser(user.id)">削除</button>
+            <button v-if="userRole !== 'VIEWER'" class="btn-edit" @click="startEdit(user)">編集</button>
+            <button v-if="userRole === 'ADMIN'" class="btn-delete" @click="deleteUser(user.id)">削除</button>
           </td>
         </tr>
       </tbody>
@@ -50,7 +50,8 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from '../api'
+import { getUser } from '../utils/auth'
 
 export default {
   name: 'UsersView',
@@ -61,6 +62,7 @@ export default {
       error: null,
       editingUser: null,
       form: { username: '', email: '', role: '' },
+      userRole: getUser()?.role || 'VIEWER',
     }
   },
   async mounted() {

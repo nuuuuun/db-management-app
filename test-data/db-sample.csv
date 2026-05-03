@@ -1,0 +1,515 @@
+#TABLE:PROJECTS
+ANKEN_ID,ANKEN_NAME,CLIENT,MANAGER,STATUS,START_DATE,END_DATE,REMARKS
+ANK-001,プロジェクト001,有限会社テスト産業,山田太郎,中止,2024-05-01,2025-04-08,備考1
+ANK-002,プロジェクト002,田中製造株式会社,鈴木花子,中止,2024-12-01,2025-09-03,備考2
+ANK-003,プロジェクト003,札幌テック株式会社,小林亮,提案中,2024-01-01,2025-02-07,
+ANK-004,プロジェクト004,鈴木物流株式会社,吉田剛,完了,2024-01-01,2025-09-07,備考4
+ANK-005,プロジェクト005,福岡ソリューションズ,小林亮,進行中,2024-08-01,2025-10-09,備考5
+ANK-006,プロジェクト006,株式会社サンプル商事,田中健二,中止,2024-07-01,2025-06-09,
+ANK-007,プロジェクト007,田中製造株式会社,伊藤由紀,進行中,2024-02-01,2025-02-13,備考7
+ANK-008,プロジェクト008,有限会社テスト産業,中村愛,進行中,2024-10-01,2025-05-26,備考8
+ANK-009,プロジェクト009,株式会社サンプル商事,加藤美咲,完了,2024-02-01,2025-07-03,
+ANK-010,プロジェクト010,福岡ソリューションズ,渡辺純,中止,2024-10-01,2025-06-19,備考10
+ANK-011,プロジェクト011,鈴木物流株式会社,鈴木花子,提案中,2024-11-01,2025-04-25,備考11
+ANK-012,プロジェクト012,山田サービス株式会社,鈴木花子,進行中,2024-02-01,2025-07-09,
+ANK-013,プロジェクト013,名古屋工業株式会社,中村愛,進行中,2024-06-01,2025-06-07,備考13
+ANK-014,プロジェクト014,山田サービス株式会社,鈴木花子,完了,2024-11-01,2025-03-18,備考14
+ANK-015,プロジェクト015,鈴木物流株式会社,田中健二,完了,2024-07-01,2025-05-21,
+ANK-016,プロジェクト016,福岡ソリューションズ,伊藤由紀,中止,2024-06-01,2025-01-08,備考16
+ANK-017,プロジェクト017,株式会社サンプル商事,中村愛,完了,2024-05-01,2025-02-07,備考17
+ANK-018,プロジェクト018,札幌テック株式会社,中村愛,進行中,2024-11-01,2025-08-13,
+ANK-019,プロジェクト019,名古屋工業株式会社,田中健二,進行中,2024-03-01,2025-04-24,備考19
+ANK-020,プロジェクト020,福岡ソリューションズ,吉田剛,進行中,2024-12-01,2025-10-14,備考20
+ANK-021,プロジェクト021,札幌テック株式会社,小林亮,進行中,2024-04-01,2025-03-17,
+ANK-022,プロジェクト022,名古屋工業株式会社,鈴木花子,提案中,2024-02-01,2025-03-21,備考22
+ANK-023,プロジェクト023,田中製造株式会社,小林亮,完了,2024-02-01,2025-07-13,備考23
+ANK-024,プロジェクト024,札幌テック株式会社,加藤美咲,完了,2024-05-01,2025-09-28,
+ANK-025,プロジェクト025,株式会社サンプル商事,鈴木花子,中止,2024-09-01,2025-05-25,備考25
+ANK-026,プロジェクト026,東京システム株式会社,鈴木花子,進行中,2024-07-01,2025-03-15,備考26
+ANK-027,プロジェクト027,株式会社サンプル商事,渡辺純,完了,2024-03-01,2025-09-04,
+ANK-028,プロジェクト028,山田サービス株式会社,吉田剛,完了,2024-04-01,2025-03-12,備考28
+ANK-029,プロジェクト029,田中製造株式会社,吉田剛,完了,2024-01-01,2025-10-11,備考29
+ANK-030,プロジェクト030,名古屋工業株式会社,山田太郎,提案中,2024-06-01,2025-05-08,
+ANK-031,プロジェクト031,株式会社サンプル商事,伊藤由紀,完了,2024-02-01,2025-02-24,備考31
+ANK-032,プロジェクト032,名古屋工業株式会社,鈴木花子,完了,2024-03-01,2025-03-22,備考32
+ANK-033,プロジェクト033,名古屋工業株式会社,吉田剛,進行中,2024-05-01,2025-09-28,
+ANK-034,プロジェクト034,札幌テック株式会社,小林亮,進行中,2024-09-01,2025-12-23,備考34
+ANK-035,プロジェクト035,鈴木物流株式会社,渡辺純,完了,2024-11-01,2025-11-12,備考35
+ANK-036,プロジェクト036,名古屋工業株式会社,吉田剛,完了,2024-02-01,2025-04-08,
+ANK-037,プロジェクト037,有限会社テスト産業,中村愛,提案中,2024-10-01,2025-09-08,備考37
+ANK-038,プロジェクト038,札幌テック株式会社,伊藤由紀,提案中,2024-02-01,2025-12-21,備考38
+ANK-039,プロジェクト039,株式会社サンプル商事,伊藤由紀,提案中,2024-01-01,2025-06-03,
+ANK-040,プロジェクト040,福岡ソリューションズ,伊藤由紀,進行中,2024-11-01,2025-08-07,備考40
+ANK-041,プロジェクト041,福岡ソリューションズ,田中健二,中止,2024-10-01,2025-10-16,備考41
+ANK-042,プロジェクト042,鈴木物流株式会社,加藤美咲,完了,2024-04-01,2025-02-04,
+ANK-043,プロジェクト043,大阪商事株式会社,中村愛,完了,2024-07-01,2025-08-28,備考43
+ANK-044,プロジェクト044,株式会社サンプル商事,鈴木花子,提案中,2024-07-01,2025-12-11,備考44
+ANK-045,プロジェクト045,有限会社テスト産業,伊藤由紀,進行中,2024-04-01,2025-09-15,
+ANK-046,プロジェクト046,田中製造株式会社,小林亮,進行中,2024-05-01,2025-08-08,備考46
+ANK-047,プロジェクト047,有限会社テスト産業,加藤美咲,完了,2024-02-01,2025-01-21,備考47
+ANK-048,プロジェクト048,福岡ソリューションズ,山田太郎,提案中,2024-04-01,2025-03-14,
+ANK-049,プロジェクト049,名古屋工業株式会社,加藤美咲,進行中,2024-07-01,2025-01-06,備考49
+ANK-050,プロジェクト050,大阪商事株式会社,山田太郎,完了,2024-05-01,2025-08-10,備考50
+ANK-051,プロジェクト051,大阪商事株式会社,吉田剛,中止,2024-12-01,2025-08-05,
+ANK-052,プロジェクト052,鈴木物流株式会社,渡辺純,進行中,2024-01-01,2025-10-24,備考52
+ANK-053,プロジェクト053,福岡ソリューションズ,山田太郎,中止,2024-06-01,2025-01-02,備考53
+ANK-054,プロジェクト054,札幌テック株式会社,加藤美咲,完了,2024-09-01,2025-03-02,
+ANK-055,プロジェクト055,福岡ソリューションズ,鈴木花子,進行中,2024-02-01,2025-10-03,備考55
+ANK-056,プロジェクト056,鈴木物流株式会社,小林亮,提案中,2024-10-01,2025-04-19,備考56
+ANK-057,プロジェクト057,札幌テック株式会社,山田太郎,完了,2024-02-01,2025-07-22,
+ANK-058,プロジェクト058,札幌テック株式会社,山本沙希,完了,2024-06-01,2025-05-07,備考58
+ANK-059,プロジェクト059,東京システム株式会社,伊藤由紀,進行中,2024-07-01,2025-03-22,備考59
+ANK-060,プロジェクト060,山田サービス株式会社,加藤美咲,進行中,2024-02-01,2025-01-15,
+ANK-061,プロジェクト061,札幌テック株式会社,山本沙希,提案中,2024-02-01,2025-09-07,備考61
+ANK-062,プロジェクト062,福岡ソリューションズ,渡辺純,進行中,2024-06-01,2025-02-08,備考62
+ANK-063,プロジェクト063,東京システム株式会社,渡辺純,進行中,2024-08-01,2025-09-23,
+ANK-064,プロジェクト064,山田サービス株式会社,山本沙希,中止,2024-09-01,2025-01-22,備考64
+ANK-065,プロジェクト065,福岡ソリューションズ,渡辺純,中止,2024-02-01,2025-03-09,備考65
+ANK-066,プロジェクト066,有限会社テスト産業,鈴木花子,中止,2024-09-01,2025-03-09,
+ANK-067,プロジェクト067,山田サービス株式会社,山本沙希,進行中,2024-12-01,2025-06-07,備考67
+ANK-068,プロジェクト068,山田サービス株式会社,吉田剛,完了,2024-05-01,2025-01-03,備考68
+ANK-069,プロジェクト069,大阪商事株式会社,渡辺純,提案中,2024-01-01,2025-06-25,
+ANK-070,プロジェクト070,田中製造株式会社,渡辺純,進行中,2024-12-01,2025-08-18,備考70
+ANK-071,プロジェクト071,大阪商事株式会社,吉田剛,提案中,2024-02-01,2025-02-23,備考71
+ANK-072,プロジェクト072,田中製造株式会社,吉田剛,提案中,2024-06-01,2025-10-18,
+ANK-073,プロジェクト073,田中製造株式会社,小林亮,進行中,2024-01-01,2025-05-12,備考73
+ANK-074,プロジェクト074,株式会社サンプル商事,中村愛,進行中,2024-11-01,2025-04-22,備考74
+ANK-075,プロジェクト075,有限会社テスト産業,中村愛,完了,2024-07-01,2025-10-24,
+ANK-076,プロジェクト076,田中製造株式会社,伊藤由紀,進行中,2024-03-01,2025-07-01,備考76
+ANK-077,プロジェクト077,田中製造株式会社,中村愛,完了,2024-11-01,2025-12-26,備考77
+ANK-078,プロジェクト078,鈴木物流株式会社,渡辺純,進行中,2024-12-01,2025-02-13,
+ANK-079,プロジェクト079,株式会社サンプル商事,加藤美咲,進行中,2024-04-01,2025-08-12,備考79
+ANK-080,プロジェクト080,山田サービス株式会社,伊藤由紀,進行中,2024-01-01,2025-11-07,備考80
+ANK-081,プロジェクト081,大阪商事株式会社,中村愛,進行中,2024-02-01,2025-05-12,
+ANK-082,プロジェクト082,福岡ソリューションズ,小林亮,中止,2024-09-01,2025-06-01,備考82
+ANK-083,プロジェクト083,有限会社テスト産業,渡辺純,進行中,2024-10-01,2025-05-02,備考83
+ANK-084,プロジェクト084,有限会社テスト産業,山本沙希,完了,2024-06-01,2025-12-26,
+ANK-085,プロジェクト085,東京システム株式会社,小林亮,完了,2024-09-01,2025-02-13,備考85
+ANK-086,プロジェクト086,札幌テック株式会社,伊藤由紀,進行中,2024-01-01,2025-12-14,備考86
+ANK-087,プロジェクト087,株式会社サンプル商事,吉田剛,完了,2024-11-01,2025-12-24,
+ANK-088,プロジェクト088,鈴木物流株式会社,中村愛,完了,2024-02-01,2025-11-11,備考88
+ANK-089,プロジェクト089,札幌テック株式会社,中村愛,中止,2024-02-01,2025-12-10,備考89
+ANK-090,プロジェクト090,福岡ソリューションズ,渡辺純,中止,2024-07-01,2025-06-13,
+ANK-091,プロジェクト091,山田サービス株式会社,吉田剛,進行中,2024-04-01,2025-07-22,備考91
+ANK-092,プロジェクト092,大阪商事株式会社,田中健二,完了,2024-10-01,2025-05-13,備考92
+ANK-093,プロジェクト093,福岡ソリューションズ,山田太郎,進行中,2024-05-01,2025-04-14,
+ANK-094,プロジェクト094,札幌テック株式会社,山本沙希,中止,2024-06-01,2025-08-15,備考94
+ANK-095,プロジェクト095,名古屋工業株式会社,伊藤由紀,完了,2024-08-01,2025-12-06,備考95
+ANK-096,プロジェクト096,有限会社テスト産業,渡辺純,完了,2024-11-01,2025-11-20,
+ANK-097,プロジェクト097,東京システム株式会社,鈴木花子,進行中,2024-11-01,2025-05-08,備考97
+ANK-098,プロジェクト098,鈴木物流株式会社,田中健二,提案中,2024-01-01,2025-04-16,備考98
+ANK-099,プロジェクト099,札幌テック株式会社,鈴木花子,完了,2024-07-01,2025-11-19,
+ANK-100,プロジェクト100,鈴木物流株式会社,小林亮,完了,2024-07-01,2025-04-05,備考100
+
+#TABLE:REQUIREMENTS
+YOQYU_ID,ANKEN_ID,YOQYU_NAME,DESCRIPTION,PRIORITY,STATUS,REQUESTED_BY,REMARKS
+YQY-001,ANK-084,要求事項001,要求1の詳細説明です,高,未対応,小林亮,備考1
+YQY-002,ANK-029,要求事項002,要求2の詳細説明です,高,完了,山田太郎,備考2
+YQY-003,ANK-072,要求事項003,要求3の詳細説明です,高,未対応,加藤美咲,備考3
+YQY-004,ANK-018,要求事項004,要求4の詳細説明です,中,完了,加藤美咲,
+YQY-005,ANK-079,要求事項005,要求5の詳細説明です,低,完了,吉田剛,備考5
+YQY-006,ANK-058,要求事項006,要求6の詳細説明です,高,完了,加藤美咲,備考6
+YQY-007,ANK-034,要求事項007,要求7の詳細説明です,高,完了,吉田剛,備考7
+YQY-008,ANK-063,要求事項008,要求8の詳細説明です,高,完了,加藤美咲,
+YQY-009,ANK-010,要求事項009,要求9の詳細説明です,中,対応中,渡辺純,備考9
+YQY-010,ANK-043,要求事項010,要求10の詳細説明です,中,未対応,田中健二,備考10
+YQY-011,ANK-020,要求事項011,要求11の詳細説明です,高,完了,田中健二,備考11
+YQY-012,ANK-091,要求事項012,要求12の詳細説明です,高,未対応,小林亮,
+YQY-013,ANK-053,要求事項013,要求13の詳細説明です,中,完了,小林亮,備考13
+YQY-014,ANK-008,要求事項014,要求14の詳細説明です,高,完了,小林亮,備考14
+YQY-015,ANK-099,要求事項015,要求15の詳細説明です,低,未対応,山本沙希,備考15
+YQY-016,ANK-049,要求事項016,要求16の詳細説明です,中,未対応,中村愛,
+YQY-017,ANK-039,要求事項017,要求17の詳細説明です,中,完了,吉田剛,備考17
+YQY-018,ANK-096,要求事項018,要求18の詳細説明です,低,対応中,加藤美咲,備考18
+YQY-019,ANK-029,要求事項019,要求19の詳細説明です,中,完了,加藤美咲,備考19
+YQY-020,ANK-004,要求事項020,要求20の詳細説明です,中,完了,小林亮,
+YQY-021,ANK-093,要求事項021,要求21の詳細説明です,高,完了,田中健二,備考21
+YQY-022,ANK-080,要求事項022,要求22の詳細説明です,低,未対応,小林亮,備考22
+YQY-023,ANK-076,要求事項023,要求23の詳細説明です,低,未対応,鈴木花子,備考23
+YQY-024,ANK-083,要求事項024,要求24の詳細説明です,中,対応中,加藤美咲,
+YQY-025,ANK-024,要求事項025,要求25の詳細説明です,高,完了,小林亮,備考25
+YQY-026,ANK-042,要求事項026,要求26の詳細説明です,高,完了,中村愛,備考26
+YQY-027,ANK-044,要求事項027,要求27の詳細説明です,中,完了,小林亮,備考27
+YQY-028,ANK-033,要求事項028,要求28の詳細説明です,高,完了,山田太郎,
+YQY-029,ANK-096,要求事項029,要求29の詳細説明です,低,未対応,中村愛,備考29
+YQY-030,ANK-029,要求事項030,要求30の詳細説明です,高,未対応,山田太郎,備考30
+YQY-031,ANK-032,要求事項031,要求31の詳細説明です,高,未対応,山本沙希,備考31
+YQY-032,ANK-020,要求事項032,要求32の詳細説明です,高,対応中,加藤美咲,
+YQY-033,ANK-086,要求事項033,要求33の詳細説明です,高,対応中,加藤美咲,備考33
+YQY-034,ANK-090,要求事項034,要求34の詳細説明です,中,完了,田中健二,備考34
+YQY-035,ANK-078,要求事項035,要求35の詳細説明です,低,未対応,田中健二,備考35
+YQY-036,ANK-040,要求事項036,要求36の詳細説明です,高,未対応,渡辺純,
+YQY-037,ANK-074,要求事項037,要求37の詳細説明です,中,完了,伊藤由紀,備考37
+YQY-038,ANK-010,要求事項038,要求38の詳細説明です,低,対応中,鈴木花子,備考38
+YQY-039,ANK-090,要求事項039,要求39の詳細説明です,中,未対応,山本沙希,備考39
+YQY-040,ANK-006,要求事項040,要求40の詳細説明です,中,完了,中村愛,
+YQY-041,ANK-009,要求事項041,要求41の詳細説明です,低,完了,山田太郎,備考41
+YQY-042,ANK-054,要求事項042,要求42の詳細説明です,中,未対応,小林亮,備考42
+YQY-043,ANK-047,要求事項043,要求43の詳細説明です,中,対応中,小林亮,備考43
+YQY-044,ANK-023,要求事項044,要求44の詳細説明です,低,完了,山本沙希,
+YQY-045,ANK-069,要求事項045,要求45の詳細説明です,中,完了,小林亮,備考45
+YQY-046,ANK-094,要求事項046,要求46の詳細説明です,低,完了,中村愛,備考46
+YQY-047,ANK-032,要求事項047,要求47の詳細説明です,高,完了,加藤美咲,備考47
+YQY-048,ANK-032,要求事項048,要求48の詳細説明です,中,完了,中村愛,
+YQY-049,ANK-004,要求事項049,要求49の詳細説明です,中,完了,田中健二,備考49
+YQY-050,ANK-063,要求事項050,要求50の詳細説明です,高,完了,渡辺純,備考50
+YQY-051,ANK-044,要求事項051,要求51の詳細説明です,中,完了,吉田剛,備考51
+YQY-052,ANK-002,要求事項052,要求52の詳細説明です,低,対応中,鈴木花子,
+YQY-053,ANK-031,要求事項053,要求53の詳細説明です,中,完了,吉田剛,備考53
+YQY-054,ANK-098,要求事項054,要求54の詳細説明です,高,完了,加藤美咲,備考54
+YQY-055,ANK-058,要求事項055,要求55の詳細説明です,高,未対応,渡辺純,備考55
+YQY-056,ANK-029,要求事項056,要求56の詳細説明です,中,対応中,渡辺純,
+YQY-057,ANK-085,要求事項057,要求57の詳細説明です,低,完了,加藤美咲,備考57
+YQY-058,ANK-071,要求事項058,要求58の詳細説明です,低,完了,小林亮,備考58
+YQY-059,ANK-096,要求事項059,要求59の詳細説明です,低,完了,中村愛,備考59
+YQY-060,ANK-090,要求事項060,要求60の詳細説明です,中,完了,渡辺純,
+YQY-061,ANK-033,要求事項061,要求61の詳細説明です,高,未対応,伊藤由紀,備考61
+YQY-062,ANK-041,要求事項062,要求62の詳細説明です,高,対応中,伊藤由紀,備考62
+YQY-063,ANK-028,要求事項063,要求63の詳細説明です,中,完了,山本沙希,備考63
+YQY-064,ANK-098,要求事項064,要求64の詳細説明です,低,完了,鈴木花子,
+YQY-065,ANK-025,要求事項065,要求65の詳細説明です,中,対応中,中村愛,備考65
+YQY-066,ANK-023,要求事項066,要求66の詳細説明です,中,未対応,吉田剛,備考66
+YQY-067,ANK-017,要求事項067,要求67の詳細説明です,中,未対応,山田太郎,備考67
+YQY-068,ANK-071,要求事項068,要求68の詳細説明です,中,対応中,加藤美咲,
+YQY-069,ANK-014,要求事項069,要求69の詳細説明です,高,完了,加藤美咲,備考69
+YQY-070,ANK-062,要求事項070,要求70の詳細説明です,中,完了,田中健二,備考70
+YQY-071,ANK-007,要求事項071,要求71の詳細説明です,中,完了,鈴木花子,備考71
+YQY-072,ANK-009,要求事項072,要求72の詳細説明です,中,完了,鈴木花子,
+YQY-073,ANK-074,要求事項073,要求73の詳細説明です,高,対応中,田中健二,備考73
+YQY-074,ANK-073,要求事項074,要求74の詳細説明です,中,未対応,伊藤由紀,備考74
+YQY-075,ANK-016,要求事項075,要求75の詳細説明です,低,完了,山本沙希,備考75
+YQY-076,ANK-077,要求事項076,要求76の詳細説明です,低,対応中,吉田剛,
+YQY-077,ANK-049,要求事項077,要求77の詳細説明です,中,完了,渡辺純,備考77
+YQY-078,ANK-076,要求事項078,要求78の詳細説明です,中,完了,山本沙希,備考78
+YQY-079,ANK-080,要求事項079,要求79の詳細説明です,高,未対応,伊藤由紀,備考79
+YQY-080,ANK-081,要求事項080,要求80の詳細説明です,高,完了,鈴木花子,
+YQY-081,ANK-021,要求事項081,要求81の詳細説明です,高,対応中,吉田剛,備考81
+YQY-082,ANK-010,要求事項082,要求82の詳細説明です,高,未対応,小林亮,備考82
+YQY-083,ANK-058,要求事項083,要求83の詳細説明です,低,完了,渡辺純,備考83
+YQY-084,ANK-005,要求事項084,要求84の詳細説明です,高,完了,渡辺純,
+YQY-085,ANK-090,要求事項085,要求85の詳細説明です,中,未対応,伊藤由紀,備考85
+YQY-086,ANK-034,要求事項086,要求86の詳細説明です,低,対応中,小林亮,備考86
+YQY-087,ANK-015,要求事項087,要求87の詳細説明です,低,対応中,田中健二,備考87
+YQY-088,ANK-035,要求事項088,要求88の詳細説明です,高,未対応,山田太郎,
+YQY-089,ANK-022,要求事項089,要求89の詳細説明です,中,完了,加藤美咲,備考89
+YQY-090,ANK-016,要求事項090,要求90の詳細説明です,中,完了,小林亮,備考90
+YQY-091,ANK-035,要求事項091,要求91の詳細説明です,低,完了,加藤美咲,備考91
+YQY-092,ANK-011,要求事項092,要求92の詳細説明です,低,未対応,小林亮,
+YQY-093,ANK-095,要求事項093,要求93の詳細説明です,中,完了,山田太郎,備考93
+YQY-094,ANK-012,要求事項094,要求94の詳細説明です,高,未対応,渡辺純,備考94
+YQY-095,ANK-074,要求事項095,要求95の詳細説明です,高,対応中,加藤美咲,備考95
+YQY-096,ANK-067,要求事項096,要求96の詳細説明です,中,完了,田中健二,
+YQY-097,ANK-075,要求事項097,要求97の詳細説明です,中,完了,鈴木花子,備考97
+YQY-098,ANK-061,要求事項098,要求98の詳細説明です,中,完了,中村愛,備考98
+YQY-099,ANK-042,要求事項099,要求99の詳細説明です,高,対応中,中村愛,備考99
+YQY-100,ANK-053,要求事項100,要求100の詳細説明です,中,完了,小林亮,
+
+#TABLE:SPECIFICATIONS
+YOKEN_ID,YOQYU_ID,YOKEN_NAME,DESCRIPTION,TYPE,PRIORITY,STATUS,REMARKS
+YKN-001,YQY-098,要件001,要件1の詳細説明です,非機能要件,高,完了,備考1
+YKN-002,YQY-012,要件002,要件2の詳細説明です,機能要件,中,完了,備考2
+YKN-003,YQY-015,要件003,要件3の詳細説明です,機能要件,低,未着手,
+YKN-004,YQY-085,要件004,要件4の詳細説明です,非機能要件,中,完了,備考4
+YKN-005,YQY-007,要件005,要件5の詳細説明です,機能要件,低,完了,備考5
+YKN-006,YQY-080,要件006,要件6の詳細説明です,機能要件,中,未着手,
+YKN-007,YQY-027,要件007,要件7の詳細説明です,機能要件,低,実装中,備考7
+YKN-008,YQY-037,要件008,要件8の詳細説明です,機能要件,中,未着手,備考8
+YKN-009,YQY-004,要件009,要件9の詳細説明です,非機能要件,低,実装中,
+YKN-010,YQY-091,要件010,要件10の詳細説明です,機能要件,中,却下,備考10
+YKN-011,YQY-002,要件011,要件11の詳細説明です,非機能要件,中,未着手,備考11
+YKN-012,YQY-029,要件012,要件12の詳細説明です,機能要件,中,未着手,
+YKN-013,YQY-083,要件013,要件13の詳細説明です,機能要件,中,完了,備考13
+YKN-014,YQY-066,要件014,要件14の詳細説明です,非機能要件,中,完了,備考14
+YKN-015,YQY-062,要件015,要件15の詳細説明です,機能要件,高,完了,
+YKN-016,YQY-071,要件016,要件16の詳細説明です,機能要件,中,実装中,備考16
+YKN-017,YQY-077,要件017,要件17の詳細説明です,非機能要件,高,未着手,備考17
+YKN-018,YQY-036,要件018,要件18の詳細説明です,機能要件,中,却下,
+YKN-019,YQY-035,要件019,要件19の詳細説明です,機能要件,中,完了,備考19
+YKN-020,YQY-076,要件020,要件20の詳細説明です,非機能要件,中,実装中,備考20
+YKN-021,YQY-058,要件021,要件21の詳細説明です,非機能要件,中,完了,
+YKN-022,YQY-043,要件022,要件22の詳細説明です,非機能要件,低,完了,備考22
+YKN-023,YQY-059,要件023,要件23の詳細説明です,機能要件,高,実装中,備考23
+YKN-024,YQY-074,要件024,要件24の詳細説明です,機能要件,高,完了,
+YKN-025,YQY-006,要件025,要件25の詳細説明です,機能要件,中,完了,備考25
+YKN-026,YQY-050,要件026,要件26の詳細説明です,非機能要件,高,完了,備考26
+YKN-027,YQY-005,要件027,要件27の詳細説明です,機能要件,低,却下,
+YKN-028,YQY-043,要件028,要件28の詳細説明です,機能要件,中,未着手,備考28
+YKN-029,YQY-068,要件029,要件29の詳細説明です,機能要件,高,実装中,備考29
+YKN-030,YQY-053,要件030,要件30の詳細説明です,非機能要件,高,未着手,
+YKN-031,YQY-061,要件031,要件31の詳細説明です,機能要件,中,却下,備考31
+YKN-032,YQY-089,要件032,要件32の詳細説明です,機能要件,高,完了,備考32
+YKN-033,YQY-087,要件033,要件33の詳細説明です,非機能要件,中,完了,
+YKN-034,YQY-081,要件034,要件34の詳細説明です,非機能要件,中,却下,備考34
+YKN-035,YQY-005,要件035,要件35の詳細説明です,非機能要件,高,実装中,備考35
+YKN-036,YQY-081,要件036,要件36の詳細説明です,非機能要件,中,実装中,
+YKN-037,YQY-096,要件037,要件37の詳細説明です,機能要件,中,未着手,備考37
+YKN-038,YQY-098,要件038,要件38の詳細説明です,非機能要件,高,完了,備考38
+YKN-039,YQY-022,要件039,要件39の詳細説明です,非機能要件,中,未着手,
+YKN-040,YQY-006,要件040,要件40の詳細説明です,機能要件,高,完了,備考40
+YKN-041,YQY-046,要件041,要件41の詳細説明です,機能要件,中,実装中,備考41
+YKN-042,YQY-032,要件042,要件42の詳細説明です,非機能要件,中,却下,
+YKN-043,YQY-088,要件043,要件43の詳細説明です,機能要件,高,実装中,備考43
+YKN-044,YQY-011,要件044,要件44の詳細説明です,非機能要件,中,却下,備考44
+YKN-045,YQY-088,要件045,要件45の詳細説明です,機能要件,中,却下,
+YKN-046,YQY-019,要件046,要件46の詳細説明です,機能要件,中,完了,備考46
+YKN-047,YQY-059,要件047,要件47の詳細説明です,機能要件,高,完了,備考47
+YKN-048,YQY-037,要件048,要件48の詳細説明です,非機能要件,低,実装中,
+YKN-049,YQY-010,要件049,要件49の詳細説明です,機能要件,中,却下,備考49
+YKN-050,YQY-039,要件050,要件50の詳細説明です,非機能要件,中,完了,備考50
+YKN-051,YQY-059,要件051,要件51の詳細説明です,機能要件,高,完了,
+YKN-052,YQY-062,要件052,要件52の詳細説明です,機能要件,高,完了,備考52
+YKN-053,YQY-074,要件053,要件53の詳細説明です,機能要件,低,完了,備考53
+YKN-054,YQY-090,要件054,要件54の詳細説明です,機能要件,高,完了,
+YKN-055,YQY-036,要件055,要件55の詳細説明です,機能要件,低,未着手,備考55
+YKN-056,YQY-078,要件056,要件56の詳細説明です,非機能要件,中,完了,備考56
+YKN-057,YQY-100,要件057,要件57の詳細説明です,機能要件,低,完了,
+YKN-058,YQY-029,要件058,要件58の詳細説明です,非機能要件,高,却下,備考58
+YKN-059,YQY-033,要件059,要件59の詳細説明です,非機能要件,高,未着手,備考59
+YKN-060,YQY-081,要件060,要件60の詳細説明です,非機能要件,高,完了,
+YKN-061,YQY-057,要件061,要件61の詳細説明です,機能要件,低,完了,備考61
+YKN-062,YQY-094,要件062,要件62の詳細説明です,機能要件,高,完了,備考62
+YKN-063,YQY-042,要件063,要件63の詳細説明です,非機能要件,中,実装中,
+YKN-064,YQY-026,要件064,要件64の詳細説明です,機能要件,低,完了,備考64
+YKN-065,YQY-068,要件065,要件65の詳細説明です,非機能要件,中,実装中,備考65
+YKN-066,YQY-033,要件066,要件66の詳細説明です,機能要件,中,完了,
+YKN-067,YQY-015,要件067,要件67の詳細説明です,機能要件,高,実装中,備考67
+YKN-068,YQY-097,要件068,要件68の詳細説明です,機能要件,中,却下,備考68
+YKN-069,YQY-047,要件069,要件69の詳細説明です,機能要件,中,未着手,
+YKN-070,YQY-034,要件070,要件70の詳細説明です,非機能要件,高,完了,備考70
+YKN-071,YQY-048,要件071,要件71の詳細説明です,非機能要件,中,却下,備考71
+YKN-072,YQY-049,要件072,要件72の詳細説明です,非機能要件,中,未着手,
+YKN-073,YQY-087,要件073,要件73の詳細説明です,機能要件,中,未着手,備考73
+YKN-074,YQY-080,要件074,要件74の詳細説明です,非機能要件,中,却下,備考74
+YKN-075,YQY-029,要件075,要件75の詳細説明です,非機能要件,高,完了,
+YKN-076,YQY-090,要件076,要件76の詳細説明です,機能要件,中,未着手,備考76
+YKN-077,YQY-018,要件077,要件77の詳細説明です,機能要件,高,完了,備考77
+YKN-078,YQY-064,要件078,要件78の詳細説明です,機能要件,高,実装中,
+YKN-079,YQY-069,要件079,要件79の詳細説明です,機能要件,中,完了,備考79
+YKN-080,YQY-048,要件080,要件80の詳細説明です,非機能要件,低,完了,備考80
+YKN-081,YQY-076,要件081,要件81の詳細説明です,非機能要件,高,完了,
+YKN-082,YQY-084,要件082,要件82の詳細説明です,機能要件,中,却下,備考82
+YKN-083,YQY-053,要件083,要件83の詳細説明です,機能要件,高,完了,備考83
+YKN-084,YQY-028,要件084,要件84の詳細説明です,機能要件,中,実装中,
+YKN-085,YQY-047,要件085,要件85の詳細説明です,機能要件,中,却下,備考85
+YKN-086,YQY-083,要件086,要件86の詳細説明です,機能要件,高,完了,備考86
+YKN-087,YQY-036,要件087,要件87の詳細説明です,機能要件,高,完了,
+YKN-088,YQY-012,要件088,要件88の詳細説明です,非機能要件,高,却下,備考88
+YKN-089,YQY-003,要件089,要件89の詳細説明です,機能要件,中,実装中,備考89
+YKN-090,YQY-017,要件090,要件90の詳細説明です,非機能要件,高,未着手,
+YKN-091,YQY-098,要件091,要件91の詳細説明です,非機能要件,高,却下,備考91
+YKN-092,YQY-028,要件092,要件92の詳細説明です,機能要件,中,実装中,備考92
+YKN-093,YQY-077,要件093,要件93の詳細説明です,機能要件,中,実装中,
+YKN-094,YQY-017,要件094,要件94の詳細説明です,非機能要件,中,実装中,備考94
+YKN-095,YQY-015,要件095,要件95の詳細説明です,非機能要件,高,実装中,備考95
+YKN-096,YQY-002,要件096,要件96の詳細説明です,機能要件,高,却下,
+YKN-097,YQY-042,要件097,要件97の詳細説明です,機能要件,高,完了,備考97
+YKN-098,YQY-007,要件098,要件98の詳細説明です,機能要件,中,却下,備考98
+YKN-099,YQY-015,要件099,要件99の詳細説明です,非機能要件,高,完了,
+YKN-100,YQY-058,要件100,要件100の詳細説明です,機能要件,低,却下,備考100
+
+#TABLE:APPLICATIONS
+APP_ID,YOKEN_ID,APP_NAME,VERSION,TECHNOLOGY,REPOSITORY_URL,STATUS,REMARKS
+APP-001,YKN-014,アプリケーション001,1.7.8,FastAPI / Python,https://github.com/example/app-001,開発中,備考1
+APP-002,YKN-094,アプリケーション002,1.8.4,Rails / PostgreSQL,https://github.com/example/app-002,開発中,備考2
+APP-003,YKN-008,アプリケーション003,1.7.6,Laravel / MySQL,https://github.com/example/app-003,開発中,備考3
+APP-004,YKN-063,アプリケーション004,1.7.1,Spring Boot 3 / JPA,https://github.com/example/app-004,リリース済,
+APP-005,YKN-078,アプリケーション005,1.2.1,React / TypeScript,https://github.com/example/app-005,リリース済,備考5
+APP-006,YKN-080,アプリケーション006,1.9.8,Next.js / Prisma,https://github.com/example/app-006,廃止,備考6
+APP-007,YKN-077,アプリケーション007,1.8.4,Rails / PostgreSQL,https://github.com/example/app-007,廃止,備考7
+APP-008,YKN-013,アプリケーション008,1.1.8,FastAPI / Python,https://github.com/example/app-008,廃止,
+APP-009,YKN-058,アプリケーション009,1.3.6,Next.js / Prisma,https://github.com/example/app-009,廃止,備考9
+APP-010,YKN-052,アプリケーション010,1.6.1,Next.js / Prisma,https://github.com/example/app-010,廃止,備考10
+APP-011,YKN-041,アプリケーション011,1.4.5,React / TypeScript,https://github.com/example/app-011,廃止,備考11
+APP-012,YKN-009,アプリケーション012,1.1.1,Spring Boot 3 / JPA,https://github.com/example/app-012,廃止,
+APP-013,YKN-013,アプリケーション013,1.5.2,Flutter / Dart,https://github.com/example/app-013,開発中,備考13
+APP-014,YKN-076,アプリケーション014,1.8.8,Next.js / Prisma,https://github.com/example/app-014,開発中,備考14
+APP-015,YKN-053,アプリケーション015,1.5.6,Vue 3 / Vite,https://github.com/example/app-015,リリース済,備考15
+APP-016,YKN-077,アプリケーション016,1.4.5,Spring Boot 3 / JPA,https://github.com/example/app-016,リリース済,
+APP-017,YKN-020,アプリケーション017,1.7.3,Spring Boot 3 / JPA,https://github.com/example/app-017,リリース済,備考17
+APP-018,YKN-072,アプリケーション018,1.5.1,Django / PostgreSQL,https://github.com/example/app-018,リリース済,備考18
+APP-019,YKN-055,アプリケーション019,1.8.9,Kotlin / Android,https://github.com/example/app-019,開発中,備考19
+APP-020,YKN-078,アプリケーション020,1.4.0,React / TypeScript,https://github.com/example/app-020,リリース済,
+APP-021,YKN-090,アプリケーション021,1.4.5,Next.js / Prisma,https://github.com/example/app-021,開発中,備考21
+APP-022,YKN-024,アプリケーション022,1.2.9,Laravel / MySQL,https://github.com/example/app-022,開発中,備考22
+APP-023,YKN-019,アプリケーション023,1.0.1,Flutter / Dart,https://github.com/example/app-023,リリース済,備考23
+APP-024,YKN-049,アプリケーション024,1.6.7,Next.js / Prisma,https://github.com/example/app-024,リリース済,
+APP-025,YKN-048,アプリケーション025,1.4.5,Kotlin / Android,https://github.com/example/app-025,開発中,備考25
+APP-026,YKN-007,アプリケーション026,1.2.2,Kotlin / Android,https://github.com/example/app-026,開発中,備考26
+APP-027,YKN-087,アプリケーション027,1.1.4,Rails / PostgreSQL,https://github.com/example/app-027,廃止,備考27
+APP-028,YKN-063,アプリケーション028,1.9.7,Laravel / MySQL,https://github.com/example/app-028,リリース済,
+APP-029,YKN-028,アプリケーション029,1.8.1,Next.js / Prisma,https://github.com/example/app-029,廃止,備考29
+APP-030,YKN-015,アプリケーション030,1.4.9,Rails / PostgreSQL,https://github.com/example/app-030,リリース済,備考30
+APP-031,YKN-006,アプリケーション031,1.3.6,Kotlin / Android,https://github.com/example/app-031,開発中,備考31
+APP-032,YKN-001,アプリケーション032,1.3.4,FastAPI / Python,https://github.com/example/app-032,リリース済,
+APP-033,YKN-098,アプリケーション033,1.4.4,Next.js / Prisma,https://github.com/example/app-033,開発中,備考33
+APP-034,YKN-001,アプリケーション034,1.7.6,React / TypeScript,https://github.com/example/app-034,リリース済,備考34
+APP-035,YKN-049,アプリケーション035,1.8.3,Flutter / Dart,https://github.com/example/app-035,リリース済,備考35
+APP-036,YKN-010,アプリケーション036,1.6.0,Laravel / MySQL,https://github.com/example/app-036,開発中,
+APP-037,YKN-059,アプリケーション037,1.1.5,Kotlin / Android,https://github.com/example/app-037,廃止,備考37
+APP-038,YKN-074,アプリケーション038,1.6.6,Django / PostgreSQL,https://github.com/example/app-038,開発中,備考38
+APP-039,YKN-052,アプリケーション039,1.0.5,React / TypeScript,https://github.com/example/app-039,廃止,備考39
+APP-040,YKN-089,アプリケーション040,1.5.1,Laravel / MySQL,https://github.com/example/app-040,開発中,
+APP-041,YKN-032,アプリケーション041,1.6.9,Laravel / MySQL,https://github.com/example/app-041,開発中,備考41
+APP-042,YKN-051,アプリケーション042,1.4.5,FastAPI / Python,https://github.com/example/app-042,リリース済,備考42
+APP-043,YKN-100,アプリケーション043,1.2.1,Flutter / Dart,https://github.com/example/app-043,開発中,備考43
+APP-044,YKN-068,アプリケーション044,1.8.3,Next.js / Prisma,https://github.com/example/app-044,リリース済,
+APP-045,YKN-094,アプリケーション045,1.2.3,Spring Boot 3 / JPA,https://github.com/example/app-045,リリース済,備考45
+APP-046,YKN-033,アプリケーション046,1.3.2,Kotlin / Android,https://github.com/example/app-046,リリース済,備考46
+APP-047,YKN-098,アプリケーション047,1.1.2,Rails / PostgreSQL,https://github.com/example/app-047,廃止,備考47
+APP-048,YKN-097,アプリケーション048,1.9.9,Rails / PostgreSQL,https://github.com/example/app-048,リリース済,
+APP-049,YKN-081,アプリケーション049,1.5.2,Rails / PostgreSQL,https://github.com/example/app-049,開発中,備考49
+APP-050,YKN-061,アプリケーション050,1.7.4,Django / PostgreSQL,https://github.com/example/app-050,開発中,備考50
+APP-051,YKN-046,アプリケーション051,1.8.1,Django / PostgreSQL,https://github.com/example/app-051,廃止,備考51
+APP-052,YKN-058,アプリケーション052,1.0.0,Next.js / Prisma,https://github.com/example/app-052,リリース済,
+APP-053,YKN-010,アプリケーション053,1.1.9,Kotlin / Android,https://github.com/example/app-053,廃止,備考53
+APP-054,YKN-060,アプリケーション054,1.9.8,Vue 3 / Vite,https://github.com/example/app-054,廃止,備考54
+APP-055,YKN-074,アプリケーション055,1.3.5,Kotlin / Android,https://github.com/example/app-055,廃止,備考55
+APP-056,YKN-065,アプリケーション056,1.2.0,Rails / PostgreSQL,https://github.com/example/app-056,開発中,
+APP-057,YKN-044,アプリケーション057,1.1.8,React / TypeScript,https://github.com/example/app-057,開発中,備考57
+APP-058,YKN-032,アプリケーション058,1.7.7,Flutter / Dart,https://github.com/example/app-058,リリース済,備考58
+APP-059,YKN-047,アプリケーション059,1.5.4,Laravel / MySQL,https://github.com/example/app-059,廃止,備考59
+APP-060,YKN-100,アプリケーション060,1.5.9,Vue 3 / Vite,https://github.com/example/app-060,リリース済,
+APP-061,YKN-009,アプリケーション061,1.5.1,Flutter / Dart,https://github.com/example/app-061,廃止,備考61
+APP-062,YKN-037,アプリケーション062,1.4.9,React / TypeScript,https://github.com/example/app-062,リリース済,備考62
+APP-063,YKN-011,アプリケーション063,1.9.2,Next.js / Prisma,https://github.com/example/app-063,リリース済,備考63
+APP-064,YKN-084,アプリケーション064,1.6.2,Kotlin / Android,https://github.com/example/app-064,開発中,
+APP-065,YKN-040,アプリケーション065,1.8.6,Next.js / Prisma,https://github.com/example/app-065,リリース済,備考65
+APP-066,YKN-086,アプリケーション066,1.8.1,Laravel / MySQL,https://github.com/example/app-066,リリース済,備考66
+APP-067,YKN-003,アプリケーション067,1.5.4,React / TypeScript,https://github.com/example/app-067,リリース済,備考67
+APP-068,YKN-044,アプリケーション068,1.7.3,FastAPI / Python,https://github.com/example/app-068,リリース済,
+APP-069,YKN-020,アプリケーション069,1.1.4,Spring Boot 3 / JPA,https://github.com/example/app-069,開発中,備考69
+APP-070,YKN-085,アプリケーション070,1.5.9,React / TypeScript,https://github.com/example/app-070,廃止,備考70
+APP-071,YKN-020,アプリケーション071,1.2.2,Kotlin / Android,https://github.com/example/app-071,リリース済,備考71
+APP-072,YKN-093,アプリケーション072,1.7.0,Laravel / MySQL,https://github.com/example/app-072,リリース済,
+APP-073,YKN-087,アプリケーション073,1.3.7,Kotlin / Android,https://github.com/example/app-073,リリース済,備考73
+APP-074,YKN-097,アプリケーション074,1.7.3,Flutter / Dart,https://github.com/example/app-074,リリース済,備考74
+APP-075,YKN-040,アプリケーション075,1.7.3,Next.js / Prisma,https://github.com/example/app-075,廃止,備考75
+APP-076,YKN-060,アプリケーション076,1.4.6,Flutter / Dart,https://github.com/example/app-076,廃止,
+APP-077,YKN-021,アプリケーション077,1.3.9,React / TypeScript,https://github.com/example/app-077,リリース済,備考77
+APP-078,YKN-007,アプリケーション078,1.7.5,Flutter / Dart,https://github.com/example/app-078,開発中,備考78
+APP-079,YKN-092,アプリケーション079,1.8.1,Django / PostgreSQL,https://github.com/example/app-079,開発中,備考79
+APP-080,YKN-098,アプリケーション080,1.2.4,Rails / PostgreSQL,https://github.com/example/app-080,リリース済,
+APP-081,YKN-056,アプリケーション081,1.1.3,Rails / PostgreSQL,https://github.com/example/app-081,リリース済,備考81
+APP-082,YKN-004,アプリケーション082,1.6.0,Laravel / MySQL,https://github.com/example/app-082,リリース済,備考82
+APP-083,YKN-031,アプリケーション083,1.6.1,Next.js / Prisma,https://github.com/example/app-083,リリース済,備考83
+APP-084,YKN-004,アプリケーション084,1.5.1,Next.js / Prisma,https://github.com/example/app-084,リリース済,
+APP-085,YKN-018,アプリケーション085,1.0.4,Rails / PostgreSQL,https://github.com/example/app-085,リリース済,備考85
+APP-086,YKN-098,アプリケーション086,1.7.7,Kotlin / Android,https://github.com/example/app-086,開発中,備考86
+APP-087,YKN-011,アプリケーション087,1.0.4,FastAPI / Python,https://github.com/example/app-087,リリース済,備考87
+APP-088,YKN-071,アプリケーション088,1.9.8,Laravel / MySQL,https://github.com/example/app-088,開発中,
+APP-089,YKN-100,アプリケーション089,1.4.3,Django / PostgreSQL,https://github.com/example/app-089,開発中,備考89
+APP-090,YKN-007,アプリケーション090,1.3.6,Kotlin / Android,https://github.com/example/app-090,廃止,備考90
+APP-091,YKN-009,アプリケーション091,1.1.7,Kotlin / Android,https://github.com/example/app-091,開発中,備考91
+APP-092,YKN-081,アプリケーション092,1.8.9,FastAPI / Python,https://github.com/example/app-092,リリース済,
+APP-093,YKN-038,アプリケーション093,1.6.0,Kotlin / Android,https://github.com/example/app-093,リリース済,備考93
+APP-094,YKN-031,アプリケーション094,1.9.6,React / TypeScript,https://github.com/example/app-094,開発中,備考94
+APP-095,YKN-068,アプリケーション095,1.5.1,Flutter / Dart,https://github.com/example/app-095,開発中,備考95
+APP-096,YKN-050,アプリケーション096,1.7.0,Laravel / MySQL,https://github.com/example/app-096,リリース済,
+APP-097,YKN-033,アプリケーション097,1.0.5,Spring Boot 3 / JPA,https://github.com/example/app-097,リリース済,備考97
+APP-098,YKN-031,アプリケーション098,1.1.9,Next.js / Prisma,https://github.com/example/app-098,リリース済,備考98
+APP-099,YKN-006,アプリケーション099,1.5.8,Next.js / Prisma,https://github.com/example/app-099,リリース済,備考99
+APP-100,YKN-100,アプリケーション100,1.7.7,React / TypeScript,https://github.com/example/app-100,リリース済,
+
+#TABLE:ENVIRONMENTS
+ENV_ID,APP_ID,ENV_NAME,SERVER,URL,DB_NAME,STATUS,REMARKS
+ENV-001,APP-009,本番,server01.example.com,https://app-001.example.com,H2 (in-memory),停止中,備考1
+ENV-002,APP-026,開発,server02.example.com,https://app-002.example.com,,稼働中,備考2
+ENV-003,APP-006,ステージング,server03.example.com,https://app-003.example.com,PostgreSQL 15,構築中,備考3
+ENV-004,APP-070,本番,server04.example.com,https://app-004.example.com,PostgreSQL 15,稼働中,
+ENV-005,APP-097,テスト,server05.example.com,https://app-005.example.com,PostgreSQL 15,停止中,備考5
+ENV-006,APP-100,開発,server06.example.com,https://app-006.example.com,,停止中,備考6
+ENV-007,APP-035,開発,server07.example.com,https://app-007.example.com,,停止中,備考7
+ENV-008,APP-056,本番,server08.example.com,https://app-008.example.com,,構築中,
+ENV-009,APP-050,ステージング,server09.example.com,https://app-009.example.com,MySQL 8.0,構築中,備考9
+ENV-010,APP-089,本番,server10.example.com,https://app-010.example.com,PostgreSQL 15,停止中,備考10
+ENV-011,APP-011,本番,server11.example.com,https://app-011.example.com,H2 (in-memory),構築中,備考11
+ENV-012,APP-078,テスト,server12.example.com,https://app-012.example.com,SQL Server 2019,停止中,
+ENV-013,APP-042,開発,server13.example.com,https://app-013.example.com,H2 (in-memory),停止中,備考13
+ENV-014,APP-085,ステージング,server14.example.com,https://app-014.example.com,PostgreSQL 15,構築中,備考14
+ENV-015,APP-078,本番,server15.example.com,https://app-015.example.com,MySQL 8.0,構築中,備考15
+ENV-016,APP-045,本番,server16.example.com,https://app-016.example.com,H2 (in-memory),停止中,
+ENV-017,APP-079,本番,server17.example.com,https://app-017.example.com,PostgreSQL 15,稼働中,備考17
+ENV-018,APP-010,本番,server18.example.com,https://app-018.example.com,PostgreSQL 15,稼働中,備考18
+ENV-019,APP-004,テスト,server19.example.com,https://app-019.example.com,,構築中,備考19
+ENV-020,APP-005,テスト,server20.example.com,https://app-020.example.com,H2 (in-memory),稼働中,
+ENV-021,APP-100,ステージング,server21.example.com,https://app-021.example.com,PostgreSQL 15,構築中,備考21
+ENV-022,APP-073,開発,server22.example.com,https://app-022.example.com,SQL Server 2019,稼働中,備考22
+ENV-023,APP-087,本番,server23.example.com,https://app-023.example.com,PostgreSQL 15,停止中,備考23
+ENV-024,APP-057,開発,server24.example.com,https://app-024.example.com,SQL Server 2019,稼働中,
+ENV-025,APP-068,ステージング,server25.example.com,https://app-025.example.com,Oracle 19c,停止中,備考25
+ENV-026,APP-084,ステージング,server26.example.com,https://app-026.example.com,MySQL 8.0,稼働中,備考26
+ENV-027,APP-004,テスト,server27.example.com,https://app-027.example.com,Oracle 19c,構築中,備考27
+ENV-028,APP-072,開発,server28.example.com,https://app-028.example.com,PostgreSQL 15,停止中,
+ENV-029,APP-091,本番,server29.example.com,https://app-029.example.com,MySQL 8.0,停止中,備考29
+ENV-030,APP-089,本番,server30.example.com,https://app-030.example.com,MySQL 8.0,稼働中,備考30
+ENV-031,APP-018,開発,server31.example.com,https://app-031.example.com,Oracle 19c,稼働中,備考31
+ENV-032,APP-092,本番,server32.example.com,https://app-032.example.com,H2 (in-memory),停止中,
+ENV-033,APP-086,ステージング,server33.example.com,https://app-033.example.com,,稼働中,備考33
+ENV-034,APP-071,ステージング,server34.example.com,https://app-034.example.com,PostgreSQL 15,稼働中,備考34
+ENV-035,APP-092,テスト,server35.example.com,https://app-035.example.com,,停止中,備考35
+ENV-036,APP-066,テスト,server36.example.com,https://app-036.example.com,H2 (in-memory),稼働中,
+ENV-037,APP-018,テスト,server37.example.com,https://app-037.example.com,,構築中,備考37
+ENV-038,APP-004,ステージング,server38.example.com,https://app-038.example.com,SQL Server 2019,停止中,備考38
+ENV-039,APP-060,テスト,server39.example.com,https://app-039.example.com,SQL Server 2019,稼働中,備考39
+ENV-040,APP-009,ステージング,server40.example.com,https://app-040.example.com,Oracle 19c,構築中,
+ENV-041,APP-068,本番,server41.example.com,https://app-041.example.com,,構築中,備考41
+ENV-042,APP-074,開発,server42.example.com,https://app-042.example.com,MySQL 8.0,停止中,備考42
+ENV-043,APP-083,開発,server43.example.com,https://app-043.example.com,Oracle 19c,構築中,備考43
+ENV-044,APP-088,ステージング,server44.example.com,https://app-044.example.com,MySQL 8.0,稼働中,
+ENV-045,APP-099,テスト,server45.example.com,https://app-045.example.com,Oracle 19c,稼働中,備考45
+ENV-046,APP-016,テスト,server46.example.com,https://app-046.example.com,PostgreSQL 15,稼働中,備考46
+ENV-047,APP-021,ステージング,server47.example.com,https://app-047.example.com,,稼働中,備考47
+ENV-048,APP-045,ステージング,server48.example.com,https://app-048.example.com,,稼働中,
+ENV-049,APP-033,テスト,server49.example.com,https://app-049.example.com,,停止中,備考49
+ENV-050,APP-017,ステージング,server50.example.com,https://app-050.example.com,SQL Server 2019,稼働中,備考50
+ENV-051,APP-065,テスト,server51.example.com,https://app-051.example.com,SQL Server 2019,稼働中,備考51
+ENV-052,APP-022,ステージング,server52.example.com,https://app-052.example.com,,稼働中,
+ENV-053,APP-004,開発,server53.example.com,https://app-053.example.com,H2 (in-memory),停止中,備考53
+ENV-054,APP-084,テスト,server54.example.com,https://app-054.example.com,,構築中,備考54
+ENV-055,APP-080,開発,server55.example.com,https://app-055.example.com,Oracle 19c,停止中,備考55
+ENV-056,APP-083,ステージング,server56.example.com,https://app-056.example.com,Oracle 19c,稼働中,
+ENV-057,APP-088,本番,server57.example.com,https://app-057.example.com,PostgreSQL 15,構築中,備考57
+ENV-058,APP-010,開発,server58.example.com,https://app-058.example.com,MySQL 8.0,構築中,備考58
+ENV-059,APP-054,本番,server59.example.com,https://app-059.example.com,Oracle 19c,稼働中,備考59
+ENV-060,APP-044,テスト,server60.example.com,https://app-060.example.com,PostgreSQL 15,停止中,
+ENV-061,APP-094,ステージング,server61.example.com,https://app-061.example.com,Oracle 19c,稼働中,備考61
+ENV-062,APP-098,ステージング,server62.example.com,https://app-062.example.com,SQL Server 2019,稼働中,備考62
+ENV-063,APP-041,テスト,server63.example.com,https://app-063.example.com,Oracle 19c,稼働中,備考63
+ENV-064,APP-035,本番,server64.example.com,https://app-064.example.com,MySQL 8.0,稼働中,
+ENV-065,APP-013,開発,server65.example.com,https://app-065.example.com,PostgreSQL 15,構築中,備考65
+ENV-066,APP-079,本番,server66.example.com,https://app-066.example.com,MySQL 8.0,稼働中,備考66
+ENV-067,APP-042,ステージング,server67.example.com,https://app-067.example.com,MySQL 8.0,稼働中,備考67
+ENV-068,APP-064,本番,server68.example.com,https://app-068.example.com,Oracle 19c,停止中,
+ENV-069,APP-064,開発,server69.example.com,https://app-069.example.com,H2 (in-memory),構築中,備考69
+ENV-070,APP-065,本番,server70.example.com,https://app-070.example.com,MySQL 8.0,稼働中,備考70
+ENV-071,APP-075,ステージング,server71.example.com,https://app-071.example.com,H2 (in-memory),稼働中,備考71
+ENV-072,APP-037,本番,server72.example.com,https://app-072.example.com,SQL Server 2019,構築中,
+ENV-073,APP-037,開発,server73.example.com,https://app-073.example.com,,稼働中,備考73
+ENV-074,APP-056,テスト,server74.example.com,https://app-074.example.com,PostgreSQL 15,停止中,備考74
+ENV-075,APP-098,本番,server75.example.com,https://app-075.example.com,PostgreSQL 15,稼働中,備考75
+ENV-076,APP-052,開発,server76.example.com,https://app-076.example.com,SQL Server 2019,稼働中,
+ENV-077,APP-047,ステージング,server77.example.com,https://app-077.example.com,H2 (in-memory),構築中,備考77
+ENV-078,APP-065,本番,server78.example.com,https://app-078.example.com,,停止中,備考78
+ENV-079,APP-080,開発,server79.example.com,https://app-079.example.com,MySQL 8.0,稼働中,備考79
+ENV-080,APP-051,ステージング,server80.example.com,https://app-080.example.com,,停止中,
+ENV-081,APP-072,ステージング,server81.example.com,https://app-081.example.com,,稼働中,備考81
+ENV-082,APP-026,本番,server82.example.com,https://app-082.example.com,SQL Server 2019,稼働中,備考82
+ENV-083,APP-006,開発,server83.example.com,https://app-083.example.com,MySQL 8.0,停止中,備考83
+ENV-084,APP-061,本番,server84.example.com,https://app-084.example.com,MySQL 8.0,稼働中,
+ENV-085,APP-042,ステージング,server85.example.com,https://app-085.example.com,MySQL 8.0,構築中,備考85
+ENV-086,APP-079,ステージング,server86.example.com,https://app-086.example.com,SQL Server 2019,停止中,備考86
+ENV-087,APP-065,本番,server87.example.com,https://app-087.example.com,,停止中,備考87
+ENV-088,APP-061,開発,server88.example.com,https://app-088.example.com,PostgreSQL 15,停止中,
+ENV-089,APP-087,開発,server89.example.com,https://app-089.example.com,Oracle 19c,停止中,備考89
+ENV-090,APP-093,開発,server90.example.com,https://app-090.example.com,SQL Server 2019,構築中,備考90
+ENV-091,APP-034,テスト,server91.example.com,https://app-091.example.com,,稼働中,備考91
+ENV-092,APP-075,本番,server92.example.com,https://app-092.example.com,MySQL 8.0,構築中,
+ENV-093,APP-019,テスト,server93.example.com,https://app-093.example.com,H2 (in-memory),稼働中,備考93
+ENV-094,APP-025,開発,server94.example.com,https://app-094.example.com,Oracle 19c,停止中,備考94
+ENV-095,APP-054,テスト,server95.example.com,https://app-095.example.com,Oracle 19c,稼働中,備考95
+ENV-096,APP-053,本番,server96.example.com,https://app-096.example.com,,稼働中,
+ENV-097,APP-091,テスト,server97.example.com,https://app-097.example.com,SQL Server 2019,稼働中,備考97
+ENV-098,APP-072,ステージング,server98.example.com,https://app-098.example.com,,構築中,備考98
+ENV-099,APP-068,本番,server99.example.com,https://app-099.example.com,PostgreSQL 15,稼働中,備考99
+ENV-100,APP-059,ステージング,server100.example.com,https://app-100.example.com,SQL Server 2019,停止中,
+

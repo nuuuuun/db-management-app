@@ -1,86 +1,95 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { ref } from 'vue'
+import { isLoggedIn, getUser, logout } from './utils/auth'
+
+const router = useRouter()
+const loggedIn = ref(isLoggedIn())
+const user = ref(getUser())
+
+router.afterEach(() => {
+  loggedIn.value = isLoggedIn()
+  user.value = getUser()
+})
+
+const handleLogout = () => {
+  logout()
+  loggedIn.value = false
+  user.value = null
+  router.push('/login')
+}
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
+    <div class="navbar">
+      <span class="site-title">DB Management</span>
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/users">ユーザー一覧</RouterLink>
+        <template v-if="loggedIn">
+          <RouterLink to="/tables">テーブル管理</RouterLink>
+          <RouterLink v-if="user?.role !== 'VIEWER'" to="/csv-bulk">CSV管理</RouterLink>
+          <span class="user-info">{{ user?.username }}（{{ user?.role }}）</span>
+          <button class="btn-logout" @click="handleLogout">ログアウト</button>
+        </template>
+        <template v-else>
+          <RouterLink to="/login">ログイン</RouterLink>
+        </template>
       </nav>
     </div>
   </header>
-
   <RouterView />
 </template>
 
 <style scoped>
 header {
-  line-height: 1.5;
-  max-height: 100vh;
+  background: #2c3e50;
+  padding: 0 2rem;
 }
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.navbar {
+  display: flex;
+  align-items: center;
+  height: 52px;
+  gap: 1.5rem;
 }
-
+.site-title {
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
 nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 1;
 }
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
 nav a {
   display: inline-block;
   padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+  color: #ccc;
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-left: 1px solid #455;
+  line-height: 52px;
 }
-
-nav a:first-of-type {
-  border: 0;
+nav a:first-of-type { border: 0; }
+nav a:hover { color: white; background: rgba(255,255,255,0.08); }
+nav a.router-link-exact-active { color: white; font-weight: bold; }
+.user-info {
+  margin-left: auto;
+  color: #aaa;
+  font-size: 0.85rem;
+  white-space: nowrap;
 }
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+.btn-logout {
+  margin-left: 0.75rem;
+  padding: 4px 12px;
+  background: #d9534f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
 }
+.btn-logout:hover { background: #c0392b; }
 </style>
