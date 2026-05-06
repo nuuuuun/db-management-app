@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>バックエンド詳細設計書 — DB管理アプリ</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f5f7fa; color: #333; }
+  header { background: #1e3a5f; color: #fff; padding: 20px 40px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; opacity: .7; font-size: 13px; }
+  nav { background: #fff; border-bottom: 1px solid #dde3ec; padding: 10px 40px; font-size: 13px; }
+  nav a { color: #1e3a5f; text-decoration: none; margin-right: 16px; }
+  main { max-width: 1100px; margin: 32px auto; padding: 0 24px; }
+  h2 { color: #1e3a5f; border-bottom: 2px solid #1e3a5f; padding-bottom: 6px; margin-top: 40px; font-size: 18px; }
+  h3 { color: #2c5282; font-size: 15px; margin-top: 24px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: #1e3a5f; color: #fff; padding: 8px 12px; text-align: left; }
+  td { border: 1px solid #dde3ec; padding: 8px 12px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  pre { background: #2d3748; color: #e2e8f0; padding: 16px; border-radius: 8px; font-size: 12px; line-height: 1.6; overflow-x: auto; }
+  .box { background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 16px 20px; margin: 12px 0; }
+  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; margin: 2px; }
+  .ctrl { background: #e3f2fd; color: #1565c0; }
+  .svc { background: #e8f5e9; color: #2e7d32; }
+  .repo { background: #fff8e1; color: #f57f17; }
+  .entity { background: #f3e5f5; color: #6a1b9a; }
+  .sec { background: #fde8e8; color: #c0392b; }
+  p { line-height: 1.7; font-size: 14px; }
+  .class-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin: 16px 0; }
+  .class-card { background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 14px; }
+  .class-card .cname { font-size: 14px; font-weight: 700; color: #1e3a5f; margin-bottom: 6px; }
+  .class-card .cdesc { font-size: 12px; color: #555; line-height: 1.6; }
+</style>
+</head>
+<body>
+<header>
+  <h1>バックエンド詳細設計書</h1>
+  <p>D-01 / D-05 ／ DB管理アプリ ／ 作成日: 2026-05-06</p>
+</header>
+<nav>
+  <a href="index.html">← 目次</a>
+  <a href="#classes">クラス一覧</a>
+  <a href="#controllers">コントローラ詳細</a>
+  <a href="#security-impl">セキュリティ実装</a>
+  <a href="#data-access">データアクセス</a>
+  <a href="#config">設定ファイル</a>
+</nav>
+<main>
+
+<h2 id="classes">クラス構成一覧</h2>
+
+<h3>コントローラ層</h3>
+<div class="class-grid">
+  <div class="class-card">
+    <div class="cname"><span class="tag ctrl">Controller</span> AuthController</div>
+    <div class="cdesc">POST /api/auth/login 。ユーザー認証・JWT生成・返却。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag ctrl">Controller</span> UserController</div>
+    <div class="cdesc">ユーザーCRUD。全操作がADMIN限定。パスワードBCryptハッシュ化。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag ctrl">Controller</span> TableController</div>
+    <div class="cdesc">業務テーブルの動的CRUD。JdbcTemplate使用。allowlist制御。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag ctrl">Controller</span> MaskedColumnController</div>
+    <div class="cdesc">カラムマスク設定のCRUD。追加・削除はADMIN限定。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag ctrl">Controller</span> CsvImportController</div>
+    <div class="cdesc">CSVインポート（単テーブル）。@Transactional。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag ctrl">Controller</span> CsvBulkController</div>
+    <div class="cdesc">CSV一括エクスポート/インポート。マスク適用。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag ctrl">Controller</span> ExcelExportController</div>
+    <div class="cdesc">Excelエクスポート（単体・全体）。Apache POI使用。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag ctrl">Controller</span> SpaController</div>
+    <div class="cdesc">Vue SPA用フォールバックルーティング。/api 以外の全パスを index.html に転送。</div>
+  </div>
+</div>
+
+<h3>サービス・ユーティリティ層</h3>
+<div class="class-grid">
+  <div class="class-card">
+    <div class="cname"><span class="tag svc">Service</span> OperationHistoryService</div>
+    <div class="cdesc">操作履歴のDB書き込み。失敗時はlog.error()で記録、処理は継続。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag sec">Security</span> JwtUtil</div>
+    <div class="cdesc">JWT生成・検証・クレーム抽出。HS256署名。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag sec">Security</span> JwtFilter</div>
+    <div class="cdesc">OncePerRequestFilter。BearerトークンをSecurityContextに設定。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag sec">Security</span> SecurityUtils</div>
+    <div class="cdesc">getCurrentRole() / getCurrentUsername() の静的ユーティリティ。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag sec">Security</span> SecurityConfig</div>
+    <div class="cdesc">Spring Security設定。JwtFilter登録・CORS・エンドポイント認可ルール。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag svc">Init</span> DataInitializer</div>
+    <div class="cdesc">CommandLineRunner。初回起動時のみ初期ユーザー3件を作成。</div>
+  </div>
+</div>
+
+<h3>エンティティ・リポジトリ層</h3>
+<div class="class-grid">
+  <div class="class-card">
+    <div class="cname"><span class="tag entity">Entity</span> User</div>
+    <div class="cdesc">id, username, email, password, role。JPAエンティティ。@JsonIgnore on password。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag entity">Entity</span> MaskedColumn</div>
+    <div class="cdesc">id, tableName, columnName, role。JPAエンティティ。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag entity">DTO</span> LoginRequest / LoginResponse</div>
+    <div class="cdesc">ログインリクエスト・レスポンス用DTO。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag repo">Repository</span> UserRepository</div>
+    <div class="cdesc">JpaRepository拡張。findByUsername(String) を追加定義。</div>
+  </div>
+  <div class="class-card">
+    <div class="cname"><span class="tag repo">Repository</span> MaskedColumnRepository</div>
+    <div class="cdesc">JpaRepository拡張。findByTableNameAndRoleIn(String, List) を追加。</div>
+  </div>
+</div>
+
+<h2 id="controllers">コントローラ詳細</h2>
+
+<h3>TableController — 動的テーブルCRUD</h3>
+<p>業務テーブルのスキーマを実行時に取得し、動的にSQL生成・実行する。JPA Entityは使用しない。</p>
+<table>
+  <tr><th>メソッド</th><th>処理</th></tr>
+  <tr><td>getTables()</td><td>DBメタデータからALLOWED_TABLESに含まれるテーブル一覧を返す</td></tr>
+  <tr><td>getTableData()</td><td>ページング・検索・ソートを動的SQLで実現。マスク列を除外して返す。</td></tr>
+  <tr><td>getColumns()</td><td>メタデータからカラム名・型一覧を返す</td></tr>
+  <tr><td>insertRow()</td><td>リクエストボディのMapをパラメータにINSERT。操作履歴記録。</td></tr>
+  <tr><td>updateRow()</td><td>id指定でUPDATE。変更前後の値を取得して操作履歴記録。</td></tr>
+  <tr><td>deleteRow()</td><td>id指定でDELETE。削除前の値を操作履歴記録。</td></tr>
+</table>
+
+<pre>// 動的SQL生成例（updateRow）
+String setClauses = columns.stream()
+    .map(col -> col + " = ?")
+    .collect(Collectors.joining(", "));
+String sql = "UPDATE " + upperTable + " SET " + setClauses
+           + " WHERE " + pkColumn + " = ?";
+</pre>
+
+<h3>CsvImportController — CSVインポート</h3>
+<pre>@Transactional
+@PostMapping("/{tableName}")
+public ResponseEntity&lt;?&gt; importCsv(...) {
+    // 1. 権限チェック（VIEWER は 403）
+    // 2. overwrite かつ非ADMIN → 403
+    // 3. allowlist チェック
+    // 4. DBのカラム一覧取得（メタデータ）
+    // 5. CSVヘッダー全件バリデーション
+    // 6. レコード読み込み
+    // 7. overwrite なら DELETE FROM table
+    // 8. INSERT（@Transactional でロールバック保証）
+    // 9. 結果返却 { inserted, errors }
+}</pre>
+
+<h2 id="security-impl">セキュリティ実装詳細</h2>
+
+<h3>JwtFilter の処理順序</h3>
+<pre>doFilterInternal():
+  1. Authorization ヘッダー取得
+  2. "Bearer " プレフィックス確認
+  3. JwtUtil.extractUsername() でユーザー名取得
+  4. JwtUtil.validateToken() でトークン検証
+  5. UserDetails を生成し SecurityContextHolder にセット
+  6. ロール情報を SimpleGrantedAuthority として付与
+  7. chain.doFilter() で次のフィルタへ</pre>
+
+<h3>SecurityConfig の主要設定</h3>
+<pre>http
+  .csrf(csrf -> csrf.disable())
+  .sessionManagement(session -> session
+      .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+  .authorizeHttpRequests(auth -> auth
+      .requestMatchers("/api/auth/login", "/", "/index.html",
+                       "/assets/**", "/favicon.ico").permitAll()
+      .anyRequest().authenticated())
+  .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+  .cors(cors -> cors.configurationSource(corsConfigurationSource()))</pre>
+
+<h3>CORS設定</h3>
+<table>
+  <tr><th>項目</th><th>設定値</th></tr>
+  <tr><td>許可オリジン</td><td>http://localhost:5173, http://localhost:5174（開発時のVite dev server）</td></tr>
+  <tr><td>許可メソッド</td><td>GET, POST, PUT, DELETE, OPTIONS</td></tr>
+  <tr><td>許可ヘッダー</td><td>Authorization, Content-Type</td></tr>
+  <tr><td>本番での注意</td><td>フロントエンドはSpring Bootに同梱されるため、本番ではCORSは実質不要。開発時のみ有効。</td></tr>
+</table>
+
+<h2 id="data-access">データアクセス設計</h2>
+
+<h3>JPA vs JdbcTemplate の使い分け</h3>
+<table>
+  <tr><th>技術</th><th>使用箇所</th><th>理由</th></tr>
+  <tr><td>Spring Data JPA</td><td>User / MaskedColumn エンティティ</td><td>スキーマ固定・型安全なCRUDが可能</td></tr>
+  <tr><td>JdbcTemplate</td><td>業務テーブル操作・操作履歴</td><td>テーブル名・カラム名が実行時に決まるため動的SQL必須</td></tr>
+  <tr><td>DatabaseMetaData</td><td>テーブル一覧・カラム一覧取得</td><td>スキーマ情報をコードに持たず動的に取得</td></tr>
+</table>
+
+<h2 id="config">設定ファイル</h2>
+
+<h3>application.properties（開発環境）</h3>
+<table>
+  <tr><th>プロパティ</th><th>値/デフォルト</th><th>説明</th></tr>
+  <tr><td>spring.datasource.url</td><td>${DB_URL:jdbc:postgresql://localhost:5432/dbmanagement}</td><td>DB接続URL</td></tr>
+  <tr><td>spring.sql.init.mode</td><td>always</td><td>開発時はschema.sql・data.sqlを実行</td></tr>
+  <tr><td>spring.jpa.hibernate.ddl-auto</td><td>none</td><td>Hibernate自動DDLは無効</td></tr>
+  <tr><td>jwt.secret</td><td>${JWT_SECRET:dev-only-secret}</td><td>JWT秘密鍵</td></tr>
+  <tr><td>jwt.expiration</td><td>${JWT_EXPIRATION:86400000}</td><td>JWTトークン有効期限（ms）</td></tr>
+  <tr><td>app.init.password</td><td>${INIT_PASSWORD:password123}</td><td>初期ユーザーパスワード</td></tr>
+</table>
+
+<h3>application-prod.properties（本番環境）</h3>
+<table>
+  <tr><th>プロパティ</th><th>設定</th><th>説明</th></tr>
+  <tr><td>spring.sql.init.mode</td><td>never</td><td>本番ではDDL自動実行を無効化</td></tr>
+  <tr><td>spring.jpa.open-in-view</td><td>false</td><td>OSIV無効（パフォーマンス向上）</td></tr>
+  <tr><td>各種シークレット</td><td>環境変数のみ（デフォルト値なし）</td><td>必ず.envで設定する</td></tr>
+</table>
+
+</main>
+</body>
+</html>

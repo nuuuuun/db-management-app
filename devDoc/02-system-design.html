@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>システムアーキテクチャ・インフラ設計書 — DB管理アプリ</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f5f7fa; color: #333; }
+  header { background: #1e3a5f; color: #fff; padding: 20px 40px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; opacity: .7; font-size: 13px; }
+  nav { background: #fff; border-bottom: 1px solid #dde3ec; padding: 10px 40px; font-size: 13px; }
+  nav a { color: #1e3a5f; text-decoration: none; margin-right: 16px; }
+  main { max-width: 1000px; margin: 32px auto; padding: 0 24px; }
+  h2 { color: #1e3a5f; border-bottom: 2px solid #1e3a5f; padding-bottom: 6px; margin-top: 40px; font-size: 18px; }
+  h3 { color: #2c5282; font-size: 15px; margin-top: 24px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: #1e3a5f; color: #fff; padding: 8px 12px; text-align: left; }
+  td { border: 1px solid #dde3ec; padding: 8px 12px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .box { background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 20px 24px; margin: 12px 0; }
+  pre { background: #1e3a5f; color: #e2e8f0; padding: 20px; border-radius: 8px; font-size: 13px; line-height: 1.7; overflow-x: auto; }
+  p { line-height: 1.7; font-size: 14px; }
+  .arch { display: grid; grid-template-columns: 1fr 40px 1fr 40px 1fr; align-items: center; gap: 0; margin: 20px 0; }
+  .arch-box { background: #fff; border: 2px solid #1e3a5f; border-radius: 8px; padding: 16px; text-align: center; }
+  .arch-box .label { font-size: 11px; color: #888; }
+  .arch-box .name { font-size: 15px; font-weight: 700; color: #1e3a5f; margin: 4px 0; }
+  .arch-box .tech { font-size: 12px; color: #555; }
+  .arch-arrow { text-align: center; font-size: 24px; color: #1e3a5f; }
+  .tag { display: inline-block; background: #e8f4fd; color: #0077cc; font-size: 11px; padding: 2px 8px; border-radius: 4px; margin: 2px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>システムアーキテクチャ・インフラ設計書</h1>
+  <p>B-01 / B-06 ／ DB管理アプリ ／ 作成日: 2026-05-06</p>
+</header>
+<nav>
+  <a href="index.html">← 目次</a>
+  <a href="#arch">全体構成</a>
+  <a href="#stack">技術スタック</a>
+  <a href="#docker">Docker構成</a>
+  <a href="#network">ネットワーク</a>
+  <a href="#dir">ディレクトリ構成</a>
+</nav>
+<main>
+
+<h2 id="arch">全体アーキテクチャ</h2>
+
+<div class="arch">
+  <div class="arch-box">
+    <div class="label">クライアント</div>
+    <div class="name">ブラウザ</div>
+    <div class="tech">Vue.js SPA<br>（静的ファイル）</div>
+  </div>
+  <div class="arch-arrow">↔</div>
+  <div class="arch-box">
+    <div class="label">バックエンド</div>
+    <div class="name">Spring Boot</div>
+    <div class="tech">REST API<br>ポート: 8080（内部）<br>18080（外部公開）</div>
+  </div>
+  <div class="arch-arrow">↔</div>
+  <div class="arch-box">
+    <div class="label">データベース</div>
+    <div class="name">PostgreSQL 16</div>
+    <div class="tech">Dockerコンテナ<br>ポート: 5432<br>Volume永続化</div>
+  </div>
+</div>
+
+<div class="box">
+  <p><strong>構成のポイント:</strong></p>
+  <ul style="margin:8px 0;padding-left:20px;font-size:14px;line-height:1.8">
+    <li>フロントエンドはビルド成果物（dist/）をSpring Bootの静的リソースとして組み込み。別途Webサーバー不要。</li>
+    <li>バックエンドとDBはDocker Composeで同一ホストで管理。</li>
+    <li>ユーザーは <code>http://[サーバーIP]:18080</code> へアクセスするだけで利用可能。</li>
+    <li>社内LAN限定運用のため、インターネット向けロードバランサ・HTTPS証明書は不要。</li>
+  </ul>
+</div>
+
+<h2 id="stack">技術スタック詳細</h2>
+
+<h3>バックエンド</h3>
+<table>
+  <tr><th>技術</th><th>バージョン</th><th>用途</th></tr>
+  <tr><td>Java (OpenJDK)</td><td>21 LTS</td><td>バックエンドランタイム</td></tr>
+  <tr><td>Spring Boot</td><td>3.4.5</td><td>Webフレームワーク</td></tr>
+  <tr><td>Spring Security</td><td>（Boot同梱）</td><td>認証・認可・CORS設定</td></tr>
+  <tr><td>Spring Data JPA</td><td>（Boot同梱）</td><td>ORM（Userエンティティ管理）</td></tr>
+  <tr><td>JdbcTemplate</td><td>（Boot同梱）</td><td>動的テーブルCRUD</td></tr>
+  <tr><td>JJWT</td><td>0.12.3</td><td>JWT生成・検証</td></tr>
+  <tr><td>Apache Commons CSV</td><td>1.10.0</td><td>CSV解析・出力</td></tr>
+  <tr><td>Apache POI</td><td>5.2.5</td><td>Excel生成</td></tr>
+  <tr><td>Lombok</td><td>（Boot同梱）</td><td>boilerplate削減</td></tr>
+  <tr><td>Maven Wrapper</td><td>3.3.4</td><td>ビルドツール</td></tr>
+</table>
+
+<h3>フロントエンド</h3>
+<table>
+  <tr><th>技術</th><th>バージョン</th><th>用途</th></tr>
+  <tr><td>Vue.js</td><td>3.5.32</td><td>UIフレームワーク</td></tr>
+  <tr><td>Vue Router</td><td>5.0.4</td><td>SPAルーティング</td></tr>
+  <tr><td>Axios</td><td>1.15.2</td><td>HTTPクライアント</td></tr>
+  <tr><td>Vite</td><td>最新安定版</td><td>開発サーバー・ビルドツール</td></tr>
+</table>
+
+<h3>インフラ・DB</h3>
+<table>
+  <tr><th>技術</th><th>バージョン</th><th>用途</th></tr>
+  <tr><td>PostgreSQL</td><td>16-alpine</td><td>業務データストア</td></tr>
+  <tr><td>Docker</td><td>最新安定版</td><td>コンテナランタイム</td></tr>
+  <tr><td>Docker Compose</td><td>最新安定版</td><td>マルチコンテナ管理</td></tr>
+</table>
+
+<h2 id="docker">Docker構成</h2>
+
+<h3>コンテナ構成</h3>
+<table>
+  <tr><th>サービス名</th><th>イメージ</th><th>ポート</th><th>役割</th></tr>
+  <tr><td>db</td><td>postgres:16-alpine</td><td>5432:5432</td><td>PostgreSQLデータベース</td></tr>
+  <tr><td>app</td><td>（Dockerfileでビルド）</td><td>18080:8080</td><td>Spring Boot アプリ</td></tr>
+</table>
+
+<h3>docker-compose.yml 要点</h3>
+<pre>services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: dbmanagement
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports: ["5432:5432"]
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
+      interval: 10s / timeout: 5s / retries: 5
+
+  app:
+    build: .
+    ports: ["18080:8080"]
+    env_file: .env
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/dbmanagement
+    depends_on:
+      db: { condition: service_healthy }
+
+volumes:
+  postgres_data:</pre>
+
+<h3>Dockerfile 要点（マルチステージビルド）</h3>
+<pre># Stage 1: フロントエンドビルド
+FROM node:20-alpine AS frontend-build
+WORKDIR /app/frontend
+COPY frontend/ .
+RUN npm ci && npm run build
+
+# Stage 2: バックエンドビルド
+FROM eclipse-temurin:21-jdk-alpine AS backend-build
+WORKDIR /app
+COPY db-management/ .
+COPY --from=frontend-build /app/frontend/dist ./src/main/resources/static
+RUN ./mvnw -B package -DskipTests
+
+# Stage 3: 実行イメージ
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY --from=backend-build /app/target/*.jar app.jar
+ENTRYPOINT ["java","-jar","app.jar","--spring.profiles.active=prod"]</pre>
+
+<h3>環境変数（.env）</h3>
+<table>
+  <tr><th>変数名</th><th>説明</th><th>デフォルト</th></tr>
+  <tr><td>DB_USERNAME</td><td>PostgreSQL ユーザー名</td><td>— （必須）</td></tr>
+  <tr><td>DB_PASSWORD</td><td>PostgreSQL パスワード</td><td>— （必須）</td></tr>
+  <tr><td>JWT_SECRET</td><td>JWT署名秘密鍵（32文字以上推奨）</td><td>— （必須）</td></tr>
+  <tr><td>INIT_PASSWORD</td><td>初期ユーザーパスワード</td><td>password123</td></tr>
+</table>
+
+<h2 id="network">ネットワーク構成</h2>
+
+<pre>【社内LAN】
+  ┌─────────────────────────────────────────┐
+  │  クライアント PC（ブラウザ）             │
+  │  http://192.168.x.x:18080 へアクセス    │
+  └──────────────┬──────────────────────────┘
+                 │ HTTP (LAN)
+  ┌──────────────▼──────────────────────────┐
+  │  Docker ホストサーバー                   │
+  │  ┌──────────────────────────────────┐   │
+  │  │ app コンテナ (Spring Boot :8080)  │   │
+  │  │  ← ポートマッピング 18080:8080 →  │   │
+  │  └──────────┬───────────────────────┘   │
+  │             │ Docker内部ネットワーク     │
+  │  ┌──────────▼───────────────────────┐   │
+  │  │ db コンテナ (PostgreSQL :5432)    │   │
+  │  │  Volume: postgres_data           │   │
+  │  └──────────────────────────────────┘   │
+  └─────────────────────────────────────────┘</pre>
+
+<h2 id="dir">プロジェクトディレクトリ構成</h2>
+<pre>db-management-app/
+├── Dockerfile                          # マルチステージビルド定義
+├── docker-compose.yml                  # コンテナオーケストレーション
+├── .env                                # 秘密情報（Git管理外）
+├── .env.example                        # 環境変数テンプレート
+├── .gitignore                          # .env, *.txt を除外
+├── frontend/                           # Vue.js フロントエンド
+│   ├── src/
+│   │   ├── views/                      # 画面コンポーネント
+│   │   ├── router/index.js             # ルーティング設定
+│   │   ├── api/index.js                # Axios インスタンス
+│   │   └── utils/                      # 認証・ラベルユーティリティ
+│   ├── package.json
+│   └── vite.config.js
+├── db-management/                      # Spring Boot バックエンド
+│   ├── src/main/java/com/example/db_management/
+│   │   ├── *Controller.java            # REST APIコントローラ
+│   │   ├── *Repository.java            # JPAリポジトリ
+│   │   ├── *Service.java               # サービスクラス
+│   │   ├── SecurityConfig.java         # セキュリティ設定
+│   │   ├── JwtUtil.java / JwtFilter.java
+│   │   └── DataInitializer.java        # 初期データ投入
+│   ├── src/main/resources/
+│   │   ├── application.properties      # 開発用設定
+│   │   ├── application-prod.properties # 本番用設定
+│   │   ├── schema.sql                  # DDL（テーブル作成）
+│   │   ├── data.sql                    # サンプルデータ（開発用）
+│   │   └── static/                     # フロントエンドビルド成果物
+│   └── pom.xml
+└── devDoc/                             # 本ドキュメント格納フォルダ</pre>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ファイル入出力設計書 — DB管理アプリ</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f5f7fa; color: #333; }
+  header { background: #1e3a5f; color: #fff; padding: 20px 40px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; opacity: .7; font-size: 13px; }
+  nav { background: #fff; border-bottom: 1px solid #dde3ec; padding: 10px 40px; font-size: 13px; }
+  nav a { color: #1e3a5f; text-decoration: none; margin-right: 16px; }
+  main { max-width: 1000px; margin: 32px auto; padding: 0 24px; }
+  h2 { color: #1e3a5f; border-bottom: 2px solid #1e3a5f; padding-bottom: 6px; margin-top: 40px; font-size: 18px; }
+  h3 { color: #2c5282; font-size: 15px; margin-top: 24px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: #1e3a5f; color: #fff; padding: 8px 12px; text-align: left; }
+  td { border: 1px solid #dde3ec; padding: 8px 12px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  pre { background: #2d3748; color: #e2e8f0; padding: 16px; border-radius: 8px; font-size: 13px; line-height: 1.6; overflow-x: auto; }
+  .box { background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 16px 20px; margin: 12px 0; }
+  .warn { background: #fff4e5; border-left: 4px solid #e67e22; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 13px; }
+  p { line-height: 1.7; font-size: 14px; }
+  .flow { display: flex; flex-direction: column; gap: 4px; margin: 16px 0; }
+  .flow-row { display: flex; align-items: center; gap: 8px; }
+  .flow-item { background: #1e3a5f; color: #fff; padding: 8px 16px; border-radius: 4px; font-size: 13px; }
+  .flow-arrow { font-size: 20px; color: #1e3a5f; padding: 0 4px; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .admin { background: #fde8e8; color: #c0392b; }
+  .editor { background: #fff3cd; color: #856404; }
+</style>
+</head>
+<body>
+<header>
+  <h1>ファイル入出力設計書</h1>
+  <p>B-07 / D-06 ／ DB管理アプリ ／ 作成日: 2026-05-06</p>
+</header>
+<nav>
+  <a href="index.html">← 目次</a>
+  <a href="#csv-single">CSV単体インポート</a>
+  <a href="#csv-bulk">CSV一括入出力</a>
+  <a href="#excel">Excelエクスポート</a>
+  <a href="#validation">バリデーション</a>
+  <a href="#format">フォーマット仕様</a>
+</nav>
+<main>
+
+<h2>機能概要</h2>
+<table>
+  <tr><th>機能</th><th>API</th><th>権限</th><th>ライブラリ</th></tr>
+  <tr><td>CSVインポート（単テーブル）</td><td>POST /api/import/{tableName}</td><td><span class="badge editor">EDITOR+</span></td><td>Apache Commons CSV</td></tr>
+  <tr><td>CSV一括エクスポート</td><td>GET /api/export/all</td><td><span class="badge editor">EDITOR+</span></td><td>Apache Commons CSV</td></tr>
+  <tr><td>CSV一括インポート</td><td>POST /api/import/all</td><td><span class="badge editor">EDITOR+</span></td><td>Apache Commons CSV</td></tr>
+  <tr><td>Excelエクスポート（単テーブル）</td><td>GET /api/export/excel/{tableName}</td><td><span class="badge editor">EDITOR+</span></td><td>Apache POI</td></tr>
+  <tr><td>Excelエクスポート（全テーブル）</td><td>GET /api/export/excel/all</td><td><span class="badge editor">EDITOR+</span></td><td>Apache POI</td></tr>
+</table>
+
+<h2 id="csv-single">CSV単体インポート仕様</h2>
+
+<h3>処理フロー</h3>
+<div class="flow">
+  <div class="flow-row">
+    <div class="flow-item">ファイル受信</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">権限チェック</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">テーブル名検証（allowlist）</div>
+  </div>
+  <div class="flow-row" style="padding-left:0">
+    <div class="flow-item">DBカラム取得</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">CSVヘッダー検証</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">全件読み込み</div>
+  </div>
+  <div class="flow-row">
+    <div class="flow-item">overwriteなら DELETE実行</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">INSERT（@Transactional）</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">結果返却</div>
+  </div>
+</div>
+
+<h3>パラメータ</h3>
+<table>
+  <tr><th>パラメータ</th><th>型</th><th>説明</th></tr>
+  <tr><td>tableName (path)</td><td>string</td><td>対象テーブル名。allowlist（5テーブル）以外はエラー。</td></tr>
+  <tr><td>file (form)</td><td>MultipartFile</td><td>UTF-8 CSV ファイル</td></tr>
+  <tr><td>mode (form)</td><td>string</td><td>append（デフォルト）: 既存データに追加 / overwrite: 全件削除後インポート（ADMIN のみ）</td></tr>
+</table>
+
+<h3>バリデーション</h3>
+<table>
+  <tr><th>チェック</th><th>エラー内容</th></tr>
+  <tr><td>テーブルがallowlist外</td><td>400: "対象外のテーブルです"</td></tr>
+  <tr><td>CSVに存在しないカラム名</td><td>400: "カラム '{カラム名}' は存在しません"</td></tr>
+  <tr><td>overwrite で非ADMIN</td><td>403: "上書きモードは管理者のみ使用できます"</td></tr>
+  <tr><td>行単位のINSERTエラー</td><td>エラー行を errors リストに記録して処理続行</td></tr>
+</table>
+
+<h3>レスポンス</h3>
+<pre>{ "inserted": 15, "errors": ["行3: インポートエラーが発生しました"] }</pre>
+
+<h2 id="csv-bulk">CSV一括エクスポート/インポート仕様</h2>
+
+<h3>フォーマット（独自拡張CSV）</h3>
+<p>複数テーブルを1ファイルにまとめるため、 <code>#TABLE:[テーブル名]</code> マーカーでセクション分割する。</p>
+<pre>#TABLE:PROJECTS
+anken_id,anken_name,status,jira_link,...
+1,サンプル案件A,進行中,https://jira.example.com/XXX,...
+2,サンプル案件B,完了,https://jira.example.com/YYY,...
+
+#TABLE:REQUIREMENTS
+yoqyu_id,anken_name,yoqyu_name,status,...
+1,サンプル案件A,要求001,承認済,...
+</pre>
+
+<h3>エクスポート処理</h3>
+<table>
+  <tr><th>項目</th><th>仕様</th></tr>
+  <tr><td>ファイル名</td><td>db-export.csv</td></tr>
+  <tr><td>文字コード</td><td>UTF-8</td></tr>
+  <tr><td>マスク適用</td><td>ロール別に masked_columns を参照しカラムを除外</td></tr>
+  <tr><td>出力対象</td><td>ALLOWED_TABLES に含まれる全業務テーブル</td></tr>
+</table>
+
+<h3>一括インポート処理</h3>
+<table>
+  <tr><th>項目</th><th>仕様</th></tr>
+  <tr><td>BOM除去</td><td>ファイル先頭の BOM（﻿）を自動除去</td></tr>
+  <tr><td>セクション分割</td><td>#TABLE: マーカーで文字列分割</td></tr>
+  <tr><td>空行スキップ</td><td>setIgnoreEmptyLines(true) で空行を無視</td></tr>
+  <tr><td>エラー時</td><td>テーブルごとの処理。1テーブルエラーでも他テーブルは継続。</td></tr>
+</table>
+
+<h2 id="excel">Excelエクスポート仕様</h2>
+
+<h3>出力仕様</h3>
+<table>
+  <tr><th>項目</th><th>仕様</th></tr>
+  <tr><td>ファイル形式</td><td>.xlsx（OOXML形式）</td></tr>
+  <tr><td>ライブラリ</td><td>Apache POI 5.2.5</td></tr>
+  <tr><td>シート構成（単体）</td><td>1シート：テーブル名</td></tr>
+  <tr><td>シート構成（全体）</td><td>業務テーブル分のシートをシート名で分割</td></tr>
+  <tr><td>ヘッダー行</td><td>COLUMN_LABELS（utils/labels.js）の日本語名を使用</td></tr>
+  <tr><td>マスク適用</td><td>ロール別マスク設定に従いカラムを除外</td></tr>
+  <tr><td>スタイル</td><td>ヘッダー行に背景色・太字スタイルを適用</td></tr>
+</table>
+
+<h2 id="validation">共通バリデーションルール</h2>
+
+<table>
+  <tr><th>対象</th><th>チェック内容</th><th>エラー</th></tr>
+  <tr><td>テーブル名</td><td>ALLOWED_TABLES（PROJECTS/REQUIREMENTS/SPECIFICATIONS/APPLICATIONS/ENVIRONMENTS）に含まれること</td><td>400</td></tr>
+  <tr><td>カラム名</td><td>DBのメタデータから取得したカラムに含まれること</td><td>400</td></tr>
+  <tr><td>モード指定</td><td>overwrite は ADMIN ロールのみ許可</td><td>403</td></tr>
+  <tr><td>ファイル形式</td><td>UTF-8エンコード（BOM有りも対応）</td><td>—</td></tr>
+</table>
+
+<div class="warn">
+  <strong>⚠ 注意:</strong> CSVインポートはDBの型チェックに依存。型不一致・制約違反は行単位のエラーとして記録され、その行のみスキップされる。詳細エラー情報はサーバーログに記録。
+</div>
+
+<h2 id="format">CSVフォーマット仕様</h2>
+<table>
+  <tr><th>項目</th><th>仕様</th></tr>
+  <tr><td>区切り文字</td><td>カンマ（,）</td></tr>
+  <tr><td>文字コード</td><td>UTF-8（BOM有り・無し両対応）</td></tr>
+  <tr><td>ヘッダー行</td><td>1行目にカラム名（大文字・小文字どちらも可、トリム処理あり）</td></tr>
+  <tr><td>引用符</td><td>ダブルクォート（"）。カンマ・改行・ダブルクォートを含む値に使用。</td></tr>
+  <tr><td>エスケープ</td><td>ダブルクォートを2重（""）にエスケープ</td></tr>
+  <tr><td>空値</td><td>空文字（""）または空フィールド → NULL として挿入</td></tr>
+</table>
+
+</main>
+</body>
+</html>

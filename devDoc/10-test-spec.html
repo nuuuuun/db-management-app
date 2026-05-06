@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>テスト仕様書 — DB管理アプリ</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f5f7fa; color: #333; }
+  header { background: #1e3a5f; color: #fff; padding: 20px 40px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; opacity: .7; font-size: 13px; }
+  nav { background: #fff; border-bottom: 1px solid #dde3ec; padding: 10px 40px; font-size: 13px; }
+  nav a { color: #1e3a5f; text-decoration: none; margin-right: 16px; }
+  main { max-width: 1100px; margin: 32px auto; padding: 0 24px; }
+  h2 { color: #1e3a5f; border-bottom: 2px solid #1e3a5f; padding-bottom: 6px; margin-top: 40px; font-size: 18px; }
+  h3 { color: #2c5282; font-size: 15px; margin-top: 24px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: #1e3a5f; color: #fff; padding: 8px 12px; text-align: left; }
+  td { border: 1px solid #dde3ec; padding: 8px 12px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .pass { background: #e8f5e9; color: #2e7d32; }
+  .fail { background: #fde8e8; color: #c0392b; }
+  .skip { background: #f5f5f5; color: #777; }
+  .priority-h { background: #fde8e8; color: #c0392b; }
+  .priority-m { background: #fff3cd; color: #856404; }
+  .priority-l { background: #e8f5e9; color: #2e7d32; }
+  pre { background: #2d3748; color: #e2e8f0; padding: 14px; border-radius: 8px; font-size: 12px; line-height: 1.6; overflow-x: auto; }
+  p { line-height: 1.7; font-size: 14px; }
+  .box { background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 16px 20px; margin: 12px 0; }
+  .warn { background: #fff4e5; border-left: 4px solid #e67e22; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>テスト仕様書</h1>
+  <p>D-09 ／ DB管理アプリ ／ 作成日: 2026-05-06</p>
+</header>
+<nav>
+  <a href="index.html">← 目次</a>
+  <a href="#strategy">テスト戦略</a>
+  <a href="#unit">単体テスト</a>
+  <a href="#integration">結合テスト</a>
+  <a href="#scenario">シナリオテスト</a>
+  <a href="#security-test">セキュリティテスト</a>
+</nav>
+<main>
+
+<h2 id="strategy">テスト戦略</h2>
+
+<table>
+  <tr><th>テスト種別</th><th>対象</th><th>ツール</th><th>実行タイミング</th></tr>
+  <tr><td>単体テスト</td><td>バックエンドクラス（JWT・権限チェック等）</td><td>JUnit 5 + Spring Security Test</td><td>コミット前・CI</td></tr>
+  <tr><td>結合テスト</td><td>API エンドポイント（実DBを使用）</td><td>Spring Boot Test + TestRestTemplate</td><td>PR マージ前</td></tr>
+  <tr><td>フロントエンドテスト</td><td>npm audit（依存脆弱性）</td><td>npm audit</td><td>ビルド時</td></tr>
+  <tr><td>シナリオテスト</td><td>画面操作の業務フロー確認</td><td>手動（ブラウザ）</td><td>リリース前</td></tr>
+  <tr><td>セキュリティテスト</td><td>権限昇格・テーブルアクセス・認証バイパス</td><td>手動 + curl</td><td>リリース前・改修後</td></tr>
+</table>
+
+<div class="warn">
+  <strong>⚠ 現状:</strong> Maven Wrapper 修正により mvnw でのテスト実行が可能になった。テストクラスは Spring Boot Test スターターが含まれているが、実際のテストケースは今後追加が必要。
+</div>
+
+<h2 id="unit">単体テスト仕様</h2>
+
+<h3>UT-01 JwtUtil テスト</h3>
+<table>
+  <tr><th>ID</th><th>テスト内容</th><th>期待結果</th><th>優先度</th></tr>
+  <tr><td>UT-01-01</td><td>正常なユーザー名・ロールでトークン生成</td><td>null でないトークンが返る</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>UT-01-02</td><td>生成したトークンからユーザー名を取得</td><td>入力したユーザー名と一致</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>UT-01-03</td><td>生成したトークンからロールを取得</td><td>入力したロールと一致</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>UT-01-04</td><td>有効なトークンの検証</td><td>true を返す</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>UT-01-05</td><td>改ざんトークンの検証</td><td>false を返す（例外なし）</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>UT-01-06</td><td>有効期限切れトークンの検証</td><td>false を返す</td><td><span class="badge priority-m">中</span></td></tr>
+</table>
+
+<h3>UT-02 SecurityUtils テスト</h3>
+<table>
+  <tr><th>ID</th><th>テスト内容</th><th>期待結果</th><th>優先度</th></tr>
+  <tr><td>UT-02-01</td><td>認証済みコンテキストからロール取得</td><td>設定したロールが返る</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>UT-02-02</td><td>未認証コンテキストからロール取得</td><td>"VIEWER" が返る（デフォルト）</td><td><span class="badge priority-m">中</span></td></tr>
+</table>
+
+<h3>UT-03 OperationHistoryService テスト</h3>
+<table>
+  <tr><th>ID</th><th>テスト内容</th><th>期待結果</th><th>優先度</th></tr>
+  <tr><td>UT-03-01</td><td>正常な操作履歴記録</td><td>DB に1件挿入される</td><td><span class="badge priority-m">中</span></td></tr>
+  <tr><td>UT-03-02</td><td>DB障害時（JdbcTemplate エラー）</td><td>例外がスローされず、log.error() が呼ばれる</td><td><span class="badge priority-m">中</span></td></tr>
+</table>
+
+<h2 id="integration">結合テスト仕様</h2>
+
+<h3>IT-01 認証API テスト</h3>
+<table>
+  <tr><th>ID</th><th>テスト内容</th><th>期待ステータス</th><th>優先度</th></tr>
+  <tr><td>IT-01-01</td><td>正しい認証情報でログイン</td><td>200 + token 返却</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>IT-01-02</td><td>誤ったパスワードでログイン</td><td>401</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>IT-01-03</td><td>存在しないユーザーでログイン</td><td>401</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>IT-01-04</td><td>トークンなしで保護APIへアクセス</td><td>401</td><td><span class="badge priority-h">高</span></td></tr>
+</table>
+
+<h3>IT-02 ユーザー管理API テスト</h3>
+<table>
+  <tr><th>ID</th><th>テスト内容</th><th>期待ステータス</th><th>優先度</th></tr>
+  <tr><td>IT-02-01</td><td>ADMIN でユーザー作成</td><td>200</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>IT-02-02</td><td>EDITOR でユーザー作成（権限不足）</td><td>403</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>IT-02-03</td><td>ADMIN でユーザーのロールを ADMIN に変更</td><td>200</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>IT-02-04</td><td>EDITOR が自分のロールを ADMIN に変更</td><td>403</td><td><span class="badge priority-h">高</span></td></tr>
+</table>
+
+<h3>IT-03 テーブルアクセス制御テスト</h3>
+<table>
+  <tr><th>ID</th><th>テスト内容</th><th>期待ステータス</th><th>優先度</th></tr>
+  <tr><td>IT-03-01</td><td>業務テーブル（PROJECTS）へのアクセス</td><td>200</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>IT-03-02</td><td>管理テーブル（USERS）へのアクセス試行</td><td>400 "対象外のテーブルです"</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>IT-03-03</td><td>VIEWER で行追加試行</td><td>403</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>IT-03-04</td><td>EDITOR で行追加</td><td>200</td><td><span class="badge priority-m">中</span></td></tr>
+</table>
+
+<h3>IT-04 CSVインポートテスト</h3>
+<table>
+  <tr><th>ID</th><th>テスト内容</th><th>期待結果</th><th>優先度</th></tr>
+  <tr><td>IT-04-01</td><td>正常なCSVをappendモードでインポート</td><td>200 + inserted件数</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>IT-04-02</td><td>EDITOR が overwrite モードでインポート</td><td>403</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>IT-04-03</td><td>存在しないカラムを含むCSV</td><td>400 "カラム '...' は存在しません"</td><td><span class="badge priority-h">高</span></td></tr>
+  <tr><td>IT-04-04</td><td>overwrite の途中でエラー → ロールバック確認</td><td>全件ロールバックされDBが変わっていない</td><td><span class="badge priority-h">高</span></td></tr>
+</table>
+
+<h2 id="scenario">シナリオテスト仕様</h2>
+
+<h3>ST-01 基本業務フロー</h3>
+<table>
+  <tr><th>手順</th><th>操作</th><th>確認ポイント</th></tr>
+  <tr><td>1</td><td>admin でログイン</td><td>ホーム画面が表示される。ユーザー管理・マスク設定メニューが見える。</td></tr>
+  <tr><td>2</td><td>PROJECTSテーブルを開く</td><td>データが一覧表示される。ページング・検索・ソートが動作する。</td></tr>
+  <tr><td>3</td><td>新規行を追加</td><td>フォームで入力・保存後、一覧に反映される。</td></tr>
+  <tr><td>4</td><td>追加した行を編集</td><td>確認画面で変更前後が表示される。保存後に反映される。</td></tr>
+  <tr><td>5</td><td>追加した行を削除</td><td>確認後に削除され一覧から消える。</td></tr>
+  <tr><td>6</td><td>CSVエクスポート → インポート</td><td>エクスポートしたCSVを別テーブルにインポートできる。</td></tr>
+  <tr><td>7</td><td>viewer でログイン</td><td>追加・編集ボタンが非表示。エクスポートボタンが非表示。</td></tr>
+</table>
+
+<h3>ST-02 権限制御フロー</h3>
+<table>
+  <tr><th>手順</th><th>操作</th><th>確認ポイント</th></tr>
+  <tr><td>1</td><td>editor でログイン</td><td>ユーザー管理・マスク設定メニューが非表示。</td></tr>
+  <tr><td>2</td><td>直接 /users にアクセス</td><td>403 またはリダイレクト。</td></tr>
+  <tr><td>3</td><td>ADMIN がカラムをマスク設定</td><td>editor でログインするとそのカラムが非表示になる。</td></tr>
+  <tr><td>4</td><td>マスク設定を解除</td><td>editor でカラムが再表示される。</td></tr>
+</table>
+
+<h2 id="security-test">セキュリティテスト仕様</h2>
+
+<h3>SEC-01 テーブルアクセス制御</h3>
+<pre># allowlist外テーブルへのアクセス試行
+curl -X GET http://localhost:18080/api/tables/USERS \
+  -H "Authorization: Bearer $TOKEN"
+# → 400 "対象外のテーブルです" を確認
+
+curl -X GET http://localhost:18080/api/tables/MASKED_COLUMNS \
+  -H "Authorization: Bearer $TOKEN"
+# → 400 を確認</pre>
+
+<h3>SEC-02 権限昇格テスト</h3>
+<pre># EDITOR トークンで ADMIN権限操作試行
+curl -X POST http://localhost:18080/api/users \
+  -H "Authorization: Bearer $EDITOR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"username":"hacker","password":"test","role":"ADMIN"}'
+# → 403 を確認
+
+# EDITOR が自分のロールを ADMIN に変更試行
+curl -X PUT http://localhost:18080/api/users/2 \
+  -H "Authorization: Bearer $EDITOR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"role":"ADMIN"}'
+# → 403 を確認</pre>
+
+<h3>SEC-03 CSVインポート制御</h3>
+<pre># EDITOR が overwrite モードでインポート試行
+curl -X POST http://localhost:18080/api/import/PROJECTS?mode=overwrite \
+  -H "Authorization: Bearer $EDITOR_TOKEN" \
+  -F "file=@test.csv"
+# → 403 を確認</pre>
+
+<h3>SEC-04 トークンなしアクセス</h3>
+<pre># 認証ヘッダーなし
+curl -X GET http://localhost:18080/api/tables
+# → 401 を確認
+
+# 無効なトークン
+curl -X GET http://localhost:18080/api/tables \
+  -H "Authorization: Bearer invalid.token.here"
+# → 401 を確認</pre>
+
+</main>
+</body>
+</html>

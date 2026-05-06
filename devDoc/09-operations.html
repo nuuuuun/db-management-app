@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>環境構築・運用・障害対応手順書 — DB管理アプリ</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f5f7fa; color: #333; }
+  header { background: #1e3a5f; color: #fff; padding: 20px 40px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; opacity: .7; font-size: 13px; }
+  nav { background: #fff; border-bottom: 1px solid #dde3ec; padding: 10px 40px; font-size: 13px; }
+  nav a { color: #1e3a5f; text-decoration: none; margin-right: 16px; }
+  main { max-width: 1000px; margin: 32px auto; padding: 0 24px; }
+  h2 { color: #1e3a5f; border-bottom: 2px solid #1e3a5f; padding-bottom: 6px; margin-top: 40px; font-size: 18px; }
+  h3 { color: #2c5282; font-size: 15px; margin-top: 24px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: #1e3a5f; color: #fff; padding: 8px 12px; text-align: left; }
+  td { border: 1px solid #dde3ec; padding: 8px 12px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  pre { background: #2d3748; color: #e2e8f0; padding: 16px; border-radius: 8px; font-size: 13px; line-height: 1.7; overflow-x: auto; }
+  .step { counter-increment: step; background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 14px 16px 14px 56px; margin: 8px 0; position: relative; }
+  .step::before { content: counter(step); position: absolute; left: 16px; top: 50%; transform: translateY(-50%); background: #1e3a5f; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
+  .steps { counter-reset: step; }
+  .step .cmd { background: #2d3748; color: #e2e8f0; padding: 8px 12px; border-radius: 4px; font-size: 12px; font-family: monospace; margin-top: 6px; display: block; }
+  .warn { background: #fff4e5; border-left: 4px solid #e67e22; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 13px; }
+  .ok { background: #e8f5e9; border-left: 4px solid #2e7d32; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 13px; }
+  .err { background: #fde8e8; border-left: 4px solid #c0392b; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 13px; }
+  p { line-height: 1.7; font-size: 14px; }
+  .checklist { list-style: none; padding: 0; }
+  .checklist li { padding: 6px 0 6px 28px; position: relative; font-size: 14px; border-bottom: 1px solid #eee; }
+  .checklist li::before { content: '☐'; position: absolute; left: 4px; color: #1e3a5f; font-size: 16px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>環境構築・運用・障害対応手順書</h1>
+  <p>D-08 / D-10 / B-08 ／ DB管理アプリ ／ 作成日: 2026-05-06</p>
+</header>
+<nav>
+  <a href="index.html">← 目次</a>
+  <a href="#prereq">前提条件</a>
+  <a href="#dev-setup">開発環境構築</a>
+  <a href="#prod-setup">本番環境構築</a>
+  <a href="#ops">日常運用</a>
+  <a href="#backup">バックアップ</a>
+  <a href="#incident">障害対応</a>
+</nav>
+<main>
+
+<h2 id="prereq">前提条件・必要ソフトウェア</h2>
+<table>
+  <tr><th>ソフトウェア</th><th>バージョン</th><th>用途</th><th>インストール先</th></tr>
+  <tr><td>Docker Desktop / Docker Engine</td><td>最新安定版</td><td>コンテナ実行</td><td>本番サーバー・開発PC</td></tr>
+  <tr><td>Docker Compose</td><td>v2以上</td><td>マルチコンテナ管理</td><td>同上</td></tr>
+  <tr><td>Git</td><td>最新安定版</td><td>ソースコード管理</td><td>本番サーバー・開発PC</td></tr>
+  <tr><td>Node.js</td><td>20 LTS</td><td>フロントエンドビルド</td><td>開発PC のみ</td></tr>
+  <tr><td>JDK</td><td>21 LTS</td><td>バックエンド開発</td><td>開発PC のみ</td></tr>
+</table>
+
+<div class="warn">
+  <strong>⚠ Windows環境 (Docker Desktop) の注意:</strong>
+  WSL2を有効化してからDocker Desktopをインストールすること。
+  「Starting the Docker Engine...」が数分以上続く場合は WSL2の問題の可能性あり。
+  対処: 管理者PowerShellで <code>wsl --update</code> → <code>wsl --shutdown</code> → Docker Desktop再起動。
+</div>
+
+<h2 id="dev-setup">開発環境構築手順</h2>
+
+<div class="steps">
+  <div class="step">
+    <strong>リポジトリをクローン</strong>
+    <span class="cmd">git clone [リポジトリURL]<br>cd db-management-app</span>
+  </div>
+  <div class="step">
+    <strong>.env ファイルを作成</strong>
+    <p style="margin:4px 0;font-size:13px;">.env.example をコピーして値を設定する。</p>
+    <span class="cmd">copy .env.example .env
+# .env を編集して DB_USERNAME, DB_PASSWORD, JWT_SECRET を設定</span>
+  </div>
+  <div class="step">
+    <strong>PostgreSQL のみ Docker で起動（開発用）</strong>
+    <span class="cmd">docker compose up db -d</span>
+  </div>
+  <div class="step">
+    <strong>バックエンドを起動</strong>
+    <span class="cmd">cd db-management<br>./mvnw spring-boot:run</span>
+  </div>
+  <div class="step">
+    <strong>フロントエンドを起動</strong>
+    <span class="cmd">cd frontend<br>npm install<br>npm run dev<br># → http://localhost:5173 でアクセス</span>
+  </div>
+</div>
+
+<h2 id="prod-setup">本番環境構築手順</h2>
+
+<div class="steps">
+  <div class="step">
+    <strong>サーバーに Docker + Docker Compose をインストール</strong>
+    <span class="cmd"># Ubuntu/Debian の例
+sudo apt-get update
+sudo apt-get install docker.io docker-compose-v2
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER</span>
+  </div>
+  <div class="step">
+    <strong>リポジトリをクローン</strong>
+    <span class="cmd">git clone [リポジトリURL]<br>cd db-management-app</span>
+  </div>
+  <div class="step">
+    <strong>.env ファイルを作成（本番用）</strong>
+    <span class="cmd">cp .env.example .env
+# 本番用の強固なパスワード・秘密鍵を設定する
+# DB_USERNAME=（任意のユーザー名）
+# DB_PASSWORD=（強固なパスワード）
+# JWT_SECRET=（32文字以上のランダム文字列）
+# INIT_PASSWORD=（初期ユーザーパスワード）</span>
+  </div>
+  <div class="step">
+    <strong>ビルド・起動</strong>
+    <span class="cmd">docker compose up -d --build</span>
+  </div>
+  <div class="step">
+    <strong>動作確認</strong>
+    <span class="cmd"># コンテナ状態確認
+docker compose ps
+
+# アプリログ確認
+docker compose logs app
+
+# ブラウザで http://[サーバーIP]:18080 にアクセス
+# admin / [INIT_PASSWORDの値] でログイン</span>
+  </div>
+  <div class="step">
+    <strong>初期パスワード変更</strong>
+    <p style="margin:4px 0;font-size:13px;">admin ユーザーでログイン後、ユーザー管理画面から全ユーザーのパスワードを変更する。</p>
+  </div>
+</div>
+
+<h2 id="ops">日常運用手順</h2>
+
+<h3>アプリの起動・停止</h3>
+<pre># 起動
+docker compose up -d
+
+# 停止（データは保持）
+docker compose down
+
+# 再起動
+docker compose restart app
+
+# ログ確認
+docker compose logs -f app</pre>
+
+<h3>アップデート手順</h3>
+<pre># 1. コードを取得
+git pull origin main
+
+# 2. ビルド・再起動（ダウンタイム最小化）
+docker compose up -d --build
+
+# 3. 動作確認
+docker compose ps
+docker compose logs app</pre>
+
+<h3>コンテナ・DB状態確認</h3>
+<pre># コンテナ一覧
+docker compose ps
+
+# DBに直接接続
+docker compose exec db psql -U $DB_USERNAME -d dbmanagement
+
+# テーブル一覧確認
+\dt
+
+# 接続ユーザー確認
+SELECT * FROM users;</pre>
+
+<h2 id="backup">バックアップ・リストア</h2>
+
+<h3>バックアップ（推奨: 毎日実行）</h3>
+<pre># データベースのダンプ
+docker compose exec db pg_dump -U $DB_USERNAME dbmanagement \
+  > backup_$(date +%Y%m%d).sql
+
+# 圧縮保存
+gzip backup_$(date +%Y%m%d).sql</pre>
+
+<h3>バックアップ自動化（cron）</h3>
+<pre># crontab に追記（毎日 2:00 AM）
+0 2 * * * cd /path/to/db-management-app && \
+  docker compose exec -T db pg_dump -U $DB_USERNAME dbmanagement \
+  | gzip > /backup/db_$(date +\%Y\%m\%d).sql.gz</pre>
+
+<h3>リストア手順</h3>
+<pre># 1. バックアップファイルを解凍
+gunzip backup_YYYYMMDD.sql.gz
+
+# 2. DBを初期化してリストア
+docker compose exec db psql -U $DB_USERNAME -d dbmanagement \
+  < backup_YYYYMMDD.sql
+
+# または新規DBへリストア
+docker compose exec db psql -U $DB_USERNAME -c "DROP DATABASE dbmanagement;"
+docker compose exec db psql -U $DB_USERNAME -c "CREATE DATABASE dbmanagement;"
+docker compose exec db psql -U $DB_USERNAME -d dbmanagement < backup_YYYYMMDD.sql</pre>
+
+<h2 id="incident">障害対応手順</h2>
+
+<h3>アプリにアクセスできない</h3>
+<table>
+  <tr><th>確認項目</th><th>コマンド</th><th>対処</th></tr>
+  <tr><td>コンテナ起動確認</td><td>docker compose ps</td><td>Exited なら docker compose up -d で再起動</td></tr>
+  <tr><td>ポート確認</td><td>netstat -tlnp | grep 18080</td><td>ポート競合なら docker-compose.yml のポートを変更</td></tr>
+  <tr><td>アプリログ確認</td><td>docker compose logs app --tail=100</td><td>エラー内容に応じて対処</td></tr>
+  <tr><td>DB接続確認</td><td>docker compose exec db pg_isready</td><td>DB再起動: docker compose restart db</td></tr>
+</table>
+
+<h3>DB接続エラー</h3>
+<pre># DB コンテナの状態確認
+docker compose ps db
+docker compose logs db --tail=50
+
+# DB コンテナ再起動
+docker compose restart db
+
+# アプリも再起動
+docker compose restart app</pre>
+
+<h3>データが消えた（誤操作・バグ）</h3>
+<div class="steps">
+  <div class="step"><strong>操作履歴で確認</strong>
+    <span class="cmd">docker compose exec db psql -U $DB_USERNAME -d dbmanagement \
+  -c "SELECT * FROM operation_history ORDER BY operated_at DESC LIMIT 50;"</span>
+  </div>
+  <div class="step"><strong>直近バックアップからリストア</strong>
+    <p style="margin:4px 0;font-size:13px;">上記の「リストア手順」を参照。直近のバックアップファイルを使用する。</p>
+  </div>
+</div>
+
+<h3>ディスク容量不足</h3>
+<pre># Dockerのディスク使用量確認
+docker system df
+
+# 未使用イメージ・コンテナを削除
+docker system prune -f
+
+# バックアップファイルの古いものを削除
+ls -lh /backup/
+rm /backup/db_YYYYMMDD.sql.gz</pre>
+
+<h3>障害対応チェックリスト</h3>
+<ul class="checklist">
+  <li>コンテナが起動しているか確認（docker compose ps）</li>
+  <li>アプリのログにエラーが出ていないか確認（docker compose logs app）</li>
+  <li>DBのログにエラーが出ていないか確認（docker compose logs db）</li>
+  <li>ディスク容量が不足していないか確認（df -h）</li>
+  <li>ネットワーク接続（LAN）に問題がないか確認</li>
+  <li>ポート18080 が他のプロセスに使われていないか確認</li>
+  <li>.env ファイルが存在し、必要な変数が設定されているか確認</li>
+  <li>障害内容・対処内容を記録する</li>
+</ul>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>データベース設計書 — DB管理アプリ</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f5f7fa; color: #333; }
+  header { background: #1e3a5f; color: #fff; padding: 20px 40px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; opacity: .7; font-size: 13px; }
+  nav { background: #fff; border-bottom: 1px solid #dde3ec; padding: 10px 40px; font-size: 13px; }
+  nav a { color: #1e3a5f; text-decoration: none; margin-right: 16px; }
+  main { max-width: 1100px; margin: 32px auto; padding: 0 24px; }
+  h2 { color: #1e3a5f; border-bottom: 2px solid #1e3a5f; padding-bottom: 6px; margin-top: 40px; font-size: 18px; }
+  h3 { color: #2c5282; font-size: 15px; margin-top: 24px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: #1e3a5f; color: #fff; padding: 8px 12px; text-align: left; }
+  td { border: 1px solid #dde3ec; padding: 8px 12px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .pk { color: #c0392b; font-weight: 700; }
+  .fk { color: #2980b9; }
+  .nn { color: #888; font-size: 11px; }
+  pre { background: #2d3748; color: #e2e8f0; padding: 16px; border-radius: 8px; font-size: 12px; line-height: 1.6; overflow-x: auto; }
+  .er { background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 24px; margin: 12px 0; font-family: monospace; font-size: 12px; line-height: 1.8; }
+  .box { background: #fff4e5; border-left: 4px solid #e67e22; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 13px; }
+  .tag { display: inline-block; background: #e8f4fd; color: #0077cc; font-size: 11px; padding: 2px 8px; border-radius: 4px; }
+  p { line-height: 1.7; font-size: 14px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>データベース設計書</h1>
+  <p>B-04 / D-04 ／ DB管理アプリ ／ 作成日: 2026-05-06</p>
+</header>
+<nav>
+  <a href="index.html">← 目次</a>
+  <a href="#overview">テーブル概要</a>
+  <a href="#er">ER図</a>
+  <a href="#business">業務テーブル</a>
+  <a href="#system">システムテーブル</a>
+  <a href="#detail" id="detail">詳細定義</a>
+</nav>
+<main>
+
+<h2 id="overview">テーブル概要</h2>
+<table>
+  <tr><th>テーブル名</th><th>日本語名</th><th>区分</th><th>説明</th></tr>
+  <tr><td>projects</td><td>案件管理</td><td><span class="tag">業務</span></td><td>プロジェクト・案件の基本情報</td></tr>
+  <tr><td>requirements</td><td>要求管理</td><td><span class="tag">業務</span></td><td>案件に紐づく要求一覧</td></tr>
+  <tr><td>specifications</td><td>要件管理</td><td><span class="tag">業務</span></td><td>要求から展開した要件詳細</td></tr>
+  <tr><td>applications</td><td>アプリ管理</td><td><span class="tag">業務</span></td><td>アプリケーションのバージョン・デプロイ状況</td></tr>
+  <tr><td>environments</td><td>環境管理</td><td><span class="tag">業務</span></td><td>開発・ステージング・本番の環境情報</td></tr>
+  <tr><td>users</td><td>ユーザー</td><td><span class="tag" style="background:#fde8e8;color:#c0392b">管理</span></td><td>認証・認可ユーザー情報</td></tr>
+  <tr><td>masked_columns</td><td>マスク設定</td><td><span class="tag" style="background:#fde8e8;color:#c0392b">管理</span></td><td>ロール別カラム非表示設定</td></tr>
+  <tr><td>operation_history</td><td>操作履歴</td><td><span class="tag" style="background:#fde8e8;color:#c0392b">管理</span></td><td>全データ変更の監査ログ</td></tr>
+</table>
+
+<div class="box">
+  <strong>⚠ アクセス制御:</strong> 業務テーブル（上5件）のみ汎用APIからの操作を許可。
+  管理テーブルは専用APIまたはDirect DBアクセスでのみ操作可能。
+</div>
+
+<h2 id="er">ER図（概念）</h2>
+<div class="er">
+[projects]                [requirements]            [specifications]
+  anken_id (PK)             yoqyu_id (PK)             yoken_id (PK)
+  anken_name                anken_name (→ projects)   yoken_gaiyou
+  status                    yoqyu_name                status
+  ...                       status                    ...
+                            ...
+
+[applications]            [environments]
+  app_id (PK)               env_id (PK)
+  app_name                  kankyo
+  diff_version              ...
+  cvos_version
+  kts_version
+  ...
+
+[users]                   [masked_columns]          [operation_history]
+  id (PK)                   id (PK)                   id (PK)
+  username (UNIQUE)         table_name                operated_at
+  email                     column_name               operator
+  password (BCrypt)         role                      target_table
+  role                                                target_id
+                                                      operation
+                                                      before_value
+                                                      after_value
+
+  ※ FK制約なし。anken_name等は論理的な参照（画面リンクのみ）。
+</div>
+
+<h2 id="business">業務テーブル詳細</h2>
+
+<h3>projects（案件管理）</h3>
+<table>
+  <tr><th>カラム名</th><th>型</th><th>NULL</th><th>説明</th></tr>
+  <tr><td class="pk">anken_id</td><td>SERIAL</td><td>NOT NULL</td><td>案件ID（主キー・自動採番）</td></tr>
+  <tr><td>anken_name</td><td>VARCHAR(255)</td><td>NULL可</td><td>案件名</td></tr>
+  <tr><td>status</td><td>VARCHAR(50)</td><td>NULL可</td><td>ステータス</td></tr>
+  <tr><td>jira_link</td><td>TEXT</td><td>NULL可</td><td>JiraチケットURL</td></tr>
+  <tr><td>tantou</td><td>VARCHAR(255)</td><td>NULL可</td><td>担当者</td></tr>
+  <tr><td>start_date</td><td>DATE</td><td>NULL可</td><td>開始日</td></tr>
+  <tr><td>end_date</td><td>DATE</td><td>NULL可</td><td>終了予定日</td></tr>
+  <tr><td>remarks</td><td>TEXT</td><td>NULL可</td><td>備考</td></tr>
+</table>
+
+<h3>requirements（要求管理）</h3>
+<table>
+  <tr><th>カラム名</th><th>型</th><th>NULL</th><th>説明</th></tr>
+  <tr><td class="pk">yoqyu_id</td><td>SERIAL</td><td>NOT NULL</td><td>要求ID（主キー・自動採番）</td></tr>
+  <tr><td class="fk">anken_name</td><td>VARCHAR(255)</td><td>NULL可</td><td>案件名（projectsへの論理FK）</td></tr>
+  <tr><td>yoqyu_name</td><td>VARCHAR(255)</td><td>NULL可</td><td>要求名</td></tr>
+  <tr><td>status</td><td>VARCHAR(50)</td><td>NULL可</td><td>ステータス</td></tr>
+  <tr><td>priority</td><td>VARCHAR(50)</td><td>NULL可</td><td>優先度</td></tr>
+  <tr><td>remarks</td><td>TEXT</td><td>NULL可</td><td>備考</td></tr>
+</table>
+
+<h3>specifications（要件管理）</h3>
+<table>
+  <tr><th>カラム名</th><th>型</th><th>NULL</th><th>説明</th></tr>
+  <tr><td class="pk">yoken_id</td><td>SERIAL</td><td>NOT NULL</td><td>要件ID（主キー・自動採番）</td></tr>
+  <tr><td class="fk">anken_name</td><td>VARCHAR(255)</td><td>NULL可</td><td>案件名（論理FK）</td></tr>
+  <tr><td>yoken_gaiyou</td><td>TEXT</td><td>NULL可</td><td>要件概要</td></tr>
+  <tr><td>status</td><td>VARCHAR(50)</td><td>NULL可</td><td>ステータス</td></tr>
+  <tr><td>remarks</td><td>TEXT</td><td>NULL可</td><td>備考</td></tr>
+</table>
+
+<h3>applications（アプリ管理）</h3>
+<table>
+  <tr><th>カラム名</th><th>型</th><th>NULL</th><th>説明</th></tr>
+  <tr><td class="pk">app_id</td><td>SERIAL</td><td>NOT NULL</td><td>アプリID（主キー・自動採番）</td></tr>
+  <tr><td>app_name</td><td>VARCHAR(255)</td><td>NULL可</td><td>アプリ名</td></tr>
+  <tr><td>diff_version</td><td>VARCHAR(50)</td><td>NULL可</td><td>DIFFバージョン</td></tr>
+  <tr><td>cvos_version</td><td>VARCHAR(50)</td><td>NULL可</td><td>CVOSバージョン</td></tr>
+  <tr><td>kts_version</td><td>VARCHAR(50)</td><td>NULL可</td><td>KTSバージョン</td></tr>
+  <tr><td>status</td><td>VARCHAR(50)</td><td>NULL可</td><td>ステータス</td></tr>
+  <tr><td>remarks</td><td>TEXT</td><td>NULL可</td><td>備考</td></tr>
+</table>
+
+<h3>environments（環境管理）</h3>
+<table>
+  <tr><th>カラム名</th><th>型</th><th>NULL</th><th>説明</th></tr>
+  <tr><td class="pk">env_id</td><td>SERIAL</td><td>NOT NULL</td><td>環境ID（主キー・自動採番）</td></tr>
+  <tr><td>kankyo</td><td>VARCHAR(50)</td><td>NULL可</td><td>環境種別（dev/stg/prod 等）</td></tr>
+  <tr><td>app_name</td><td>VARCHAR(255)</td><td>NULL可</td><td>アプリ名</td></tr>
+  <tr><td>deploy_date</td><td>DATE</td><td>NULL可</td><td>デプロイ日</td></tr>
+  <tr><td>version</td><td>VARCHAR(50)</td><td>NULL可</td><td>デプロイバージョン</td></tr>
+  <tr><td>remarks</td><td>TEXT</td><td>NULL可</td><td>備考</td></tr>
+</table>
+
+<h2 id="system">システムテーブル詳細</h2>
+
+<h3>users（ユーザー管理）</h3>
+<table>
+  <tr><th>カラム名</th><th>型</th><th>NULL</th><th>説明</th></tr>
+  <tr><td class="pk">id</td><td>BIGSERIAL</td><td>NOT NULL</td><td>ユーザーID（主キー）</td></tr>
+  <tr><td>username</td><td>VARCHAR(255)</td><td>NOT NULL, UNIQUE</td><td>ログイン名</td></tr>
+  <tr><td>email</td><td>VARCHAR(255)</td><td>NULL可</td><td>メールアドレス</td></tr>
+  <tr><td>password</td><td>VARCHAR(255)</td><td>NOT NULL</td><td>BCryptハッシュ化パスワード</td></tr>
+  <tr><td>role</td><td>VARCHAR(50)</td><td>NOT NULL</td><td>ADMIN / EDITOR / VIEWER</td></tr>
+</table>
+
+<h3>masked_columns（カラムマスク設定）</h3>
+<table>
+  <tr><th>カラム名</th><th>型</th><th>NULL</th><th>説明</th></tr>
+  <tr><td class="pk">id</td><td>BIGSERIAL</td><td>NOT NULL</td><td>設定ID（主キー）</td></tr>
+  <tr><td>table_name</td><td>VARCHAR(100)</td><td>NOT NULL</td><td>対象テーブル名（大文字）</td></tr>
+  <tr><td>column_name</td><td>VARCHAR(100)</td><td>NOT NULL</td><td>対象カラム名（大文字）</td></tr>
+  <tr><td>role</td><td>VARCHAR(50)</td><td>NOT NULL</td><td>非表示にするロール（VIEWER / EDITOR）</td></tr>
+</table>
+
+<h3>operation_history（操作履歴）</h3>
+<table>
+  <tr><th>カラム名</th><th>型</th><th>NULL</th><th>説明</th></tr>
+  <tr><td class="pk">id</td><td>BIGSERIAL</td><td>NOT NULL</td><td>履歴ID（主キー）</td></tr>
+  <tr><td>operated_at</td><td>TIMESTAMP</td><td>NOT NULL</td><td>操作日時</td></tr>
+  <tr><td>operator</td><td>VARCHAR(255)</td><td>NULL可</td><td>操作ユーザー名</td></tr>
+  <tr><td>target_table</td><td>VARCHAR(100)</td><td>NULL可</td><td>操作対象テーブル名</td></tr>
+  <tr><td>target_id</td><td>VARCHAR(50)</td><td>NULL可</td><td>操作対象レコードID</td></tr>
+  <tr><td>operation</td><td>VARCHAR(50)</td><td>NULL可</td><td>INSERT / UPDATE / DELETE</td></tr>
+  <tr><td>before_value</td><td>TEXT</td><td>NULL可</td><td>変更前の値（JSON形式）</td></tr>
+  <tr><td>after_value</td><td>TEXT</td><td>NULL可</td><td>変更後の値（JSON形式）</td></tr>
+</table>
+
+<h2>初期データ投入</h2>
+<p>アプリ起動時に <code>DataInitializer.java</code> が <code>users</code> テーブルの件数を確認し、0件の場合のみ以下の初期ユーザーを作成する。</p>
+<table>
+  <tr><th>ユーザー名</th><th>ロール</th><th>初期パスワード</th></tr>
+  <tr><td>admin</td><td>ADMIN</td><td>環境変数 INIT_PASSWORD の値（デフォルト: password123）</td></tr>
+  <tr><td>editor</td><td>EDITOR</td><td>同上</td></tr>
+  <tr><td>viewer</td><td>VIEWER</td><td>同上</td></tr>
+</table>
+
+<div class="box">
+  <strong>⚠ 本番運用前:</strong> 初期パスワードを必ず変更すること。INIT_PASSWORDは.envファイルで設定する。
+</div>
+
+<h2>DDL（schema.sql 抜粋）</h2>
+<pre>-- 業務テーブル（例: projects）
+CREATE TABLE IF NOT EXISTS projects (
+    anken_id    SERIAL PRIMARY KEY,
+    anken_name  VARCHAR(255),
+    status      VARCHAR(50),
+    jira_link   TEXT,
+    tantou      VARCHAR(255),
+    start_date  DATE,
+    end_date    DATE,
+    remarks     TEXT
+);
+
+-- システムテーブル
+CREATE TABLE IF NOT EXISTS users (
+    id       BIGSERIAL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    email    VARCHAR(255),
+    password VARCHAR(255) NOT NULL,
+    role     VARCHAR(50)  NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS masked_columns (
+    id          BIGSERIAL PRIMARY KEY,
+    table_name  VARCHAR(100) NOT NULL,
+    column_name VARCHAR(100) NOT NULL,
+    role        VARCHAR(50)  NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS operation_history (
+    id           BIGSERIAL PRIMARY KEY,
+    operated_at  TIMESTAMP NOT NULL,
+    operator     VARCHAR(255),
+    target_table VARCHAR(100),
+    target_id    VARCHAR(50),
+    operation    VARCHAR(50),
+    before_value TEXT,
+    after_value  TEXT
+);</pre>
+
+</main>
+</body>
+</html>

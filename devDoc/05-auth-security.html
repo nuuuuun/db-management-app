@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>認証・認可・セキュリティ設計書 — DB管理アプリ</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f5f7fa; color: #333; }
+  header { background: #1e3a5f; color: #fff; padding: 20px 40px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; opacity: .7; font-size: 13px; }
+  nav { background: #fff; border-bottom: 1px solid #dde3ec; padding: 10px 40px; font-size: 13px; }
+  nav a { color: #1e3a5f; text-decoration: none; margin-right: 16px; }
+  main { max-width: 1000px; margin: 32px auto; padding: 0 24px; }
+  h2 { color: #1e3a5f; border-bottom: 2px solid #1e3a5f; padding-bottom: 6px; margin-top: 40px; font-size: 18px; }
+  h3 { color: #2c5282; font-size: 15px; margin-top: 24px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: #1e3a5f; color: #fff; padding: 8px 12px; text-align: left; }
+  td { border: 1px solid #dde3ec; padding: 8px 12px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  pre { background: #2d3748; color: #e2e8f0; padding: 16px; border-radius: 8px; font-size: 13px; line-height: 1.6; overflow-x: auto; }
+  .box { background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 16px 20px; margin: 12px 0; }
+  .warn { background: #fff4e5; border-left: 4px solid #e67e22; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 13px; }
+  .ok { background: #e8f5e9; border-left: 4px solid #2e7d32; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 13px; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .done { background: #e8f5e9; color: #2e7d32; }
+  .skip { background: #f5f5f5; color: #777; }
+  p { line-height: 1.7; font-size: 14px; }
+  .flow-box { background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 20px; margin: 12px 0; }
+  .flow-step { display: flex; align-items: flex-start; margin-bottom: 16px; }
+  .step-num { background: #1e3a5f; color: #fff; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-right: 12px; margin-top: 1px; }
+  .step-body .title { font-weight: 600; font-size: 14px; color: #1e3a5f; }
+  .step-body .desc { font-size: 13px; color: #555; margin-top: 2px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>認証・認可・セキュリティ設計書</h1>
+  <p>B-05 / D-05 ／ DB管理アプリ ／ 作成日: 2026-05-06</p>
+</header>
+<nav>
+  <a href="index.html">← 目次</a>
+  <a href="#auth">認証フロー</a>
+  <a href="#jwt">JWT仕様</a>
+  <a href="#rbac">認可・RBAC</a>
+  <a href="#mask">カラムマスク</a>
+  <a href="#security">セキュリティ対策</a>
+</nav>
+<main>
+
+<h2 id="auth">認証フロー</h2>
+
+<div class="flow-box">
+  <div class="flow-step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <div class="title">ログインリクエスト</div>
+      <div class="desc">クライアントが POST /api/auth/login に { username, password } を送信</div>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <div class="title">ユーザー検索・パスワード検証</div>
+      <div class="desc">AuthController → UserRepository.findByUsername() でDBからユーザー取得。BCryptPasswordEncoder.matches() でパスワード照合。</div>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <div class="title">JWT生成・返却</div>
+      <div class="desc">認証成功時、JwtUtil.generateToken(username, role) でJWTを生成。{ "token": "eyJ..." } を返す。</div>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <div class="title">トークン保管（クライアント側）</div>
+      <div class="desc">フロントエンドは localStorage にトークンを保存。全APIリクエストの Authorization: Bearer ヘッダーに付与。</div>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <div class="title">リクエスト検証（JwtFilter）</div>
+      <div class="desc">JwtFilter が Authorization ヘッダーを取り出し → JwtUtil.validateToken() で署名・有効期限を検証 → SecurityContextHolder に認証情報をセット。</div>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <div class="title">API処理</div>
+      <div class="desc">各コントローラが SecurityUtils.getCurrentRole() でロールを取得し、権限チェックを実施。</div>
+    </div>
+  </div>
+</div>
+
+<h2 id="jwt">JWT仕様</h2>
+
+<h3>トークン構成</h3>
+<table>
+  <tr><th>項目</th><th>値</th></tr>
+  <tr><td>署名アルゴリズム</td><td>HS256（HMAC-SHA256）</td></tr>
+  <tr><td>有効期限</td><td>86400000ms（24時間）。環境変数 JWT_EXPIRATION で変更可。</td></tr>
+  <tr><td>クレーム: sub</td><td>ユーザー名</td></tr>
+  <tr><td>クレーム: role</td><td>ADMIN / EDITOR / VIEWER</td></tr>
+  <tr><td>クレーム: iat</td><td>発行日時</td></tr>
+  <tr><td>クレーム: exp</td><td>有効期限</td></tr>
+  <tr><td>秘密鍵</td><td>環境変数 JWT_SECRET。32文字以上のランダム文字列推奨。Gitにコミット禁止。</td></tr>
+</table>
+
+<h3>JWT関連クラス</h3>
+<table>
+  <tr><th>クラス</th><th>役割</th></tr>
+  <tr><td>JwtUtil.java</td><td>generateToken() / validateToken() / extractUsername() / extractRole()</td></tr>
+  <tr><td>JwtFilter.java</td><td>OncePerRequestFilter。リクエストごとにトークン検証・SecurityContext設定。</td></tr>
+  <tr><td>SecurityUtils.java</td><td>getCurrentRole() / getCurrentUsername() をコントローラから呼び出す静的ユーティリティ。</td></tr>
+</table>
+
+<h2 id="rbac">認可・RBAC設計</h2>
+
+<h3>ロール定義</h3>
+<table>
+  <tr><th>ロール</th><th>権限レベル</th><th>主な制限</th></tr>
+  <tr><td><strong>ADMIN</strong></td><td>最上位</td><td>全機能利用可能</td></tr>
+  <tr><td><strong>EDITOR</strong></td><td>中間</td><td>ユーザー管理・マスク設定・上書きインポート不可</td></tr>
+  <tr><td><strong>VIEWER</strong></td><td>最低</td><td>データ参照のみ。書き込み・エクスポート全て不可</td></tr>
+</table>
+
+<h3>認可チェックの実装パターン</h3>
+<p>Spring Securityのアノテーションは使用せず、各コントローラで <code>SecurityUtils.getCurrentRole()</code> を直接チェック。</p>
+<pre>// ADMIN のみ許可
+if (!"ADMIN".equals(SecurityUtils.getCurrentRole())) {
+    return ResponseEntity.status(403).body(Map.of("error", "権限がありません"));
+}
+
+// VIEWER は書き込み禁止
+if ("VIEWER".equals(SecurityUtils.getCurrentRole())) {
+    return ResponseEntity.status(403).body(Map.of("error", "権限がありません"));
+}</pre>
+
+<h3>SecurityConfig のエンドポイント設定</h3>
+<table>
+  <tr><th>パス</th><th>設定</th></tr>
+  <tr><td>/api/auth/login</td><td>permitAll（認証不要）</td></tr>
+  <tr><td>/（静的リソース）</td><td>permitAll</td></tr>
+  <tr><td>/api/**（その他）</td><td>authenticated（JWTトークン必須）</td></tr>
+</table>
+
+<h2 id="mask">カラムマスク設計</h2>
+
+<h3>仕組み</h3>
+<div class="box">
+  <p>masked_columns テーブルに「テーブル名・カラム名・ロール」の組み合わせを登録することで、該当ロールのユーザーにはそのカラムのデータを返さない。</p>
+  <p><strong>適用範囲:</strong> テーブルデータ取得API・CSV一括エクスポート・Excelエクスポート</p>
+  <p><strong>ADMIN は常に全カラム表示。</strong> マスク設定はADMINには適用されない。</p>
+</div>
+
+<h3>マスク適用ロジック</h3>
+<pre>// EDITOR の場合: EDITOR設定 のみ確認
+// VIEWER の場合: VIEWER + EDITOR 設定を両方確認（累積マスク）
+List&lt;String&gt; rolesToCheck = "VIEWER".equals(role)
+    ? List.of("VIEWER", "EDITOR")
+    : List.of("EDITOR");
+
+Set&lt;String&gt; maskedCols = maskedColumnRepository
+    .findByTableNameAndRoleIn(tableName, rolesToCheck)
+    .stream().map(MaskedColumn::getColumnName)
+    .collect(Collectors.toSet());
+
+// データ取得後、maskedCols のカラムを除外して返す</pre>
+
+<h2 id="security">セキュリティ対策一覧</h2>
+
+<table>
+  <tr><th>#</th><th>対策</th><th>実装</th><th>状態</th></tr>
+  <tr><td>1</td><td>本番DDL保護（DROP TABLE無効化）</td><td>application-prod.properties: init.mode=never / schema.sql から DROP 削除</td><td><span class="badge done">✅ 実装済</span></td></tr>
+  <tr><td>2</td><td>シークレットの外部化</td><td>.env ファイル管理、.gitignore で除外</td><td><span class="badge done">✅ 実装済</span></td></tr>
+  <tr><td>3</td><td>ユーザー管理ADMIN限定</td><td>UserController 全操作で ADMIN チェック</td><td><span class="badge done">✅ 実装済</span></td></tr>
+  <tr><td>4</td><td>パスワードBCryptハッシュ化</td><td>ユーザー作成・更新時に BCryptPasswordEncoder.encode()</td><td><span class="badge done">✅ 実装済</span></td></tr>
+  <tr><td>5</td><td>テーブルallowlist</td><td>ALLOWED_TABLES で業務テーブル5件のみ許可</td><td><span class="badge done">✅ 実装済</span></td></tr>
+  <tr><td>6</td><td>上書きインポートADMIN限定</td><td>mode=overwrite 時に ADMIN チェック</td><td><span class="badge done">✅ 実装済</span></td></tr>
+  <tr><td>7</td><td>CSVインポートのトランザクション化</td><td>@Transactional によりロールバック保証</td><td><span class="badge done">✅ 実装済</span></td></tr>
+  <tr><td>8</td><td>エラー詳細の非公開</td><td>例外メッセージを汎用メッセージに置換、詳細はサーバーログ</td><td><span class="badge done">✅ 実装済</span></td></tr>
+  <tr><td>9</td><td>操作履歴ログ</td><td>log.error() でサーバーログに出力</td><td><span class="badge done">✅ 実装済</span></td></tr>
+  <tr><td>10</td><td>CSVエクスポートのマスク適用</td><td>CsvBulkController でロール別マスク処理</td><td><span class="badge done">✅ 実装済</span></td></tr>
+  <tr><td>11</td><td>JWT localStorage（XSSリスク）</td><td>社内LAN限定のため現状許容。将来的にhttpOnly Cookie移行を検討。</td><td><span class="badge skip">対応不要（LAN限定）</span></td></tr>
+  <tr><td>12</td><td>CSRF保護</td><td>JWTヘッダー認証のため現状問題なし。</td><td><span class="badge skip">対応不要</span></td></tr>
+</table>
+
+<div class="ok">
+  <strong>現状評価:</strong> 社内LAN限定運用として必要なセキュリティ対策はすべて実施済み。インターネット公開を検討する場合は JWT → httpOnly Cookie 移行、HTTPS必須化、レートリミット等の追加対策が必要。
+</div>
+
+</main>
+</body>
+</html>

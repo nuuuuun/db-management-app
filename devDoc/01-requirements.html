@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>要件定義書 — DB管理アプリ</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f5f7fa; color: #333; }
+  header { background: #1e3a5f; color: #fff; padding: 20px 40px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; opacity: .7; font-size: 13px; }
+  nav { background: #fff; border-bottom: 1px solid #dde3ec; padding: 10px 40px; font-size: 13px; }
+  nav a { color: #1e3a5f; text-decoration: none; margin-right: 16px; }
+  main { max-width: 1000px; margin: 32px auto; padding: 0 24px; }
+  h2 { color: #1e3a5f; border-bottom: 2px solid #1e3a5f; padding-bottom: 6px; margin-top: 40px; font-size: 18px; }
+  h3 { color: #2c5282; font-size: 15px; margin-top: 24px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: #1e3a5f; color: #fff; padding: 8px 12px; text-align: left; }
+  td { border: 1px solid #dde3ec; padding: 8px 12px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .must { background: #fde8e8; color: #c0392b; }
+  .should { background: #fef3cd; color: #856404; }
+  .nice { background: #e8f5e9; color: #2e7d32; }
+  .box { background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 16px 20px; margin: 12px 0; }
+  .box ul { margin: 8px 0; padding-left: 20px; }
+  .box li { margin-bottom: 4px; line-height: 1.7; font-size: 14px; }
+  .flow { display: flex; gap: 0; flex-wrap: wrap; margin: 16px 0; }
+  .flow-step { background: #1e3a5f; color: #fff; padding: 10px 20px; font-size: 13px; position: relative; }
+  .flow-step::after { content: '▶'; position: absolute; right: -12px; top: 50%; transform: translateY(-50%); color: #1e3a5f; z-index: 1; font-size: 14px; }
+  .flow-step:last-child::after { display: none; }
+  .flow-gap { width: 12px; }
+  p { line-height: 1.7; font-size: 14px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>要件定義書</h1>
+  <p>R-01〜R-05 ／ DB管理アプリ ／ 作成日: 2026-05-06</p>
+</header>
+<nav>
+  <a href="index.html">← 目次</a>
+  <a href="#r01">R-01 システム要件</a>
+  <a href="#r02">R-02 機能要件</a>
+  <a href="#r03">R-03 非機能要件</a>
+  <a href="#r04">R-04 権限要件</a>
+  <a href="#r05">R-05 業務フロー</a>
+</nav>
+<main>
+
+<!-- R-01 -->
+<h2 id="r01">R-01 システム要件定義</h2>
+
+<h3>システム概要</h3>
+<div class="box">
+  <p>社内業務データ（案件・要求・要件・アプリ・環境）を一元管理するWebアプリケーション。<br>
+  社内LAN環境に設置したサーバーで動作し、15名程度のユーザーが同時利用する。ブラウザのみで操作可能。</p>
+</div>
+
+<h3>システム構成</h3>
+<table>
+  <tr><th>区分</th><th>技術</th><th>バージョン</th><th>役割</th></tr>
+  <tr><td>バックエンド</td><td>Spring Boot</td><td>3.4.5</td><td>REST API サーバー</td></tr>
+  <tr><td>フロントエンド</td><td>Vue.js</td><td>3.5.32</td><td>SPA (Single Page App)</td></tr>
+  <tr><td>データベース</td><td>PostgreSQL</td><td>16</td><td>業務データ永続化</td></tr>
+  <tr><td>コンテナ</td><td>Docker / Docker Compose</td><td>最新安定版</td><td>本番・開発環境の統一</td></tr>
+  <tr><td>認証</td><td>JWT + Spring Security</td><td>—</td><td>ステートレス認証</td></tr>
+  <tr><td>Java</td><td>OpenJDK</td><td>21 LTS</td><td>バックエンドランタイム</td></tr>
+</table>
+
+<h3>利用環境</h3>
+<table>
+  <tr><th>項目</th><th>内容</th></tr>
+  <tr><td>ネットワーク</td><td>社内LAN（インターネット非公開）</td></tr>
+  <tr><td>同時接続数</td><td>最大15名程度</td></tr>
+  <tr><td>サーバーOS</td><td>Linux（Docker動作可能環境）</td></tr>
+  <tr><td>クライアント</td><td>Webブラウザ（Chrome / Edge 最新版推奨）</td></tr>
+  <tr><td>アクセスURL</td><td>http://[サーバーIP]:18080</td></tr>
+</table>
+
+<!-- R-02 -->
+<h2 id="r02">R-02 機能要件一覧</h2>
+
+<h3>認証・ユーザー管理</h3>
+<table>
+  <tr><th>ID</th><th>機能</th><th>優先度</th><th>概要</th></tr>
+  <tr><td>F-01</td><td>ログイン</td><td><span class="badge must">必須</span></td><td>ユーザー名・パスワードでJWTトークン取得。24時間有効。</td></tr>
+  <tr><td>F-02</td><td>ユーザー一覧</td><td><span class="badge must">必須</span></td><td>登録ユーザーの一覧表示。ADMIN のみ操作可。</td></tr>
+  <tr><td>F-03</td><td>ユーザー作成</td><td><span class="badge must">必須</span></td><td>新規ユーザー登録。ADMIN のみ。パスワードはBCryptでハッシュ化。</td></tr>
+  <tr><td>F-04</td><td>ユーザー編集</td><td><span class="badge must">必須</span></td><td>パスワード・ロール変更。ADMIN のみ。</td></tr>
+  <tr><td>F-05</td><td>ユーザー削除</td><td><span class="badge must">必須</span></td><td>ユーザー削除。ADMIN のみ。</td></tr>
+</table>
+
+<h3>データ管理（テーブル操作）</h3>
+<table>
+  <tr><th>ID</th><th>機能</th><th>優先度</th><th>概要</th></tr>
+  <tr><td>F-10</td><td>テーブル一覧</td><td><span class="badge must">必須</span></td><td>業務テーブル（5種）の一覧表示。</td></tr>
+  <tr><td>F-11</td><td>データ一覧</td><td><span class="badge must">必須</span></td><td>テーブルデータのページング表示・検索・ソート。</td></tr>
+  <tr><td>F-12</td><td>行追加</td><td><span class="badge must">必須</span></td><td>新規レコード登録。ADMIN/EDITOR のみ。</td></tr>
+  <tr><td>F-13</td><td>行編集</td><td><span class="badge must">必須</span></td><td>既存レコード更新（確認画面あり）。ADMIN/EDITOR のみ。</td></tr>
+  <tr><td>F-14</td><td>行削除</td><td><span class="badge must">必須</span></td><td>レコード削除。ADMIN/EDITOR のみ。</td></tr>
+</table>
+
+<h3>カラムマスク設定</h3>
+<table>
+  <tr><th>ID</th><th>機能</th><th>優先度</th><th>概要</th></tr>
+  <tr><td>F-20</td><td>マスク設定一覧</td><td><span class="badge must">必須</span></td><td>ロール別カラム非表示設定の一覧表示。</td></tr>
+  <tr><td>F-21</td><td>マスク設定追加</td><td><span class="badge must">必須</span></td><td>指定テーブル・カラムをロール別に非表示設定。ADMIN のみ。</td></tr>
+  <tr><td>F-22</td><td>マスク設定削除</td><td><span class="badge must">必須</span></td><td>マスク設定の解除。ADMIN のみ。</td></tr>
+</table>
+
+<h3>インポート・エクスポート</h3>
+<table>
+  <tr><th>ID</th><th>機能</th><th>優先度</th><th>概要</th></tr>
+  <tr><td>F-30</td><td>CSVインポート（単体）</td><td><span class="badge must">必須</span></td><td>テーブル単位のCSVファイル取込。追加/上書きモード選択可。</td></tr>
+  <tr><td>F-31</td><td>CSV一括エクスポート</td><td><span class="badge must">必須</span></td><td>全業務テーブルを1つのCSVファイルへ出力。ロール別マスク適用。</td></tr>
+  <tr><td>F-32</td><td>CSV一括インポート</td><td><span class="badge must">必須</span></td><td>一括エクスポートフォーマットのCSVファイルを全テーブルへ取込。</td></tr>
+  <tr><td>F-33</td><td>Excelエクスポート（単体）</td><td><span class="badge should">推奨</span></td><td>テーブル単位のExcelファイル出力。</td></tr>
+  <tr><td>F-34</td><td>Excel一括エクスポート</td><td><span class="badge should">推奨</span></td><td>全業務テーブルをシート分けしたExcelファイルへ出力。</td></tr>
+</table>
+
+<h3>操作履歴</h3>
+<table>
+  <tr><th>ID</th><th>機能</th><th>優先度</th><th>概要</th></tr>
+  <tr><td>F-40</td><td>操作履歴記録</td><td><span class="badge must">必須</span></td><td>INSERT/UPDATE/DELETE 操作時に操作者・日時・変更前後を自動記録。</td></tr>
+</table>
+
+<!-- R-03 -->
+<h2 id="r03">R-03 非機能要件定義</h2>
+
+<h3>パフォーマンス</h3>
+<table>
+  <tr><th>項目</th><th>目標値</th><th>備考</th></tr>
+  <tr><td>ページ表示レスポンス</td><td>3秒以内</td><td>LAN内通常操作時</td></tr>
+  <tr><td>CSV出力（全テーブル）</td><td>10秒以内</td><td>1000件規模想定</td></tr>
+  <tr><td>同時接続</td><td>15名</td><td>社内LAN運用</td></tr>
+</table>
+
+<h3>可用性</h3>
+<table>
+  <tr><th>項目</th><th>要件</th></tr>
+  <tr><td>稼働時間</td><td>業務時間内（平日9:00〜18:00）</td></tr>
+  <tr><td>計画停止</td><td>事前周知の上で週末メンテナンス可</td></tr>
+  <tr><td>データ永続性</td><td>Dockerボリュームによるデータ永続化。本番では定期バックアップ必須。</td></tr>
+</table>
+
+<h3>セキュリティ</h3>
+<table>
+  <tr><th>項目</th><th>要件</th></tr>
+  <tr><td>認証</td><td>JWT認証。トークン有効期限24時間。パスワードはBCryptハッシュ化。</td></tr>
+  <tr><td>認可</td><td>3ロール（ADMIN/EDITOR/VIEWER）によるRBAC。</td></tr>
+  <tr><td>シークレット管理</td><td>DBパスワード・JWT秘密鍵は .env ファイル管理（Gitコミット禁止）。</td></tr>
+  <tr><td>テーブルアクセス制御</td><td>業務テーブルallowlistにより管理テーブルへの直接アクセスを禁止。</td></tr>
+  <tr><td>カラム非表示</td><td>ロール別カラムマスク設定によるデータ保護。</td></tr>
+</table>
+
+<h3>保守性</h3>
+<table>
+  <tr><th>項目</th><th>要件</th></tr>
+  <tr><td>設定の外部化</td><td>接続情報・秘密鍵は環境変数で切り替え可能。</td></tr>
+  <tr><td>ログ</td><td>操作履歴はDBに記録。エラーはサーバーログへ出力。</td></tr>
+  <tr><td>デプロイ</td><td>docker compose up --build で1コマンドデプロイ可能。</td></tr>
+</table>
+
+<!-- R-04 -->
+<h2 id="r04">R-04 ユーザー・権限要件定義</h2>
+
+<h3>ロール定義</h3>
+<table>
+  <tr><th>ロール</th><th>対象者</th><th>概要</th></tr>
+  <tr><td><strong>ADMIN</strong></td><td>システム管理者</td><td>全機能利用可。ユーザー管理・マスク設定・上書きインポートが可能。</td></tr>
+  <tr><td><strong>EDITOR</strong></td><td>業務担当者</td><td>業務データのCRUD操作が可能。ユーザー管理・上書きインポートは不可。</td></tr>
+  <tr><td><strong>VIEWER</strong></td><td>閲覧者</td><td>データ参照のみ。エクスポートも不可。</td></tr>
+</table>
+
+<h3>機能別権限マトリクス</h3>
+<table>
+  <tr><th>機能</th><th>ADMIN</th><th>EDITOR</th><th>VIEWER</th></tr>
+  <tr><td>ログイン</td><td>✅</td><td>✅</td><td>✅</td></tr>
+  <tr><td>データ参照</td><td>✅</td><td>✅</td><td>✅</td></tr>
+  <tr><td>データ追加・編集・削除</td><td>✅</td><td>✅</td><td>❌</td></tr>
+  <tr><td>CSVインポート（追加）</td><td>✅</td><td>✅</td><td>❌</td></tr>
+  <tr><td>CSVインポート（上書き）</td><td>✅</td><td>❌</td><td>❌</td></tr>
+  <tr><td>CSV/Excelエクスポート</td><td>✅</td><td>✅</td><td>❌</td></tr>
+  <tr><td>ユーザー管理</td><td>✅</td><td>❌</td><td>❌</td></tr>
+  <tr><td>カラムマスク設定</td><td>✅</td><td>❌</td><td>❌</td></tr>
+</table>
+
+<h3>カラムマスク仕様</h3>
+<div class="box">
+  <ul>
+    <li>ADMIN は常に全カラムを参照可能</li>
+    <li>EDITOR / VIEWER それぞれに対して非表示カラムを個別設定可能</li>
+    <li>VIEWER にマスク設定したカラムは、EDITOR も自動的に非表示</li>
+    <li>マスクは一覧表示・エクスポート・CSV一括出力に適用される</li>
+  </ul>
+</div>
+
+<!-- R-05 -->
+<h2 id="r05">R-05 業務フロー定義</h2>
+
+<h3>日常操作フロー（EDITOR）</h3>
+<div class="flow">
+  <div class="flow-step">ブラウザ起動</div><div class="flow-gap"></div>
+  <div class="flow-step">ログイン</div><div class="flow-gap"></div>
+  <div class="flow-step">テーブル選択</div><div class="flow-gap"></div>
+  <div class="flow-step">データ参照・検索</div><div class="flow-gap"></div>
+  <div class="flow-step">追加/編集/削除</div><div class="flow-gap"></div>
+  <div class="flow-step">確認画面</div><div class="flow-gap"></div>
+  <div class="flow-step">保存完了</div>
+</div>
+
+<h3>CSVインポートフロー</h3>
+<div class="flow">
+  <div class="flow-step">CSVファイル準備</div><div class="flow-gap"></div>
+  <div class="flow-step">インポート画面へ</div><div class="flow-gap"></div>
+  <div class="flow-step">ファイル選択</div><div class="flow-gap"></div>
+  <div class="flow-step">モード選択（追加/上書き）</div><div class="flow-gap"></div>
+  <div class="flow-step">バリデーション</div><div class="flow-gap"></div>
+  <div class="flow-step">インポート実行</div><div class="flow-gap"></div>
+  <div class="flow-step">結果確認</div>
+</div>
+
+<h3>ユーザー追加フロー（ADMIN）</h3>
+<div class="flow">
+  <div class="flow-step">ユーザー管理画面へ</div><div class="flow-gap"></div>
+  <div class="flow-step">新規作成ボタン</div><div class="flow-gap"></div>
+  <div class="flow-step">情報入力</div><div class="flow-gap"></div>
+  <div class="flow-step">ロール選択</div><div class="flow-gap"></div>
+  <div class="flow-step">登録完了</div>
+</div>
+
+</main>
+</body>
+</html>

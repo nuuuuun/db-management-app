@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>改修手順書 — DB管理アプリ</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f5f7fa; color: #333; }
+  header { background: #1e3a5f; color: #fff; padding: 20px 40px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; opacity: .7; font-size: 13px; }
+  nav { background: #fff; border-bottom: 1px solid #dde3ec; padding: 10px 40px; font-size: 13px; }
+  nav a { color: #1e3a5f; text-decoration: none; margin-right: 16px; }
+  main { max-width: 1000px; margin: 32px auto; padding: 0 24px; }
+  h2 { color: #1e3a5f; border-bottom: 2px solid #1e3a5f; padding-bottom: 6px; margin-top: 40px; font-size: 18px; }
+  h3 { color: #2c5282; font-size: 15px; margin-top: 24px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: #1e3a5f; color: #fff; padding: 8px 12px; text-align: left; }
+  td { border: 1px solid #dde3ec; padding: 8px 12px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  pre { background: #2d3748; color: #e2e8f0; padding: 16px; border-radius: 8px; font-size: 13px; line-height: 1.7; overflow-x: auto; }
+  .step { counter-increment: step; background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 14px 16px 14px 56px; margin: 8px 0; position: relative; font-size: 14px; }
+  .step::before { content: counter(step); position: absolute; left: 16px; top: 50%; transform: translateY(-50%); background: #1e3a5f; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
+  .steps { counter-reset: step; }
+  .warn { background: #fff4e5; border-left: 4px solid #e67e22; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 13px; }
+  .ok { background: #e8f5e9; border-left: 4px solid #2e7d32; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 13px; }
+  .info { background: #e3f2fd; border-left: 4px solid #1565c0; padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 13px; }
+  p { line-height: 1.7; font-size: 14px; }
+  .impact { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+  .impact-h { background: #fde8e8; color: #c0392b; }
+  .impact-m { background: #fff3cd; color: #856404; }
+  .impact-l { background: #e8f5e9; color: #2e7d32; }
+  .code-ref { background: #f0f4ff; border: 1px solid #c5d0e6; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+  .checklist { list-style: none; padding: 0; }
+  .checklist li { padding: 6px 0 6px 28px; position: relative; font-size: 13px; border-bottom: 1px solid #eee; }
+  .checklist li::before { content: '☐'; position: absolute; left: 4px; color: #1e3a5f; font-size: 16px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>改修手順書</h1>
+  <p>保守ドキュメント ／ DB管理アプリ ／ 作成日: 2026-05-06</p>
+</header>
+<nav>
+  <a href="index.html">← 目次</a>
+  <a href="#flow">改修フロー</a>
+  <a href="#impact">影響範囲の調べ方</a>
+  <a href="#add-table">テーブル追加</a>
+  <a href="#add-column">カラム追加</a>
+  <a href="#add-api">API追加</a>
+  <a href="#add-user-role">ロール追加</a>
+  <a href="#deploy">デプロイ</a>
+  <a href="#checklist">改修チェックリスト</a>
+</nav>
+<main>
+
+<h2 id="flow">改修基本フロー</h2>
+
+<div class="steps">
+  <div class="step">
+    <strong>要件・影響範囲を確認する</strong>
+    <p style="margin:4px 0 0;color:#555;">何を変えるか、どのファイルが関係するかを洗い出す。本手順書の「影響範囲の調べ方」を参照。</p>
+  </div>
+  <div class="step">
+    <strong>開発環境でコードを修正する</strong>
+    <p style="margin:4px 0 0;color:#555;">ブランチを切ってから作業する: <code>git checkout -b feature/xxxx</code></p>
+  </div>
+  <div class="step">
+    <strong>ローカルで動作確認する</strong>
+    <p style="margin:4px 0 0;color:#555;"><code>docker compose up -d --build</code> で確認。テスト仕様書のシナリオテストも実施。</p>
+  </div>
+  <div class="step">
+    <strong>セキュリティテストを実施する</strong>
+    <p style="margin:4px 0 0;color:#555;">権限チェック・allowlist・入力バリデーションが正しく動作しているか確認する。</p>
+  </div>
+  <div class="step">
+    <strong>本番環境へデプロイする</strong>
+    <p style="margin:4px 0 0;color:#555;">DBバックアップを取得してから実施。デプロイ後に動作確認。</p>
+  </div>
+  <div class="step">
+    <strong>ドキュメントを更新する</strong>
+    <p style="margin:4px 0 0;color:#555;">devDoc 内の関連ドキュメントを変更内容に合わせて更新する。</p>
+  </div>
+</div>
+
+<h2 id="impact">影響範囲の調べ方</h2>
+
+<h3>変更の種類と影響するファイル</h3>
+<table>
+  <tr><th>変更内容</th><th>影響するファイル</th><th>影響度</th></tr>
+  <tr>
+    <td>業務テーブルの追加</td>
+    <td>
+      schema.sql / TableController（ALLOWED_TABLES）/ CsvImportController（ALLOWED_TABLES）/ CsvBulkController（ALLOWED_TABLES）/ frontend/utils/labels.js（TABLE_LABELS / COLUMN_LABELS）
+    </td>
+    <td><span class="impact impact-h">高</span></td>
+  </tr>
+  <tr>
+    <td>既存テーブルへのカラム追加</td>
+    <td>schema.sql（ALTER TABLE または CREATE TABLE に追記）/ frontend/utils/labels.js（COLUMN_LABELS / FIELD_DEFS）</td>
+    <td><span class="impact impact-m">中</span></td>
+  </tr>
+  <tr>
+    <td>新規APIエンドポイント追加</td>
+    <td>新規または既存 *Controller.java / SecurityConfig.java（必要に応じて）/ frontend/api/index.js または各 View</td>
+    <td><span class="impact impact-m">中</span></td>
+  </tr>
+  <tr>
+    <td>権限ロジックの変更</td>
+    <td>対象 Controller.java / SecurityConfig.java / frontend の表示制御箇所</td>
+    <td><span class="impact impact-h">高</span></td>
+  </tr>
+  <tr>
+    <td>認証フローの変更</td>
+    <td>JwtUtil.java / JwtFilter.java / SecurityConfig.java / AuthController.java / frontend/utils/auth.js</td>
+    <td><span class="impact impact-h">高</span></td>
+  </tr>
+  <tr>
+    <td>DB接続設定の変更</td>
+    <td>application.properties / application-prod.properties / .env / docker-compose.yml</td>
+    <td><span class="impact impact-m">中</span></td>
+  </tr>
+  <tr>
+    <td>フロントエンドUI変更</td>
+    <td>対象 views/*.vue / router/index.js（ルート追加時）</td>
+    <td><span class="impact impact-l">低</span></td>
+  </tr>
+</table>
+
+<h2 id="add-table">テーブル追加手順</h2>
+
+<div class="info"><strong>例:</strong> 「VENDORS（取引先管理）」テーブルを新規追加する場合</div>
+
+<div class="steps">
+  <div class="step">
+    <strong>schema.sql にテーブルを追加</strong>
+    <pre>CREATE TABLE IF NOT EXISTS vendors (
+    vendor_id   SERIAL PRIMARY KEY,
+    vendor_name VARCHAR(255),
+    contact     VARCHAR(255),
+    status      VARCHAR(50),
+    remarks     TEXT
+);</pre>
+  </div>
+  <div class="step">
+    <strong>allowlist に追加（3ファイル）</strong>
+    <pre>// TableController.java
+private static final Set&lt;String&gt; ALLOWED_TABLES = Set.of(
+    "PROJECTS", "REQUIREMENTS", "SPECIFICATIONS",
+    "APPLICATIONS", "ENVIRONMENTS",
+    "VENDORS"  // ← 追加
+);
+
+// CsvImportController.java（同様に追加）
+// CsvBulkController.java（同様に追加）</pre>
+  </div>
+  <div class="step">
+    <strong>フロントエンドのラベル定義を追加</strong>
+    <pre>// frontend/utils/labels.js
+export const TABLE_LABELS = {
+  PROJECTS: "案件管理",
+  // ...
+  VENDORS: "取引先管理",  // ← 追加
+};
+
+export const COLUMN_LABELS = {
+  // ...
+  VENDOR_ID: "取引先ID",
+  VENDOR_NAME: "取引先名",
+  CONTACT: "担当者",
+};</pre>
+  </div>
+  <div class="step">
+    <strong>動作確認</strong>
+    <p>docker compose up -d --build → テーブル一覧にVENDORSが表示されること / CRUD操作が可能なこと / CSV出力対象に含まれること</p>
+  </div>
+  <div class="step">
+    <strong>本番DBにテーブルを作成</strong>
+    <pre># 本番ではschema.sqlは自動実行されないため手動でDDLを実行
+docker compose exec db psql -U $DB_USERNAME -d dbmanagement \
+  -c "CREATE TABLE IF NOT EXISTS vendors (...);"</pre>
+  </div>
+</div>
+
+<h2 id="add-column">カラム追加手順</h2>
+
+<div class="info"><strong>例:</strong> PROJECTSテーブルに「budget（予算）」カラムを追加する場合</div>
+
+<div class="steps">
+  <div class="step">
+    <strong>schema.sql を更新</strong>
+    <p>CREATE TABLE IF NOT EXISTS に追記（開発環境の初期化用）。本番は別途ALTER TABLEで対応。</p>
+    <pre>-- schema.sql の projects テーブルに追記
+budget NUMERIC(15, 0),
+
+-- 本番環境への反映コマンド（手動実行）
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS budget NUMERIC(15, 0);</pre>
+  </div>
+  <div class="step">
+    <strong>フロントエンドのラベル・フィールド定義を追加</strong>
+    <pre>// frontend/utils/labels.js
+export const COLUMN_LABELS = {
+  // ...
+  BUDGET: "予算",
+};
+
+export const FIELD_DEFS = {
+  // 入力タイプを定義（text / date / select）
+  BUDGET: { type: "text" },
+};</pre>
+  </div>
+  <div class="step">
+    <strong>動作確認</strong>
+    <p>一覧にカラムが表示されること / 追加・編集フォームに項目が表示されること / CSV出力に含まれること</p>
+  </div>
+</div>
+
+<div class="warn">
+  <strong>⚠ 本番DBへのカラム追加:</strong> schema.sql は本番で自動実行されない（init.mode=never）。
+  必ず手動で ALTER TABLE を本番DBに実行してからアプリをデプロイすること。
+  カラム追加の前に必ずバックアップを取得すること。
+</div>
+
+<h2 id="add-api">APIエンドポイント追加手順</h2>
+
+<div class="steps">
+  <div class="step">
+    <strong>コントローラにメソッドを追加</strong>
+    <pre>// 既存コントローラへの追加、または新規コントローラ作成
+@GetMapping("/api/xxxx")
+public ResponseEntity&lt;?&gt; newEndpoint() {
+    // 権限チェックを必ず実装
+    if ("VIEWER".equals(SecurityUtils.getCurrentRole())) {
+        return ResponseEntity.status(403).body(Map.of("error", "権限がありません"));
+    }
+    // ... 処理
+}</pre>
+  </div>
+  <div class="step">
+    <strong>SecurityConfig の確認</strong>
+    <p>新しいパスが /api/** に含まれていれば追加設定不要。ログイン不要なパスを追加する場合は SecurityConfig.java の requestMatchers に追記する。</p>
+  </div>
+  <div class="step">
+    <strong>フロントエンドのAPI呼び出しを追加</strong>
+    <pre>// 対象 View の &lt;script&gt; セクション
+import api from '@/api/index.js';
+
+const result = await api.get('/api/xxxx');
+// または
+const result = await api.post('/api/xxxx', requestBody);</pre>
+  </div>
+  <div class="step">
+    <strong>テスト仕様書にテストケースを追加</strong>
+    <p>devDoc/10-test-spec.html の結合テスト・シナリオテストに追記する。</p>
+  </div>
+</div>
+
+<h2 id="add-user-role">ロール追加手順</h2>
+
+<div class="warn">
+  <strong>⚠ 影響範囲が広いため慎重に実施すること。</strong>
+  ロール追加は認証・認可・マスク設定・フロントエンドUI に広く影響する。
+</div>
+
+<table>
+  <tr><th>対応が必要なファイル</th><th>変更内容</th></tr>
+  <tr><td>各 *Controller.java</td><td>新ロールの権限チェックロジックを追加</td></tr>
+  <tr><td>SecurityUtils.java</td><td>デフォルトロールの見直し</td></tr>
+  <tr><td>MaskedColumnController.java</td><td>マスク対象ロールに新ロールを追加</td></tr>
+  <tr><td>CsvBulkController.java</td><td>rolesToCheck の条件を更新</td></tr>
+  <tr><td>frontend/views/各View</td><td>新ロール向けのUI表示制御を追加</td></tr>
+  <tr><td>users テーブル</td><td>role カラムの許容値（制約がある場合）</td></tr>
+  <tr><td>devDoc/05-auth-security.html</td><td>ロール定義・権限マトリクスを更新</td></tr>
+  <tr><td>devDoc/01-requirements.html</td><td>権限要件を更新</td></tr>
+</table>
+
+<h2 id="deploy">本番デプロイ手順</h2>
+
+<div class="steps">
+  <div class="step">
+    <strong>DBバックアップを取得</strong>
+    <pre>docker compose exec db pg_dump -U $DB_USERNAME dbmanagement \
+  > backup_before_deploy_$(date +%Y%m%d_%H%M%S).sql</pre>
+  </div>
+  <div class="step">
+    <strong>DBスキーマ変更がある場合は先に実行</strong>
+    <pre># テーブル追加・カラム追加のDDLを手動実行
+docker compose exec db psql -U $DB_USERNAME -d dbmanagement \
+  -f /path/to/migration.sql</pre>
+  </div>
+  <div class="step">
+    <strong>コードを取得・ビルド・再起動</strong>
+    <pre>git pull origin main
+docker compose up -d --build</pre>
+  </div>
+  <div class="step">
+    <strong>動作確認</strong>
+    <pre>docker compose ps
+docker compose logs app --tail=50
+# ブラウザでアクセスして主要機能を確認</pre>
+  </div>
+  <div class="step">
+    <strong>異常時のロールバック</strong>
+    <pre># 旧バージョンに戻す
+git checkout [前のコミットハッシュ]
+docker compose up -d --build
+
+# DBも必要な場合はバックアップからリストア</pre>
+  </div>
+</div>
+
+<h2 id="checklist">改修チェックリスト</h2>
+
+<h3>コーディング時</h3>
+<ul class="checklist">
+  <li>新しいAPIエンドポイントに権限チェック（VIEWER / ADMIN）が実装されているか</li>
+  <li>テーブル名・カラム名の動的SQLは allowlist または固定値のみを使用しているか（SQLインジェクション防止）</li>
+  <li>エラーメッセージに内部情報（SQL・スタックトレース等）を含んでいないか</li>
+  <li>新しいデータ操作に操作履歴記録（OperationHistoryService.log()）が追加されているか</li>
+  <li>ファイル入出力でトランザクション（@Transactional）が必要な箇所に付いているか</li>
+  <li>秘密情報（パスワード・APIキー等）をコードやGitにコミットしていないか</li>
+</ul>
+
+<h3>テスト時</h3>
+<ul class="checklist">
+  <li>正常系だけでなく異常系（権限不足・不正パラメータ）のテストをしたか</li>
+  <li>ADMIN / EDITOR / VIEWER の3ロールすべてで動作確認したか</li>
+  <li>既存機能への影響（デグレード）がないか確認したか</li>
+  <li>CSVインポートのトランザクション（失敗時ロールバック）を確認したか（変更した場合）</li>
+</ul>
+
+<h3>デプロイ前</h3>
+<ul class="checklist">
+  <li>DBバックアップを取得したか</li>
+  <li>DBスキーマ変更がある場合、本番DBへの手動DDL実行を準備したか</li>
+  <li>関連するドキュメント（devDoc）の更新を行ったか</li>
+  <li>ロールバック手順を確認したか</li>
+</ul>
+
+<h3>デプロイ後</h3>
+<ul class="checklist">
+  <li>docker compose ps でコンテナが正常起動しているか</li>
+  <li>アプリログにエラーが出ていないか（docker compose logs app）</li>
+  <li>ブラウザで主要機能が動作するか確認したか</li>
+  <li>操作履歴テーブルに正しく記録されているか</li>
+</ul>
+
+</main>
+</body>
+</html>

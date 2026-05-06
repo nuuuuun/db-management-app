@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DB管理アプリ ドキュメント目次</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f5f7fa; color: #333; }
+  header { background: #1e3a5f; color: #fff; padding: 24px 40px; }
+  header h1 { margin: 0; font-size: 24px; }
+  header p { margin: 6px 0 0; opacity: .75; font-size: 14px; }
+  main { max-width: 960px; margin: 40px auto; padding: 0 24px; }
+  .category { margin-bottom: 40px; }
+  .category h2 { font-size: 16px; color: #1e3a5f; border-left: 4px solid #1e3a5f; padding-left: 12px; margin-bottom: 16px; }
+  .doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .doc-card { background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 16px 20px; text-decoration: none; color: #333; transition: box-shadow .15s; display: block; }
+  .doc-card:hover { box-shadow: 0 4px 12px rgba(30,58,95,.15); border-color: #1e3a5f; }
+  .doc-card .num { font-size: 11px; color: #888; font-weight: 600; letter-spacing: .05em; margin-bottom: 4px; }
+  .doc-card .title { font-size: 15px; font-weight: 600; color: #1e3a5f; margin-bottom: 6px; }
+  .doc-card .desc { font-size: 12px; color: #666; line-height: 1.6; }
+  .badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; margin-top: 8px; }
+  .req { background: #e8f4fd; color: #0077cc; }
+  .basic { background: #e8f5e9; color: #2e7d32; }
+  .detail { background: #fff3e0; color: #e65100; }
+  .other { background: #f3e5f5; color: #6a1b9a; }
+  .meta { font-size: 12px; color: #888; margin-top: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>DB管理アプリ — 開発・保守ドキュメント</h1>
+  <p>作成日: 2026-05-06 ／ 対象: db-management-app</p>
+</header>
+<main>
+
+  <div class="category">
+    <h2>要件定義</h2>
+    <div class="doc-grid">
+      <a class="doc-card" href="01-requirements.html">
+        <div class="num">R-01〜05</div>
+        <div class="title">要件定義書</div>
+        <div class="desc">システム要件・機能要件・非機能要件・権限要件・業務フローを収録</div>
+        <span class="badge req">要件定義</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="category">
+    <h2>基本設計</h2>
+    <div class="doc-grid">
+      <a class="doc-card" href="02-system-design.html">
+        <div class="num">B-01 / B-06</div>
+        <div class="title">システムアーキテクチャ・インフラ設計書</div>
+        <div class="desc">全体構成図・技術スタック・Docker構成・ネットワーク構成</div>
+        <span class="badge basic">基本設計</span>
+      </a>
+      <a class="doc-card" href="03-api-design.html">
+        <div class="num">B-02 / B-03</div>
+        <div class="title">画面・API設計書</div>
+        <div class="desc">画面一覧・画面遷移・APIエンドポイント一覧・権限マトリクス</div>
+        <span class="badge basic">基本設計</span>
+      </a>
+      <a class="doc-card" href="04-database-design.html">
+        <div class="num">B-04</div>
+        <div class="title">データベース設計書</div>
+        <div class="desc">ER図・テーブル定義・主要テーブルの役割と関係</div>
+        <span class="badge basic">基本設計</span>
+      </a>
+      <a class="doc-card" href="05-auth-security.html">
+        <div class="num">B-05</div>
+        <div class="title">認証・認可・セキュリティ設計書</div>
+        <div class="desc">JWT認証フロー・RBACロール設計・カラムマスク設計・セキュリティ対策一覧</div>
+        <span class="badge basic">基本設計</span>
+      </a>
+      <a class="doc-card" href="06-file-io.html">
+        <div class="num">B-07</div>
+        <div class="title">ファイル入出力設計書</div>
+        <div class="desc">CSV・Excel インポート/エクスポートの仕様・フォーマット定義・バリデーション方針</div>
+        <span class="badge basic">基本設計</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="category">
+    <h2>詳細設計</h2>
+    <div class="doc-grid">
+      <a class="doc-card" href="07-backend-detail.html">
+        <div class="num">D-01 / D-05</div>
+        <div class="title">バックエンド詳細設計書</div>
+        <div class="desc">クラス構成・各コントローラ/サービスの処理フロー・セキュリティ実装詳細</div>
+        <span class="badge detail">詳細設計</span>
+      </a>
+      <a class="doc-card" href="08-frontend-detail.html">
+        <div class="num">D-02</div>
+        <div class="title">フロントエンド詳細設計書</div>
+        <div class="desc">コンポーネント構成・ルーティング・API連携・状態管理・ロール別UI制御</div>
+        <span class="badge detail">詳細設計</span>
+      </a>
+      <a class="doc-card" href="04-database-design.html#detail">
+        <div class="num">D-04</div>
+        <div class="title">DB詳細設計（→DB設計書内）</div>
+        <div class="desc">カラム型・制約・インデックス定義はDB設計書に統合</div>
+        <span class="badge detail">詳細設計</span>
+      </a>
+      <a class="doc-card" href="09-operations.html">
+        <div class="num">D-08 / D-10 / B-08</div>
+        <div class="title">環境構築・運用・障害対応手順書</div>
+        <div class="desc">開発/本番環境構築手順・バックアップ・復旧・障害対応チェックリスト</div>
+        <span class="badge detail">詳細設計</span>
+      </a>
+      <a class="doc-card" href="10-test-spec.html">
+        <div class="num">D-09</div>
+        <div class="title">テスト仕様書</div>
+        <div class="desc">単体テスト・結合テスト・シナリオテスト・テストケース一覧</div>
+        <span class="badge detail">詳細設計</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="category">
+    <h2>保守・改修</h2>
+    <div class="doc-grid">
+      <a class="doc-card" href="maintenance-guide.html">
+        <div class="num">保守</div>
+        <div class="title">改修手順書</div>
+        <div class="desc">改修フロー・影響範囲の調べ方・テーブル追加/カラム追加/API追加の手順</div>
+        <span class="badge other">保守</span>
+      </a>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

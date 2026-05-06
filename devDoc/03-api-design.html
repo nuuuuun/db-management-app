@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>画面・API設計書 — DB管理アプリ</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f5f7fa; color: #333; }
+  header { background: #1e3a5f; color: #fff; padding: 20px 40px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; opacity: .7; font-size: 13px; }
+  nav { background: #fff; border-bottom: 1px solid #dde3ec; padding: 10px 40px; font-size: 13px; }
+  nav a { color: #1e3a5f; text-decoration: none; margin-right: 16px; }
+  main { max-width: 1100px; margin: 32px auto; padding: 0 24px; }
+  h2 { color: #1e3a5f; border-bottom: 2px solid #1e3a5f; padding-bottom: 6px; margin-top: 40px; font-size: 18px; }
+  h3 { color: #2c5282; font-size: 15px; margin-top: 24px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: #1e3a5f; color: #fff; padding: 8px 12px; text-align: left; }
+  td { border: 1px solid #dde3ec; padding: 8px 12px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .method { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; min-width: 46px; text-align: center; }
+  .get { background: #e8f5e9; color: #2e7d32; }
+  .post { background: #e3f2fd; color: #1565c0; }
+  .put { background: #fff8e1; color: #f57f17; }
+  .del { background: #fce4ec; color: #c62828; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .admin { background: #fde8e8; color: #c0392b; }
+  .editor { background: #fff3cd; color: #856404; }
+  .all { background: #e8f5e9; color: #2e7d32; }
+  pre { background: #2d3748; color: #e2e8f0; padding: 16px; border-radius: 8px; font-size: 13px; line-height: 1.6; overflow-x: auto; }
+  .box { background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 16px 20px; margin: 12px 0; }
+  p { line-height: 1.7; font-size: 14px; }
+  .screen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin: 16px 0; }
+  .screen-card { background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 14px; }
+  .screen-card .path { font-size: 12px; color: #888; font-family: monospace; margin-bottom: 4px; }
+  .screen-card .name { font-size: 14px; font-weight: 600; color: #1e3a5f; }
+  .screen-card .desc { font-size: 12px; color: #666; margin-top: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>画面・API設計書</h1>
+  <p>B-02 / B-03 ／ DB管理アプリ ／ 作成日: 2026-05-06</p>
+</header>
+<nav>
+  <a href="index.html">← 目次</a>
+  <a href="#screens">画面一覧</a>
+  <a href="#transition">画面遷移</a>
+  <a href="#api">API一覧</a>
+  <a href="#request">リクエスト/レスポンス例</a>
+</nav>
+<main>
+
+<h2 id="screens">画面一覧</h2>
+
+<div class="screen-grid">
+  <div class="screen-card">
+    <div class="path">/login</div>
+    <div class="name">ログイン画面</div>
+    <div class="desc">ユーザー名・パスワード入力。認証後はホームへリダイレクト。</div>
+  </div>
+  <div class="screen-card">
+    <div class="path">/</div>
+    <div class="name">ホーム画面</div>
+    <div class="desc">ログイン後のトップ。ナビゲーションメニュー。</div>
+  </div>
+  <div class="screen-card">
+    <div class="path">/tables</div>
+    <div class="name">テーブル一覧画面</div>
+    <div class="desc">業務テーブル（5種）の一覧。全テーブルExcelエクスポートボタン。</div>
+  </div>
+  <div class="screen-card">
+    <div class="path">/tables/:name</div>
+    <div class="name">テーブル詳細画面</div>
+    <div class="desc">データ一覧。ページング・検索・ソート・追加・編集・削除・Excel出力。</div>
+  </div>
+  <div class="screen-card">
+    <div class="path">/tables/:name/edit/:id</div>
+    <div class="name">行編集画面</div>
+    <div class="desc">既存レコードの編集フォーム。</div>
+  </div>
+  <div class="screen-card">
+    <div class="path">/tables/:name/edit/:id/confirm</div>
+    <div class="name">編集確認画面</div>
+    <div class="desc">変更内容の確認・確定。</div>
+  </div>
+  <div class="screen-card">
+    <div class="path">/tables/:name/import</div>
+    <div class="name">CSVインポート画面</div>
+    <div class="desc">単テーブルへのCSVファイル取込。</div>
+  </div>
+  <div class="screen-card">
+    <div class="path">/users</div>
+    <div class="name">ユーザー管理画面</div>
+    <div class="desc">ユーザーCRUD。ADMIN のみアクセス可。</div>
+  </div>
+  <div class="screen-card">
+    <div class="path">/masked-columns</div>
+    <div class="name">カラムマスク設定画面</div>
+    <div class="desc">ロール別カラム非表示設定の管理。ADMIN のみ。</div>
+  </div>
+  <div class="screen-card">
+    <div class="path">/csv-bulk</div>
+    <div class="name">CSV一括入出力画面</div>
+    <div class="desc">全テーブル一括エクスポート/インポート。</div>
+  </div>
+</div>
+
+<h2 id="transition">画面遷移図</h2>
+<pre>
+[/login]
+    │ 認証成功
+    ▼
+[/] ホーム
+    ├─ テーブル管理 ──→ [/tables] テーブル一覧
+    │                        └─ テーブル選択 ──→ [/tables/:name] データ一覧
+    │                                                  ├─ 編集ボタン ──→ [/tables/:name/edit/:id]
+    │                                                  │                    └─ 確認 ──→ [/tables/:name/edit/:id/confirm]
+    │                                                  └─ インポート ──→ [/tables/:name/import]
+    ├─ ユーザー管理 ──→ [/users]      （ADMIN のみ）
+    ├─ マスク設定  ──→ [/masked-columns]  （ADMIN のみ）
+    └─ CSV一括    ──→ [/csv-bulk]
+
+    ※ 認証なし、またはトークン期限切れ → [/login] へリダイレクト
+</pre>
+
+<h2 id="api">API エンドポイント一覧</h2>
+
+<h3>認証</h3>
+<table>
+  <tr><th>メソッド</th><th>パス</th><th>権限</th><th>説明</th></tr>
+  <tr>
+    <td><span class="method post">POST</span></td>
+    <td>/api/auth/login</td>
+    <td><span class="badge all">全員</span></td>
+    <td>ログイン。JWTトークンを返す。</td>
+  </tr>
+</table>
+
+<h3>ユーザー管理</h3>
+<table>
+  <tr><th>メソッド</th><th>パス</th><th>権限</th><th>説明</th></tr>
+  <tr><td><span class="method get">GET</span></td><td>/api/users</td><td><span class="badge admin">ADMIN</span></td><td>ユーザー一覧取得</td></tr>
+  <tr><td><span class="method post">POST</span></td><td>/api/users</td><td><span class="badge admin">ADMIN</span></td><td>ユーザー作成</td></tr>
+  <tr><td><span class="method put">PUT</span></td><td>/api/users/{id}</td><td><span class="badge admin">ADMIN</span></td><td>ユーザー更新（パスワード・ロール変更）</td></tr>
+  <tr><td><span class="method del">DELETE</span></td><td>/api/users/{id}</td><td><span class="badge admin">ADMIN</span></td><td>ユーザー削除</td></tr>
+</table>
+
+<h3>テーブルデータ操作</h3>
+<table>
+  <tr><th>メソッド</th><th>パス</th><th>権限</th><th>説明</th></tr>
+  <tr><td><span class="method get">GET</span></td><td>/api/tables</td><td><span class="badge all">全員</span></td><td>業務テーブル一覧取得</td></tr>
+  <tr><td><span class="method get">GET</span></td><td>/api/tables/{name}</td><td><span class="badge all">全員</span></td><td>テーブルデータ取得（ページング・検索・ソート）</td></tr>
+  <tr><td><span class="method get">GET</span></td><td>/api/tables/{name}/columns</td><td><span class="badge all">全員</span></td><td>カラム一覧取得</td></tr>
+  <tr><td><span class="method post">POST</span></td><td>/api/tables/{name}/rows</td><td><span class="badge editor">EDITOR+</span></td><td>行追加</td></tr>
+  <tr><td><span class="method put">PUT</span></td><td>/api/tables/{name}/rows/{id}</td><td><span class="badge editor">EDITOR+</span></td><td>行更新</td></tr>
+  <tr><td><span class="method del">DELETE</span></td><td>/api/tables/{name}/rows/{id}</td><td><span class="badge editor">EDITOR+</span></td><td>行削除</td></tr>
+</table>
+
+<h3>カラムマスク</h3>
+<table>
+  <tr><th>メソッド</th><th>パス</th><th>権限</th><th>説明</th></tr>
+  <tr><td><span class="method get">GET</span></td><td>/api/masked-columns</td><td><span class="badge all">全員</span></td><td>マスク設定一覧</td></tr>
+  <tr><td><span class="method post">POST</span></td><td>/api/masked-columns</td><td><span class="badge admin">ADMIN</span></td><td>マスク設定追加</td></tr>
+  <tr><td><span class="method del">DELETE</span></td><td>/api/masked-columns/{id}</td><td><span class="badge admin">ADMIN</span></td><td>マスク設定削除</td></tr>
+</table>
+
+<h3>CSV / Excel インポート・エクスポート</h3>
+<table>
+  <tr><th>メソッド</th><th>パス</th><th>権限</th><th>説明</th></tr>
+  <tr><td><span class="method post">POST</span></td><td>/api/import/{tableName}</td><td><span class="badge editor">EDITOR+</span></td><td>CSVインポート（単テーブル）。mode=overwrite は ADMIN のみ。</td></tr>
+  <tr><td><span class="method get">GET</span></td><td>/api/export/all</td><td><span class="badge editor">EDITOR+</span></td><td>全テーブル一括CSVエクスポート</td></tr>
+  <tr><td><span class="method post">POST</span></td><td>/api/import/all</td><td><span class="badge editor">EDITOR+</span></td><td>全テーブル一括CSVインポート</td></tr>
+  <tr><td><span class="method get">GET</span></td><td>/api/export/excel/{tableName}</td><td><span class="badge editor">EDITOR+</span></td><td>Excelエクスポート（単テーブル）</td></tr>
+  <tr><td><span class="method get">GET</span></td><td>/api/export/excel/all</td><td><span class="badge editor">EDITOR+</span></td><td>全テーブルExcel一括エクスポート</td></tr>
+</table>
+
+<h2 id="request">リクエスト/レスポンス例</h2>
+
+<h3>POST /api/auth/login</h3>
+<p><strong>リクエスト:</strong></p>
+<pre>{ "username": "admin", "password": "password123" }</pre>
+<p><strong>レスポンス (200 OK):</strong></p>
+<pre>{ "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }</pre>
+<p><strong>レスポンス (401 Unauthorized):</strong></p>
+<pre>{ "error": "ユーザー名またはパスワードが正しくありません" }</pre>
+
+<h3>GET /api/tables/{name}（クエリパラメータ）</h3>
+<table>
+  <tr><th>パラメータ</th><th>型</th><th>説明</th><th>デフォルト</th></tr>
+  <tr><td>page</td><td>int</td><td>ページ番号（0始まり）</td><td>0</td></tr>
+  <tr><td>size</td><td>int</td><td>1ページあたり件数</td><td>20</td></tr>
+  <tr><td>search</td><td>string</td><td>全カラム対象キーワード検索</td><td>—</td></tr>
+  <tr><td>sortCol</td><td>string</td><td>ソート対象カラム名</td><td>—</td></tr>
+  <tr><td>sortDir</td><td>string</td><td>asc / desc</td><td>asc</td></tr>
+</table>
+<p><strong>レスポンス:</strong></p>
+<pre>{
+  "data": [ { "ANKEN_ID": 1, "ANKEN_NAME": "サンプル案件", ... }, ... ],
+  "total": 120,
+  "page": 0,
+  "size": 20
+}</pre>
+
+<h3>POST /api/import/{tableName}（CSVインポート）</h3>
+<p><strong>リクエスト:</strong> multipart/form-data</p>
+<table>
+  <tr><th>フィールド</th><th>型</th><th>説明</th></tr>
+  <tr><td>file</td><td>MultipartFile</td><td>UTF-8 CSVファイル</td></tr>
+  <tr><td>mode</td><td>string</td><td>append（デフォルト）/ overwrite</td></tr>
+</table>
+<p><strong>レスポンス:</strong></p>
+<pre>{ "inserted": 15, "errors": ["行3: インポートエラーが発生しました"] }</pre>
+
+<h3>共通エラーレスポンス</h3>
+<table>
+  <tr><th>HTTPステータス</th><th>ボディ例</th><th>発生条件</th></tr>
+  <tr><td>400 Bad Request</td><td>{ "error": "対象外のテーブルです" }</td><td>allowlist外テーブル指定</td></tr>
+  <tr><td>401 Unauthorized</td><td>（レスポンスボディなし）</td><td>トークン未送信・期限切れ</td></tr>
+  <tr><td>403 Forbidden</td><td>{ "error": "権限がありません" }</td><td>ロール不足</td></tr>
+  <tr><td>500 Internal Server Error</td><td>{ "error": "処理中にエラーが発生しました" }</td><td>DB障害等（詳細はサーバーログ）</td></tr>
+</table>
+
+<h3>共通リクエストヘッダー</h3>
+<table>
+  <tr><th>ヘッダー</th><th>値</th><th>必須</th></tr>
+  <tr><td>Authorization</td><td>Bearer &lt;JWTトークン&gt;</td><td>ログイン以外の全エンドポイント</td></tr>
+  <tr><td>Content-Type</td><td>application/json</td><td>JSONリクエスト時</td></tr>
+</table>
+
+</main>
+</body>
+</html>

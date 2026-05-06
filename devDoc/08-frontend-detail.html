@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>フロントエンド詳細設計書 — DB管理アプリ</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f5f7fa; color: #333; }
+  header { background: #1e3a5f; color: #fff; padding: 20px 40px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; opacity: .7; font-size: 13px; }
+  nav { background: #fff; border-bottom: 1px solid #dde3ec; padding: 10px 40px; font-size: 13px; }
+  nav a { color: #1e3a5f; text-decoration: none; margin-right: 16px; }
+  main { max-width: 1000px; margin: 32px auto; padding: 0 24px; }
+  h2 { color: #1e3a5f; border-bottom: 2px solid #1e3a5f; padding-bottom: 6px; margin-top: 40px; font-size: 18px; }
+  h3 { color: #2c5282; font-size: 15px; margin-top: 24px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: #1e3a5f; color: #fff; padding: 8px 12px; text-align: left; }
+  td { border: 1px solid #dde3ec; padding: 8px 12px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  pre { background: #2d3748; color: #e2e8f0; padding: 16px; border-radius: 8px; font-size: 12px; line-height: 1.6; overflow-x: auto; }
+  .box { background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 16px 20px; margin: 12px 0; }
+  p { line-height: 1.7; font-size: 14px; }
+  .file-tree { background: #fff; border: 1px solid #dde3ec; border-radius: 8px; padding: 20px; font-family: monospace; font-size: 13px; line-height: 1.9; }
+  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; margin: 2px; }
+  .view { background: #e3f2fd; color: #1565c0; }
+  .util { background: #e8f5e9; color: #2e7d32; }
+  .router { background: #fff8e1; color: #f57f17; }
+</style>
+</head>
+<body>
+<header>
+  <h1>フロントエンド詳細設計書</h1>
+  <p>D-02 ／ DB管理アプリ ／ 作成日: 2026-05-06</p>
+</header>
+<nav>
+  <a href="index.html">← 目次</a>
+  <a href="#structure">ディレクトリ構成</a>
+  <a href="#routing">ルーティング</a>
+  <a href="#api">API連携</a>
+  <a href="#views">ビュー詳細</a>
+  <a href="#utils">ユーティリティ</a>
+  <a href="#build">ビルド・デプロイ</a>
+</nav>
+<main>
+
+<h2 id="structure">ディレクトリ構成</h2>
+<div class="file-tree">
+frontend/
+├── src/
+│   ├── main.js              ← Vueアプリ起動・Router登録
+│   ├── App.vue              ← ルートコンポーネント
+│   ├── router/
+│   │   └── index.js         ← ルーティング定義・ナビゲーションガード
+│   ├── api/
+│   │   └── index.js         ← Axiosインスタンス・共通ヘッダー設定
+│   ├── utils/
+│   │   ├── auth.js          ← JWT保管・ユーザー情報管理
+│   │   └── labels.js        ← 日本語ラベル・フィールド型定義
+│   └── views/
+│       ├── LoginView.vue    ← ログイン画面
+│       ├── HomeView.vue     ← ホーム画面
+│       ├── TablesView.vue   ← テーブル一覧
+│       ├── TableDetailView.vue      ← データ一覧・CRUD
+│       ├── TableRowEditView.vue     ← 行編集フォーム
+│       ├── TableRowEditConfirmView.vue  ← 編集確認
+│       ├── CsvImportView.vue        ← CSVインポート
+│       ├── UsersView.vue            ← ユーザー管理
+│       ├── MaskedColumnsView.vue    ← マスク設定
+│       ├── CsvBulkView.vue          ← CSV一括入出力
+│       └── AboutView.vue            ← アバウト
+├── package.json
+└── vite.config.js
+</div>
+
+<h2 id="routing">ルーティング設計</h2>
+
+<h3>ルート定義</h3>
+<table>
+  <tr><th>パス</th><th>コンポーネント</th><th>認証</th><th>説明</th></tr>
+  <tr><td>/login</td><td>LoginView</td><td>不要</td><td>ログイン画面。認証済みなら / へリダイレクト。</td></tr>
+  <tr><td>/</td><td>HomeView</td><td>必要</td><td>ホーム。ナビゲーション。</td></tr>
+  <tr><td>/tables</td><td>TablesView</td><td>必要</td><td>テーブル一覧。Excelエクスポートボタン。</td></tr>
+  <tr><td>/tables/:name</td><td>TableDetailView</td><td>必要</td><td>データ一覧・CRUD・検索・ソート。</td></tr>
+  <tr><td>/tables/:name/edit/:id</td><td>TableRowEditView</td><td>必要</td><td>行編集フォーム。</td></tr>
+  <tr><td>/tables/:name/edit/:id/confirm</td><td>TableRowEditConfirmView</td><td>必要</td><td>編集確認画面。</td></tr>
+  <tr><td>/tables/:name/import</td><td>CsvImportView</td><td>必要</td><td>CSVインポート画面。</td></tr>
+  <tr><td>/users</td><td>UsersView</td><td>必要</td><td>ユーザー管理（ADMIN のみ表示）。</td></tr>
+  <tr><td>/masked-columns</td><td>MaskedColumnsView</td><td>必要</td><td>マスク設定（ADMIN のみ表示）。</td></tr>
+  <tr><td>/csv-bulk</td><td>CsvBulkView</td><td>必要</td><td>CSV一括入出力。</td></tr>
+</table>
+
+<h3>ナビゲーションガード</h3>
+<pre>// router/index.js
+router.beforeEach((to, from, next) => {
+  if (to.path !== '/login' && !isLoggedIn()) {
+    next('/login');
+  } else {
+    next();
+  }
+});</pre>
+
+<h2 id="api">API連携</h2>
+
+<h3>Axiosインスタンス（api/index.js）</h3>
+<pre>const api = axios.create({
+  baseURL: '/api'  // Vite proxy or Spring Boot 同一オリジン
+});
+
+// リクエストインターセプター: JWTを自動付与
+api.interceptors.request.use(config => {
+  const token = getToken();
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+// レスポンスインターセプター: 401 でログアウト
+api.interceptors.response.use(
+  res => res,
+  err => {
+    if (err.response?.status === 401) {
+      logout();
+      router.push('/login');
+    }
+    return Promise.reject(err);
+  }
+);</pre>
+
+<h3>開発時のProxy설정（vite.config.js）</h3>
+<pre>// 開発時: localhost:5173 → localhost:8080 へプロキシ
+server: {
+  proxy: {
+    '/api': 'http://localhost:8080'
+  }
+}</pre>
+
+<h2 id="views">主要ビューの詳細</h2>
+
+<h3>TableDetailView — メイン操作画面</h3>
+<table>
+  <tr><th>機能</th><th>実装</th></tr>
+  <tr><td>ページング</td><td>page・size をクエリパラメータでAPI送信。10/20/50/100件切替。</td></tr>
+  <tr><td>検索</td><td>キーワード入力 → search パラメータ送信。全カラム対象。</td></tr>
+  <tr><td>ソート</td><td>ヘッダークリック → sortCol・sortDir パラメータ送信。2回クリックで反転。</td></tr>
+  <tr><td>行追加</td><td>インラインフォーム表示 → POST /api/tables/{name}/rows</td></tr>
+  <tr><td>行編集</td><td>/tables/{name}/edit/{id} へ遷移</td></tr>
+  <tr><td>行削除</td><td>確認ダイアログ → DELETE /api/tables/{name}/rows/{id}</td></tr>
+  <tr><td>Excelエクスポート</td><td>GET /api/export/excel/{tableName} でファイルダウンロード</td></tr>
+  <tr><td>マスク適用</td><td>GET /api/masked-columns でマスク設定取得→カラム非表示</td></tr>
+  <tr><td>クロステーブルリンク</td><td>COLUMN_LINKS（utils/labels.js）定義に従い、値をリンクとして表示</td></tr>
+</table>
+
+<h3>TableRowEditView・TableRowEditConfirmView</h3>
+<div class="box">
+  <p><strong>フロー:</strong> 編集フォーム（TableRowEditView）→ 確認画面（TableRowEditConfirmView）→ PUT /api/tables/{name}/rows/{id}</p>
+  <p>確認画面では変更前・変更後の値を対比表示する。確定ボタンで実際のAPI呼び出しを行う。</p>
+</div>
+
+<h3>CsvBulkView — 一括入出力</h3>
+<table>
+  <tr><th>機能</th><th>実装</th></tr>
+  <tr><td>エクスポート</td><td>GET /api/export/all → blob でファイルダウンロード</td></tr>
+  <tr><td>インポート</td><td>ファイル選択 → POST /api/import/all （multipart）</td></tr>
+  <tr><td>結果表示</td><td>テーブルごとの inserted 件数・errors を一覧表示</td></tr>
+</table>
+
+<h2 id="utils">ユーティリティ詳細</h2>
+
+<h3>auth.js — 認証状態管理</h3>
+<table>
+  <tr><th>関数</th><th>説明</th></tr>
+  <tr><td>setToken(token)</td><td>localStorage に JWT を保存</td></tr>
+  <tr><td>getToken()</td><td>localStorage から JWT を取得</td></tr>
+  <tr><td>removeToken()</td><td>localStorage から JWT を削除</td></tr>
+  <tr><td>isLoggedIn()</td><td>トークンが存在するか確認</td></tr>
+  <tr><td>setUser(user)</td><td>ユーザー情報（username, role）を localStorage に保存</td></tr>
+  <tr><td>getUser()</td><td>ユーザー情報を取得</td></tr>
+  <tr><td>logout()</td><td>token・user を localStorage から削除</td></tr>
+</table>
+
+<h3>labels.js — UI定義</h3>
+<table>
+  <tr><th>定数</th><th>内容</th></tr>
+  <tr><td>TABLE_LABELS</td><td>テーブル名→日本語名マッピング（例: projects → "案件管理"）</td></tr>
+  <tr><td>COLUMN_LABELS</td><td>カラム名→日本語名マッピング（例: anken_name → "案件名"）</td></tr>
+  <tr><td>FIELD_DEFS</td><td>カラム名→入力タイプ定義（date / select / text）</td></tr>
+  <tr><td>COLUMN_LINKS</td><td>クロステーブルリンク定義（例: REQUIREMENTS.ANKEN_NAME → /tables/projects）</td></tr>
+</table>
+
+<h2 id="build">ビルド・デプロイ</h2>
+
+<h3>本番ビルド手順</h3>
+<pre># フロントエンドビルド
+cd frontend
+npm ci
+npm run build
+# → dist/ に静的ファイルが生成される
+
+# dist/ を Spring Boot の静的リソースにコピー
+cp -r dist/* ../db-management/src/main/resources/static/
+
+# Dockerfile のマルチステージビルドでは自動化されている</pre>
+
+<h3>開発サーバー起動</h3>
+<pre># フロントエンド開発サーバー（HMR有効）
+cd frontend
+npm run dev
+# → http://localhost:5173 で起動
+# → /api/* は http://localhost:8080 へプロキシ
+
+# バックエンド開発起動（別ターミナル）
+cd db-management
+./mvnw spring-boot:run</pre>
+
+<h3>本番環境では</h3>
+<div class="box">
+  <p>docker compose up -d --build を実行するだけでOK。Dockerfileのマルチステージビルドが:</p>
+  <ol style="font-size:14px;line-height:1.8">
+    <li>フロントエンドをビルド（npm run build）</li>
+    <li>dist/ を Spring Boot の static/ にコピー</li>
+    <li>Spring Boot をビルド（mvnw package）</li>
+    <li>実行イメージを作成</li>
+  </ol>
+  <p>ユーザーは http://[サーバーIP]:18080 にアクセスするだけで利用可能。</p>
+</div>
+
+</main>
+</body>
+</html>
