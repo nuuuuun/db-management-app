@@ -107,6 +107,7 @@
 
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('start')">🟢 起動する</button>
+    <button class="tab-btn" onclick="switchTab('offline')">🏢 社内ネットワーク起動</button>
     <button class="tab-btn" onclick="switchTab('stop')">🔴 停止する</button>
     <button class="tab-btn" onclick="switchTab('use')">💻 使い方</button>
     <button class="tab-btn" onclick="switchTab('faq')">❓ 困ったとき</button>
@@ -299,6 +300,172 @@
     </div>
 
   </div><!-- /tab-start -->
+
+  <!-- ===== 社内ネットワーク起動 ===== -->
+  <div class="tab-content" id="tab-offline">
+    <div class="section-title">
+      <span class="icon">🏢</span> 社内ネットワーク（プロキシ制限あり）での起動
+    </div>
+
+    <div class="box-info">
+      💡 <strong>この方法について</strong><br><br>
+      社内ネットワークはプロキシ制限でMavenやnpmが使えないことがあります。<br>
+      事前にインターネット環境でJARファイルをビルドしておき、社内PCでは <code>java -jar</code> だけで起動する方法です。<br><br>
+      必要なのは <strong>Java 21</strong> と <strong>PostgreSQL</strong> だけ。MavenもNode.jsも不要です。
+    </div>
+
+    <div class="box-warn">
+      ⚠️ <strong>準備はインターネットが使える環境で行ってください（1回だけ）</strong>
+    </div>
+
+    <div class="divider"></div>
+    <h3 style="margin-bottom:16px;">① インターネット環境での準備（1回だけ）</h3>
+
+    <div class="step-card">
+      <div class="step-title"><span class="step-num">1</span>PowerShell を開いてフォルダに移動する</div>
+      <div class="step-body">
+        <p><kbd>Windowsキー</kbd> →「PowerShell」と入力 → <strong>「Windows PowerShell」</strong> を右クリック →「管理者として実行」</p>
+        <div class="cmd-box">
+          cd D:\プログラミング\git\db-management-app
+          <button class="copy-btn" onclick="copyText('cd D:\\プログラミング\\git\\db-management-app')">コピー</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card green">
+      <div class="step-title"><span class="step-num green">2</span>JARビルドスクリプトを実行する</div>
+      <div class="step-body">
+        <p>以下を PowerShell に貼り付けて <kbd>Enter</kbd> を押してください：</p>
+        <div class="cmd-box">
+          .\scripts\build-jar.ps1
+          <button class="copy-btn" onclick="copyText('.\\scripts\\build-jar.ps1')">コピー</button>
+        </div>
+        <p>フロントエンドのビルド → Spring Boot の JAR 生成の順に自動で処理されます。</p>
+        <p><strong>「Build complete!」</strong> と表示されれば完了です（約3〜5分）。</p>
+        <div class="box-ok">✅ <code>db-management\target\</code> フォルダに <code>*.jar</code> ファイルが作成されます。</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-title"><span class="step-num">3</span>リポジトリごとコピーする</div>
+      <div class="step-body">
+        <p><code>db-management-app</code> フォルダ全体（<strong><code>target</code> フォルダを含む</strong>）を社内PCにコピーしてください。</p>
+        <div class="box-warn">⚠️ <code>target</code> フォルダの中にJARが入っています。このフォルダを忘れずにコピーしてください。</div>
+        <p>コピー方法の例：USBドライブ、社内ファイルサーバー経由、など</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <h3 style="margin-bottom:16px;">② 社内PC（プロキシ制限あり）での起動</h3>
+
+    <div class="box-info">
+      📋 <strong>前提条件</strong>（社内PCに必要なもの）<br><br>
+      <ul style="margin-left:1.2em; margin-top:8px; line-height:2;">
+        <li><strong>PostgreSQL 14以上</strong>（サービスが起動していること）</li>
+        <li><strong>JDK 21</strong>（<code>java -version</code> で確認）</li>
+        <li>Maven・Node.js・Dockerは <strong>不要</strong></li>
+      </ul>
+    </div>
+
+    <div class="step-card">
+      <div class="step-title"><span class="step-num">1</span>PowerShell を開く</div>
+      <div class="step-body">
+        <p><kbd>Windowsキー</kbd> →「PowerShell」と入力 → <strong>「Windows PowerShell」</strong> を右クリック →「管理者として実行」</p>
+        <div class="box-ng">
+          ❌ <strong>PS1ファイルをダブルクリックしないでください！</strong><br>
+          ダブルクリックするとメモ帳でスクリプトの中身が表示されるだけで、実行されません。<br>
+          必ず PowerShell ウィンドウからコマンドで実行してください。
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-title"><span class="step-num">2</span>アプリのフォルダに移動する</div>
+      <div class="step-body">
+        <p>コピーしたフォルダのパスに合わせて入力してください（例）：</p>
+        <div class="cmd-box">
+          cd D:\プログラミング\git\db-management-app
+          <button class="copy-btn" onclick="copyText('cd D:\\プログラミング\\git\\db-management-app')">コピー</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card green">
+      <div class="step-title"><span class="step-num green">3</span>オフライン起動スクリプトを実行する</div>
+      <div class="step-body">
+        <div class="cmd-box">
+          .\scripts\start-jar.ps1
+          <button class="copy-btn" onclick="copyText('.\\scripts\\start-jar.ps1')">コピー</button>
+        </div>
+        <p>以下のような表示が順に出ます：</p>
+        <div class="cmd-box" style="color:#a0aec0; font-size:13px;">
+          <span style="color:#68d391;">[1/3] Locating JAR...</span><br>
+          &nbsp;&nbsp;JAR: db-management-0.0.1-SNAPSHOT.jar<br>
+          <span style="color:#68d391;">[2/3] Checking PostgreSQL...</span><br>
+          &nbsp;&nbsp;PostgreSQL OK<br>
+          <span style="color:#68d391;">[3/3] Starting application...</span><br>
+          &nbsp;&nbsp;URL: http://localhost:8080<br>
+          ...<br>
+          Started DbManagementApplication in X.XXX seconds
+        </div>
+        <div class="box-ok">✅ 「Started DbManagementApplication」が出たら起動完了です！</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-title"><span class="step-num">4</span>ブラウザでアクセスする</div>
+      <div class="step-body">
+        <div class="cmd-box">
+          http://localhost:8080
+          <button class="copy-btn" onclick="copyText('http://localhost:8080')">コピー</button>
+        </div>
+        <div class="box-ok">✅ ログイン画面が出た → 起動成功！</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 style="margin-bottom:12px;">トラブルシューティング</h3>
+
+    <div class="faq">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        スクリプトの中身（コード）が表示されてしまった
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-a">
+        PS1ファイルをダブルクリックすると、メモ帳や VS Code でファイルが開いてコードが見えてしまいます。<br><br>
+        <strong>正しい実行方法：</strong><br>
+        1. PowerShell ウィンドウを開く（スタートメニュー → 「Windows PowerShell」 → 右クリック → 管理者として実行）<br>
+        2. <code>cd [アプリのフォルダパス]</code> で移動する<br>
+        3. <code>.\scripts\start-jar.ps1</code> と入力して <kbd>Enter</kbd> を押す
+      </div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        「No JAR found」と表示された
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-a">
+        インターネット環境で <code>.\scripts\build-jar.ps1</code> を実行してJARを作成していないか、<br>
+        <code>db-management\target\</code> フォルダがコピーされていない可能性があります。<br><br>
+        確認方法：エクスプローラーで <code>db-management → target</code> フォルダを開き、<code>*.jar</code> ファイルがあるか確認してください。
+      </div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        「スクリプトの実行が無効になっています」と出た
+        <span class="faq-icon">▼</span>
+      </div>
+      <div class="faq-a">
+        PowerShell のスクリプト実行ポリシーの制限です。<strong>管理者として実行した PowerShell</strong> で以下を1回実行してから、もう一度試してください：<br><br>
+        <code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code><br><br>
+        「変更しますか？」と聞かれたら <kbd>Y</kbd> を押してください。
+      </div>
+    </div>
+
+  </div><!-- /tab-offline -->
 
   <!-- ===== 停止する ===== -->
   <div class="tab-content" id="tab-stop">
