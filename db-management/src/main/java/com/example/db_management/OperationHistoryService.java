@@ -1,5 +1,7 @@
 package com.example.db_management;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import java.time.Instant;
 
 @Service
 public class OperationHistoryService {
+
+    private static final Logger log = LoggerFactory.getLogger(OperationHistoryService.class);
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -26,7 +30,8 @@ public class OperationHistoryService {
                 beforeValue,
                 afterValue
             );
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.error("操作履歴の記録に失敗しました: operator={}, table={}, operation={}", operator, targetTable, operation, e);
         }
     }
 }

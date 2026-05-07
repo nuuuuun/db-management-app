@@ -11,7 +11,12 @@
       <div class="form-section">
         <div v-for="col in editableColumns" :key="col" class="form-field">
           <label>{{ colLabel(col) }}</label>
-          <input v-model="editedRow[col]" :placeholder="colLabel(col)" />
+          <select v-if="fieldDef(col).type === 'select'" v-model="editedRow[col]">
+            <option value="">-- 選択 --</option>
+            <option v-for="opt in fieldDef(col).options" :key="opt" :value="opt">{{ opt }}</option>
+          </select>
+          <input v-else-if="fieldDef(col).type === 'date'" type="date" v-model="editedRow[col]" />
+          <input v-else v-model="editedRow[col]" :placeholder="colLabel(col)" />
         </div>
       </div>
       <div class="form-actions">
@@ -23,7 +28,7 @@
 </template>
 
 <script>
-import { tableLabel, colLabel } from '../utils/labels'
+import { tableLabel, colLabel, fieldDef } from '../utils/labels'
 
 export default {
   name: 'TableRowEditView',
@@ -50,8 +55,7 @@ export default {
   },
   methods: {
     colLabel(col) { return colLabel(this.tableName, col) },
-  },
-  methods: {
+    fieldDef(col) { return fieldDef(this.tableName, col) },
     goConfirm() {
       sessionStorage.setItem('editConfirmData', JSON.stringify({
         originalRow: this.originalRow,

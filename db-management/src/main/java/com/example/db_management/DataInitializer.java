@@ -1,6 +1,7 @@
 package com.example.db_management;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -14,12 +15,15 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Value("${app.init.password:password123}")
+    private String initPassword;
+
     @Override
     public void run(String... args) {
         if (userRepository.count() == 0) {
-            userRepository.save(build("admin",  "admin@example.com",  "ADMIN",  "password123"));
-            userRepository.save(build("editor", "editor@example.com", "EDITOR", "password123"));
-            userRepository.save(build("viewer", "viewer@example.com", "VIEWER", "password123"));
+            userRepository.save(build("admin",  "admin@example.com",  "ADMIN",  initPassword));
+            userRepository.save(build("editor", "editor@example.com", "EDITOR", initPassword));
+            userRepository.save(build("viewer", "viewer@example.com", "VIEWER", initPassword));
         }
     }
 

@@ -28,6 +28,7 @@ const handleLogout = () => {
         <template v-if="loggedIn">
           <RouterLink to="/tables">テーブル管理</RouterLink>
           <RouterLink v-if="user?.role !== 'VIEWER'" to="/csv-bulk">CSV管理</RouterLink>
+          <RouterLink v-if="user?.role === 'ADMIN'" to="/users">アカウント管理</RouterLink>
           <span class="user-info">{{ user?.username }}（{{ user?.role }}）</span>
           <button class="btn-logout" @click="handleLogout">ログアウト</button>
         </template>

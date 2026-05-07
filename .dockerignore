@@ -1,0 +1,12 @@
+frontend/node_modules
+frontend/dist
+frontend/.vite
+db-management/target
+db-management/.settings
+db-management/.classpath
+db-management/.project
+**/.DS_Store
+**/*.log
+.git
+.gitignore
+*.md

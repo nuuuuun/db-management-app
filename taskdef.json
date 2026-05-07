@@ -1,0 +1,51 @@
+{
+  "family": "db-management",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::<AWS_ACCOUNT_ID>:role/ECSTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "db-management",
+      "image": "<AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-1.amazonaws.com/db-management:latest",
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DB_URL",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:<AWS_ACCOUNT_ID>:secret:db-management/prod:DB_URL::"
+        },
+        {
+          "name": "DB_USERNAME",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:<AWS_ACCOUNT_ID>:secret:db-management/prod:DB_USERNAME::"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:<AWS_ACCOUNT_ID>:secret:db-management/prod:DB_PASSWORD::"
+        },
+        {
+          "name": "JWT_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:<AWS_ACCOUNT_ID>:secret:db-management/prod:JWT_SECRET::"
+        },
+        {
+          "name": "INIT_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:<AWS_ACCOUNT_ID>:secret:db-management/prod:INIT_PASSWORD::"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/db-management",
+          "awslogs-region": "ap-northeast-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "essential": true
+    }
+  ]
+}

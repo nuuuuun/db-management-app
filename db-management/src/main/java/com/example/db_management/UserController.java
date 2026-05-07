@@ -1,18 +1,20 @@
 package com.example.db_management;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
@@ -22,22 +24,39 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) {
-        if ("VIEWER".equals(SecurityUtils.getCurrentRole())) {
-            return ResponseEntity.status(403).build();
+        if (!"ADMIN".equals(SecurityUtils.getCurrentRole())) {
+            return ResponseEntity.status(403).body("権限がありません");
         }
+        if (user.getUsername() == null || user.getUsername().isBlank()) {
+            return ResponseEntity.badRequest().body("ユーザー名は必須です");
+        }
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            return ResponseEntity.status(409).body("ユーザー名「" + user.getUsername() + "」は既に使用されています");
+        }
+        if (user.getPassword() == null || user.getPassword().isBlank()) {
+            return ResponseEntity.badRequest().body("パスワードは必須です");
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return ResponseEntity.ok(userRepository.save(user));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
-        if ("VIEWER".equals(SecurityUtils.getCurrentRole())) {
-            return ResponseEntity.status(403).build();
+        if (!"ADMIN".equals(SecurityUtils.getCurrentRole())) {
+            return ResponseEntity.status(403).body("権限がありません");
         }
         return userRepository.findById(id)
             .map(user -> {
                 user.setUsername(userDetails.getUsername());
                 user.setEmail(userDetails.getEmail());
-                user.setRole(userDetails.getRole());
+                // ロール変更はADMINのみ許可（自分自身のロール降格は除く）
+                if (userDetails.getRole() != null) {
+                    user.setRole(userDetails.getRole());
+                }
+                // パスワードが送られてきた場合のみ更新（空の場合は変更しない）
+                if (userDetails.getPassword() != null && !userDetails.getPassword().isBlank()) {
+                    user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+                }
                 return ResponseEntity.ok(userRepository.save(user));
             })
             .orElse(ResponseEntity.notFound().build());

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DB管理アプリ 設計書</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif; background: #f4f6f9; color: #2d3748; line-height: 1.6; }
+
+    /* サイドナビ */
+    nav { position: fixed; top: 0; left: 0; width: 220px; height: 100vh; background: #1a202c; color: #e2e8f0; padding: 24px 0; overflow-y: auto; z-index: 100; }
+    nav h2 { font-size: 13px; font-weight: 700; letter-spacing: 1px; color: #718096; padding: 0 20px 12px; border-bottom: 1px solid #2d3748; margin-bottom: 8px; }
+    nav a { display: block; padding: 8px 20px; font-size: 13px; color: #a0aec0; text-decoration: none; transition: all .2s; }
+    nav a:hover, nav a.active { background: #2d3748; color: #fff; border-left: 3px solid #4299e1; }
+    nav .section-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: #4a5568; padding: 16px 20px 4px; text-transform: uppercase; }
+
+    /* メインコンテンツ */
+    main { margin-left: 220px; padding: 40px; max-width: 1100px; }
+    h1 { font-size: 28px; font-weight: 700; color: #1a202c; margin-bottom: 8px; }
+    .subtitle { color: #718096; font-size: 14px; margin-bottom: 40px; }
+    h2 { font-size: 20px; font-weight: 700; color: #2d3748; margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #4299e1; }
+    h3 { font-size: 15px; font-weight: 700; color: #2d3748; margin: 24px 0 10px; }
+    p { font-size: 14px; color: #4a5568; margin-bottom: 12px; }
+
+    /* カード */
+    .card { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.1); padding: 24px; margin-bottom: 20px; }
+
+    /* バッジ */
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .badge-blue   { background: #ebf8ff; color: #2b6cb0; }
+    .badge-green  { background: #f0fff4; color: #276749; }
+    .badge-yellow { background: #fffff0; color: #744210; }
+    .badge-red    { background: #fff5f5; color: #9b2c2c; }
+    .badge-gray   { background: #f7fafc; color: #4a5568; border: 1px solid #e2e8f0; }
+    .badge-purple { background: #faf5ff; color: #553c9a; }
+
+    /* テーブル */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { background: #2d3748; color: #fff; padding: 10px 14px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: .5px; }
+    td { padding: 9px 14px; border-bottom: 1px solid #e2e8f0; color: #4a5568; }
+    tr:nth-child(even) td { background: #f7fafc; }
+    tr:hover td { background: #ebf8ff; }
+
+    /* コード */
+    code { font-family: 'Consolas', 'Courier New', monospace; font-size: 13px; background: #2d3748; color: #e2e8f0; padding: 2px 7px; border-radius: 4px; }
+    pre { background: #1a202c; color: #e2e8f0; padding: 20px; border-radius: 8px; font-size: 13px; overflow-x: auto; margin: 12px 0; line-height: 1.8; font-family: 'Consolas', 'Courier New', monospace; }
+    pre .comment { color: #718096; }
+    pre .key { color: #f6ad55; }
+    pre .val { color: #68d391; }
+    pre .cmd { color: #63b3ed; }
+
+    /* アーキテクチャ図 */
+    .arch { display: flex; align-items: center; gap: 0; flex-wrap: wrap; margin: 16px 0; }
+    .arch-box { background: #fff; border: 2px solid #4299e1; border-radius: 8px; padding: 12px 20px; text-align: center; min-width: 130px; }
+    .arch-box .label { font-size: 11px; color: #718096; margin-bottom: 4px; }
+    .arch-box .name { font-size: 14px; font-weight: 700; color: #2b6cb0; }
+    .arch-box .detail { font-size: 11px; color: #a0aec0; margin-top: 2px; }
+    .arch-box.db { border-color: #48bb78; }
+    .arch-box.db .name { color: #276749; }
+    .arch-box.client { border-color: #ed8936; }
+    .arch-box.client .name { color: #744210; }
+    .arch-arrow { font-size: 22px; color: #a0aec0; padding: 0 8px; }
+
+    /* メソッドバッジ */
+    .method { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; font-family: monospace; min-width: 52px; text-align: center; }
+    .get    { background: #ebf8ff; color: #2b6cb0; border: 1px solid #bee3f8; }
+    .post   { background: #f0fff4; color: #276749; border: 1px solid #c6f6d5; }
+    .put    { background: #fffff0; color: #744210; border: 1px solid #fefcbf; }
+    .delete { background: #fff5f5; color: #9b2c2c; border: 1px solid #fed7d7; }
+
+    /* 権限マトリクス */
+    .matrix-ok   { color: #276749; font-weight: 700; }
+    .matrix-no   { color: #9b2c2c; }
+    .matrix-part { color: #744210; font-weight: 600; }
+
+    /* ステップ */
+    .steps { counter-reset: step; }
+    .step { position: relative; padding: 12px 16px 12px 52px; margin-bottom: 8px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .step::before { counter-increment: step; content: counter(step); position: absolute; left: 14px; top: 12px; width: 24px; height: 24px; background: #4299e1; color: #fff; border-radius: 50%; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; line-height: 1; }
+    .step p { margin: 0; font-size: 14px; }
+
+    /* グリッド */
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 768px) { .grid2 { grid-template-columns: 1fr; } main { margin-left: 0; } nav { display: none; } }
+
+    /* 注意 */
+    .note { background: #fffff0; border-left: 4px solid #f6ad55; padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 13px; color: #744210; margin: 12px 0; }
+    .info { background: #ebf8ff; border-left: 4px solid #4299e1; padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 13px; color: #2b6cb0; margin: 12px 0; }
+
+    /* セクション */
+    section { scroll-margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <h2>DB管理アプリ</h2>
+  <div class="section-label">概要</div>
+  <a href="#overview">システム概要</a>
+  <a href="#architecture">アーキテクチャ</a>
+  <div class="section-label">設計</div>
+  <a href="#tech">技術スタック</a>
+  <a href="#auth">認証・権限</a>
+  <a href="#db">データベース</a>
+  <a href="#api">API一覧</a>
+  <div class="section-label">運用</div>
+  <a href="#startup">起動方法</a>
+  <a href="#env">環境変数</a>
+  <a href="#files">ファイル構成</a>
+</nav>
+
+<main>
+  <h1>DB管理アプリ 設計書</h1>
+  <p class="subtitle">作成日: 2026-05-04　　バージョン: 1.0　　対象環境: ローカル / 社内LAN</p>
+
+  <!-- ===== 概要 ===== -->
+  <section id="overview">
+    <h2>システム概要</h2>
+    <div class="card">
+      <p>業務用DBの内容をブラウザ上で閲覧・編集できるWebアプリ。社内・社外のユーザーが権限レベルに応じてCRUD操作・CSVインポート・Excelエクスポートを行える。</p>
+      <div class="grid2" style="margin-top:16px;">
+        <div>
+          <h3>対象ユーザー</h3>
+          <table>
+            <tr><th>ロール</th><th>人数</th><th>種別</th></tr>
+            <tr><td><span class="badge badge-red">Admin</span></td><td>少数</td><td>社内管理者</td></tr>
+            <tr><td><span class="badge badge-yellow">Editor</span></td><td>数人</td><td>社内担当者</td></tr>
+            <tr><td><span class="badge badge-blue">Viewer</span></td><td>残り</td><td>社外・閲覧専用</td></tr>
+          </table>
+        </div>
+        <div>
+          <h3>主な機能</h3>
+          <table>
+            <tr><th>機能</th><th>説明</th></tr>
+            <tr><td>テーブル閲覧</td><td>全テーブルの一覧・検索・ソート</td></tr>
+            <tr><td>CRUD</td><td>行の追加・編集・削除</td></tr>
+            <tr><td>CSVインポート</td><td>テーブル単位の一括登録</td></tr>
+            <tr><td>Excelエクスポート</td><td>テーブル・全件のxlsx出力</td></tr>
+            <tr><td>カラムマスキング</td><td>権限別にカラムを非表示</td></tr>
+            <tr><td>操作履歴</td><td>全変更操作をDBに記録</td></tr>
+            <tr><td>ユーザー管理</td><td>Adminによるアカウント管理</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== アーキテクチャ ===== -->
+  <section id="architecture">
+    <h2>アーキテクチャ</h2>
+    <div class="card">
+      <h3>システム構成</h3>
+      <div class="arch">
+        <div class="arch-box client">
+          <div class="label">クライアント</div>
+          <div class="name">ブラウザ</div>
+          <div class="detail">社内LAN</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box">
+          <div class="label">フロントエンド</div>
+          <div class="name">Vue.js SPA</div>
+          <div class="detail">Spring Boot static に同梱</div>
+        </div>
+        <div class="arch-arrow">↕ REST API</div>
+        <div class="arch-box">
+          <div class="label">バックエンド</div>
+          <div class="name">Spring Boot</div>
+          <div class="detail">port: 8080</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box db">
+          <div class="label">データベース</div>
+          <div class="name">PostgreSQL</div>
+          <div class="detail">port: 5432</div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:24px;">Dockerコンテナ構成</h3>
+      <pre><span class="comment"># docker-compose.yml による構成</span>
+
+  ┌─────────────────────────────────────┐
+  │  Docker Network                      │
+  │                                      │
+  │  ┌─────────────┐  ┌───────────────┐ │
+  │  │  app        │  │  db           │ │
+  │  │  :8080      │→ │  PostgreSQL   │ │
+  │  │  Spring Boot│  │  :5432        │ │
+  │  │  + Vue.js   │  │  dbmanagement │ │
+  │  └─────────────┘  └───────────────┘ │
+  │         ↑                           │
+  └─────────┼───────────────────────────┘
+            │ http://[サーバーIP]:18080
+        ブラウザ（社内LAN）</pre>
+
+      <div class="info">Vue.jsのビルド成果物はSpring Bootの <code>src/main/resources/static/</code> に同梱されており、別途フロントサーバーは不要。</div>
+    </div>
+  </section>
+
+  <!-- ===== 技術スタック ===== -->
+  <section id="tech">
+    <h2>技術スタック</h2>
+    <div class="card">
+      <table>
+        <tr><th>レイヤー</th><th>技術</th><th>バージョン</th><th>役割</th></tr>
+        <tr><td>フロントエンド</td><td><span class="badge badge-green">Vue.js</span></td><td>3.x</td><td>SPA・画面描画</td></tr>
+        <tr><td></td><td>Vite</td><td>最新</td><td>ビルドツール</td></tr>
+        <tr><td></td><td>axios</td><td>最新</td><td>REST API呼び出し</td></tr>
+        <tr><td>バックエンド</td><td><span class="badge badge-red">Spring Boot</span></td><td>3.x</td><td>REST APIサーバー</td></tr>
+        <tr><td></td><td>Spring Security</td><td>-</td><td>認証・認可</td></tr>
+        <tr><td></td><td>Spring JDBC / JPA</td><td>-</td><td>DB操作</td></tr>
+        <tr><td></td><td>Apache POI</td><td>-</td><td>Excelエクスポート</td></tr>
+        <tr><td></td><td>Apache Commons CSV</td><td>-</td><td>CSVインポート</td></tr>
+        <tr><td>データベース</td><td><span class="badge badge-blue">PostgreSQL</span></td><td>16</td><td>メインDB</td></tr>
+        <tr><td>インフラ</td><td><span class="badge badge-purple">Docker</span></td><td>最新</td><td>コンテナ化</td></tr>
+        <tr><td></td><td>Docker Compose</td><td>最新</td><td>ローカル・LAN起動</td></tr>
+        <tr><td>言語</td><td>Java</td><td>21</td><td>バックエンド</td></tr>
+        <tr><td></td><td>JavaScript</td><td>ES2022</td><td>フロントエンド</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== 認証・権限 ===== -->
+  <section id="auth">
+    <h2>認証・権限</h2>
+    <div class="card">
+      <h3>認証方式</h3>
+      <p>JWT（JSON Web Token）によるステートレス認証。ログイン時にトークンを発行し、以降のリクエストは <code>Authorization: Bearer {token}</code> ヘッダーで認証する。パスワードはBCryptでハッシュ化。</p>
+
+      <h3>ロール定義と権限マトリクス</h3>
+      <table>
+        <tr>
+          <th>機能</th>
+          <th><span class="badge badge-red">ADMIN</span></th>
+          <th><span class="badge badge-yellow">EDITOR</span></th>
+          <th><span class="badge badge-blue">VIEWER</span></th>
+        </tr>
+        <tr><td>テーブル閲覧</td><td class="matrix-ok">✓ 全カラム</td><td class="matrix-part">△ マスク対象除く</td><td class="matrix-part">△ マスク対象除く</td></tr>
+        <tr><td>行の追加</td><td class="matrix-ok">✓</td><td class="matrix-ok">✓</td><td class="matrix-no">✗</td></tr>
+        <tr><td>行の編集</td><td class="matrix-ok">✓</td><td class="matrix-ok">✓</td><td class="matrix-no">✗</td></tr>
+        <tr><td>行の削除</td><td class="matrix-ok">✓</td><td class="matrix-no">✗</td><td class="matrix-no">✗</td></tr>
+        <tr><td>CSVインポート</td><td class="matrix-ok">✓</td><td class="matrix-ok">✓</td><td class="matrix-no">✗</td></tr>
+        <tr><td>Excelエクスポート</td><td class="matrix-ok">✓ 全カラム</td><td class="matrix-part">△ マスク対象除く</td><td class="matrix-part">△ マスク対象除く</td></tr>
+        <tr><td>ユーザー管理</td><td class="matrix-ok">✓ 全操作</td><td class="matrix-part">△ 追加・編集のみ</td><td class="matrix-no">✗</td></tr>
+        <tr><td>カラムマスキング設定</td><td class="matrix-ok">✓</td><td class="matrix-no">✗</td><td class="matrix-no">✗</td></tr>
+        <tr><td>操作履歴参照</td><td class="matrix-ok">✓</td><td class="matrix-part">△</td><td class="matrix-part">△</td></tr>
+      </table>
+
+      <h3 style="margin-top:20px;">カラムマスキング</h3>
+      <p>テーブル × カラム × ロールの組み合わせで非表示を設定。APIレスポンス生成時にJSONから除外して返す（<code>*</code>置換ではなくカラム自体を削除）。</p>
+      <pre><span class="comment">-- masked_columns テーブル</span>
+table_name  : "PROJECTS"
+column_name : "SALARY"
+role        : "VIEWER"   <span class="comment">-- or "EDITOR"</span></pre>
+
+      <h3>初期ユーザー</h3>
+      <table>
+        <tr><th>ユーザー名</th><th>ロール</th><th>初期パスワード</th></tr>
+        <tr><td><code>admin</code></td><td><span class="badge badge-red">ADMIN</span></td><td>環境変数 <code>INIT_PASSWORD</code></td></tr>
+        <tr><td><code>editor</code></td><td><span class="badge badge-yellow">EDITOR</span></td><td>環境変数 <code>INIT_PASSWORD</code></td></tr>
+        <tr><td><code>viewer</code></td><td><span class="badge badge-blue">VIEWER</span></td><td>環境変数 <code>INIT_PASSWORD</code></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== データベース ===== -->
+  <section id="db">
+    <h2>データベース</h2>
+    <div class="card">
+      <h3>テーブル一覧</h3>
+      <table>
+        <tr><th>テーブル名</th><th>日本語名</th><th>主な用途</th></tr>
+        <tr><td><code>users</code></td><td>ユーザー</td><td>ログインアカウント・ロール管理</td></tr>
+        <tr><td><code>projects</code></td><td>案件管理</td><td>案件ID・名称・工程・ステータス</td></tr>
+        <tr><td><code>requirements</code></td><td>要求管理</td><td>要求ID・仕様・背景・Jiraリンク</td></tr>
+        <tr><td><code>specifications</code></td><td>要件管理</td><td>要件ID・要件概要・ステータス</td></tr>
+        <tr><td><code>applications</code></td><td>アプリ管理</td><td>アプリID・バージョン情報</td></tr>
+        <tr><td><code>environments</code></td><td>環境管理</td><td>環境ID・デプロイ日・アプリ紐付け</td></tr>
+        <tr><td><code>masked_columns</code></td><td>マスキング設定</td><td>カラム非表示設定（ロール別）</td></tr>
+        <tr><td><code>operation_history</code></td><td>操作履歴</td><td>全CRUD操作の変更前後を記録</td></tr>
+      </table>
+
+      <h3 style="margin-top:20px;">テーブル表示順</h3>
+      <p>アプリ上では以下の順で表示される（それ以外は後ろに追加）：</p>
+      <pre>PROJECTS → REQUIREMENTS → SPECIFICATIONS → APPLICATIONS → ENVIRONMENTS</pre>
+
+      <h3>スキーマ初期化</h3>
+      <p>アプリ起動時に <code>schema.sql</code> と <code>data.sql</code> が自動実行される（<code>IF NOT EXISTS</code> 付きのため冪等）。</p>
+    </div>
+  </section>
+
+  <!-- ===== API一覧 ===== -->
+  <section id="api">
+    <h2>API一覧</h2>
+    <div class="card">
+      <h3>認証</h3>
+      <table>
+        <tr><th>メソッド</th><th>パス</th><th>説明</th><th>認証</th></tr>
+        <tr>
+          <td><span class="method post">POST</span></td>
+          <td><code>/api/auth/login</code></td>
+          <td>ログイン → JWTトークン返却</td>
+          <td>不要</td>
+        </tr>
+      </table>
+
+      <h3 style="margin-top:20px;">テーブル操作</h3>
+      <table>
+        <tr><th>メソッド</th><th>パス</th><th>説明</th><th>権限</th></tr>
+        <tr><td><span class="method get">GET</span></td><td><code>/api/tables</code></td><td>テーブル名一覧取得</td><td>全ロール</td></tr>
+        <tr><td><span class="method get">GET</span></td><td><code>/api/tables/{name}</code></td><td>レコード一覧（ページング・検索・ソート）</td><td>全ロール</td></tr>
+        <tr><td><span class="method get">GET</span></td><td><code>/api/tables/{name}/columns</code></td><td>カラム名一覧取得</td><td>全ロール</td></tr>
+        <tr><td><span class="method post">POST</span></td><td><code>/api/tables/{name}/rows</code></td><td>行追加</td><td>ADMIN・EDITOR</td></tr>
+        <tr><td><span class="method put">PUT</span></td><td><code>/api/tables/{name}/rows/{id}</code></td><td>行更新</td><td>ADMIN・EDITOR</td></tr>
+        <tr><td><span class="method delete">DEL</span></td><td><code>/api/tables/{name}/rows/{id}</code></td><td>行削除</td><td>ADMIN のみ</td></tr>
+      </table>
+      <div class="note">GET /api/tables/{name} のクエリパラメータ: <code>page</code>, <code>size</code>（最大100）, <code>search</code>, <code>filterCol</code>, <code>sortCol</code>, <code>sortDir</code></div>
+
+      <h3 style="margin-top:20px;">ユーザー管理</h3>
+      <table>
+        <tr><th>メソッド</th><th>パス</th><th>説明</th><th>権限</th></tr>
+        <tr><td><span class="method get">GET</span></td><td><code>/api/users</code></td><td>ユーザー一覧</td><td>全ロール</td></tr>
+        <tr><td><span class="method post">POST</span></td><td><code>/api/users</code></td><td>ユーザー追加</td><td>ADMIN・EDITOR</td></tr>
+        <tr><td><span class="method put">PUT</span></td><td><code>/api/users/{id}</code></td><td>ユーザー編集</td><td>ADMIN・EDITOR</td></tr>
+        <tr><td><span class="method delete">DEL</span></td><td><code>/api/users/{id}</code></td><td>ユーザー削除</td><td>ADMIN のみ</td></tr>
+      </table>
+
+      <h3 style="margin-top:20px;">インポート・エクスポート</h3>
+      <table>
+        <tr><th>メソッド</th><th>パス</th><th>説明</th><th>権限</th></tr>
+        <tr><td><span class="method post">POST</span></td><td><code>/api/import/{tableName}</code></td><td>CSVインポート（mode: append / overwrite）</td><td>ADMIN・EDITOR</td></tr>
+        <tr><td><span class="method get">GET</span></td><td><code>/api/export/excel/{tableName}</code></td><td>テーブル単位でExcelエクスポート</td><td>全ロール</td></tr>
+        <tr><td><span class="method get">GET</span></td><td><code>/api/export/excel/all</code></td><td>全テーブルを1ファイルにExcelエクスポート</td><td>全ロール</td></tr>
+      </table>
+
+      <h3 style="margin-top:20px;">カラムマスキング設定</h3>
+      <table>
+        <tr><th>メソッド</th><th>パス</th><th>説明</th><th>権限</th></tr>
+        <tr><td><span class="method get">GET</span></td><td><code>/api/masked-columns</code></td><td>マスキング設定一覧</td><td>ADMIN</td></tr>
+        <tr><td><span class="method post">POST</span></td><td><code>/api/masked-columns</code></td><td>マスキング設定追加</td><td>ADMIN</td></tr>
+        <tr><td><span class="method delete">DEL</span></td><td><code>/api/masked-columns/{id}</code></td><td>マスキング設定削除</td><td>ADMIN</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== 起動方法 ===== -->
+  <section id="startup">
+    <h2>起動方法</h2>
+    <div class="card">
+      <h3>前提条件</h3>
+      <table>
+        <tr><th>ソフトウェア</th><th>バージョン</th><th>確認方法</th></tr>
+        <tr><td>Docker Desktop</td><td>最新</td><td><code>docker --version</code></td></tr>
+        <tr><td>Git</td><td>任意</td><td><code>git --version</code></td></tr>
+      </table>
+
+      <h3 style="margin-top:20px;">初回起動</h3>
+      <div class="steps">
+        <div class="step"><p>プロジェクトをサーバーPCに配置する（git clone またはフォルダコピー）</p></div>
+        <div class="step">
+          <p>プロジェクトルートでコマンドを実行する</p>
+          <pre><span class="cmd">cd</span> D:\path\to\db-management-app
+<span class="cmd">docker compose up -d --build</span>
+<span class="comment"># 初回は 5〜10分かかる（Dockerイメージのビルド）</span></pre>
+        </div>
+        <div class="step">
+          <p>ブラウザでアクセスする</p>
+          <pre><span class="comment"># 起動したPCから</span>
+http://localhost:18080
+
+<span class="comment"># 他のPCから（社内LAN）</span>
+http://[サーバーPCのIPアドレス]:18080</pre>
+        </div>
+        <div class="step"><p>サーバーPCのIPアドレスを確認し、他のユーザーに共有する（ipconfig で確認）</p></div>
+      </div>
+
+      <h3 style="margin-top:20px;">日常操作</h3>
+      <table>
+        <tr><th>操作</th><th>コマンド</th></tr>
+        <tr><td>起動</td><td><code>docker compose up -d</code></td></tr>
+        <tr><td>停止</td><td><code>docker compose down</code></td></tr>
+        <tr><td>ログ確認</td><td><code>docker compose logs -f app</code></td></tr>
+        <tr><td>DB確認</td><td><code>docker compose exec db psql -U postgres dbmanagement</code></td></tr>
+        <tr><td>再ビルド（コード変更後）</td><td><code>docker compose up -d --build</code></td></tr>
+      </table>
+
+      <div class="info" style="margin-top:16px;">データはDockerのボリューム（<code>postgres_data</code>）に永続化されている。<code>docker compose down</code> してもDBのデータは消えない。</div>
+      <div class="note">PC再起動後はDockerが自動起動する設定（Docker Desktop の "Start Docker Desktop when you sign in"）にしておくと便利。その場合 <code>docker compose up -d</code> も自動化したいなら、タスクスケジューラに登録する。</div>
+
+      <h3 style="margin-top:20px;">IPアドレス固定（推奨）</h3>
+      <p>サーバーPCのLAN IPが変わるとURLが変わってしまう。ルーターのDHCP設定でサーバーPCのMACアドレスに固定IPを割り当てておくと安定する。</p>
+    </div>
+  </section>
+
+  <!-- ===== 環境変数 ===== -->
+  <section id="env">
+    <h2>環境変数</h2>
+    <div class="card">
+      <p><code>docker-compose.yml</code> の <code>environment</code> セクションで設定する。</p>
+      <table>
+        <tr><th>変数名</th><th>デフォルト値</th><th>説明</th></tr>
+        <tr><td><code>DB_URL</code></td><td><code>jdbc:postgresql://db:5432/dbmanagement</code></td><td>PostgreSQL接続URL</td></tr>
+        <tr><td><code>DB_USERNAME</code></td><td><code>postgres</code></td><td>DBユーザー名</td></tr>
+        <tr><td><code>DB_PASSWORD</code></td><td><code>postgres</code></td><td>DBパスワード（本番は変更必須）</td></tr>
+        <tr><td><code>JWT_SECRET</code></td><td><code>db-management-jwt-secret-key-for-dev-only-2026</code></td><td>JWTトークン署名キー（本番は変更必須）</td></tr>
+        <tr><td><code>INIT_PASSWORD</code></td><td><code>password123</code></td><td>初期ユーザーのパスワード</td></tr>
+      </table>
+      <div class="note">本番・社内LAN運用時は <code>DB_PASSWORD</code> と <code>JWT_SECRET</code> を必ず変更すること。</div>
+    </div>
+  </section>
+
+  <!-- ===== ファイル構成 ===== -->
+  <section id="files">
+    <h2>ファイル構成</h2>
+    <div class="card">
+      <pre>db-management-app/
+├── <span class="key">docker-compose.yml</span>      <span class="comment">← 社内LAN起動用（これだけで動く）</span>
+├── <span class="key">Dockerfile</span>              <span class="comment">← マルチステージビルド（Vue.js → Spring Boot）</span>
+├── design.html             <span class="comment">← この設計書</span>
+├── roadmap.md              <span class="comment">← デプロイロードマップ</span>
+├── brainstorming.md        <span class="comment">← 要件・設計メモ</span>
+│
+├── <span class="val">db-management/</span>          <span class="comment">← Spring Boot プロジェクト</span>
+│   ├── pom.xml
+│   └── src/main/
+│       ├── java/com/example/db_management/
+│       │   ├── AuthController.java       <span class="comment">← ログインAPI</span>
+│       │   ├── TableController.java      <span class="comment">← テーブルCRUD API</span>
+│       │   ├── UserController.java       <span class="comment">← ユーザー管理API</span>
+│       │   ├── CsvImportController.java  <span class="comment">← CSVインポートAPI</span>
+│       │   ├── ExcelExportController.java<span class="comment">← Excelエクスポート API</span>
+│       │   ├── MaskedColumnController.java<span class="comment">← マスキング設定API</span>
+│       │   ├── SecurityConfig.java       <span class="comment">← Spring Security設定</span>
+│       │   ├── JwtUtil.java              <span class="comment">← JWTトークン生成・検証</span>
+│       │   ├── JwtFilter.java            <span class="comment">← リクエストごとのJWT検証</span>
+│       │   └── SecurityUtils.java        <span class="comment">← 現在ユーザーのロール取得</span>
+│       └── resources/
+│           ├── application.properties    <span class="comment">← DB接続・JWT設定</span>
+│           ├── schema.sql                <span class="comment">← テーブル定義（起動時自動実行）</span>
+│           ├── data.sql                  <span class="comment">← 初期データ（起動時自動実行）</span>
+│           └── static/                  <span class="comment">← Vue.jsビルド成果物</span>
+│
+└── <span class="val">frontend/</span>               <span class="comment">← Vue.js プロジェクト</span>
+    ├── package.json
+    ├── vite.config.js
+    └── src/</pre>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // スクロールに応じてナビのアクティブ切り替え
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 60) current = s.id; });
+    links.forEach(a => {
+      a.classList.remove('active');
+      if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

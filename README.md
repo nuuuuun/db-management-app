@@ -11,7 +11,7 @@
 PostgreSQL をローカルにインストールして直接起動する方法。
 
 **前提条件:**
-- [PostgreSQL 16](https://www.postgresql.org/download/) がインストール済みで起動していること
+- [PostgreSQL 14以上](https://www.postgresql.org/download/) がインストール済みで起動していること（スクリプトが自動検出）
 - [Node.js 20 LTS](https://nodejs.org/) がインストール済みであること
 - [JDK 21 LTS](https://adoptium.net/) がインストール済みであること
 

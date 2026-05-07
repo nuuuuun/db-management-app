@@ -1,21 +1,27 @@
 <template>
   <div class="users">
-    <h1>ユーザー一覧</h1>
+    <div class="page-header">
+      <h1>ユーザー一覧</h1>
+      <RouterLink v-if="userRole === 'ADMIN'" to="/users/register" class="btn-register">
+        ＋ 新規アカウント登録
+      </RouterLink>
+    </div>
 
-    <!-- 追加フォーム（VIEWER は非表示） -->
-    <div v-if="userRole !== 'VIEWER'" class="form-section">
-      <h2>{{ editingUser ? 'ユーザー編集' : 'ユーザー追加' }}</h2>
-      <form @submit.prevent="editingUser ? updateUser() : createUser()">
+    <!-- 編集フォーム（編集中のみ表示） -->
+    <div v-if="editingUser && userRole !== 'VIEWER'" class="form-section">
+      <h2>ユーザー編集</h2>
+      <form @submit.prevent="updateUser()">
         <input v-model="form.username" placeholder="ユーザー名" required />
         <input v-model="form.email" placeholder="メールアドレス" type="email" required />
+        <input v-model="form.password" placeholder="新しいパスワード（変更しない場合は空欄）" type="password" />
         <select v-model="form.role" required>
           <option value="">ロールを選択</option>
           <option value="ADMIN">ADMIN</option>
           <option value="EDITOR">EDITOR</option>
           <option value="VIEWER">VIEWER</option>
         </select>
-        <button type="submit">{{ editingUser ? '更新' : '追加' }}</button>
-        <button v-if="editingUser" type="button" @click="cancelEdit">キャンセル</button>
+        <button type="submit">更新</button>
+        <button type="button" @click="cancelEdit">キャンセル</button>
       </form>
     </div>
 
@@ -51,7 +57,9 @@
 
 <script>
 import axios from '../api'
+import { RouterLink } from 'vue-router'
 import { getUser } from '../utils/auth'
+import { extractError } from '../utils/error'
 
 export default {
   name: 'UsersView',
@@ -61,7 +69,7 @@ export default {
       loading: true,
       error: null,
       editingUser: null,
-      form: { username: '', email: '', role: '' },
+      form: { username: '', email: '', password: '', role: '' },
       userRole: getUser()?.role || 'VIEWER',
     }
   },
@@ -75,23 +83,14 @@ export default {
         const response = await axios.get('/api/users')
         this.users = response.data
       } catch (e) {
-        this.error = 'APIの取得に失敗しました: ' + e.message
+        this.error = 'APIの取得に失敗しました: ' + extractError(e)
       } finally {
         this.loading = false
       }
     },
-    async createUser() {
-      try {
-        await axios.post('/api/users', this.form)
-        this.form = { username: '', email: '', role: '' }
-        await this.fetchUsers()
-      } catch (e) {
-        alert('追加に失敗しました: ' + e.message)
-      }
-    },
     startEdit(user) {
       this.editingUser = user
-      this.form = { username: user.username, email: user.email, role: user.role }
+      this.form = { username: user.username, email: user.email, password: '', role: user.role }
     },
     async updateUser() {
       try {
@@ -99,12 +98,12 @@ export default {
         this.cancelEdit()
         await this.fetchUsers()
       } catch (e) {
-        alert('更新に失敗しました: ' + e.message)
+        alert('更新に失敗しました: ' + extractError(e))
       }
     },
     cancelEdit() {
       this.editingUser = null
-      this.form = { username: '', email: '', role: '' }
+      this.form = { username: '', email: '', password: '', role: '' }
     },
     async deleteUser(id) {
       if (!confirm('本当に削除しますか？')) return
@@ -112,7 +111,7 @@ export default {
         await axios.delete(`/api/users/${id}`)
         await this.fetchUsers()
       } catch (e) {
-        alert('削除に失敗しました: ' + e.message)
+        alert('削除に失敗しました: ' + extractError(e))
       }
     },
   },
@@ -122,6 +121,27 @@ export default {
 <style scoped>
 .users {
   padding: 2rem;
+}
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.page-header h1 {
+  margin: 0;
+}
+.btn-register {
+  padding: 7px 16px;
+  background: #4a9e6b;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+.btn-register:hover {
+  background: #3d8a5c;
 }
 .form-section {
   background: #f9f9f9;

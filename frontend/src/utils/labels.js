@@ -4,7 +4,7 @@ export const TABLE_LABELS = {
   SPECIFICATIONS:    '要件管理',
   APPLICATIONS:      'アプリ管理',
   ENVIRONMENTS:      '環境管理',
-  OPERATION_HISTORY: '操作ヒストリー',
+  OPERATION_HISTORY: '操作履歴',
   USERS:             'ユーザー',
 }
 
@@ -81,10 +81,57 @@ export const COLUMN_LABELS = {
   },
 }
 
+export const FIELD_DEFS = {
+  PROJECTS: {
+    TOROKU_DATE:  { type: 'date' },
+    KOUTEI:       { type: 'select', options: ['要件定義', '設計', '開発', 'テスト', 'リリース'] },
+    STATUS:       { type: 'select', options: ['提案中', '進行中', '完了', '中止'] },
+  },
+  REQUIREMENTS: {
+    TOROKU_DATE:  { type: 'date' },
+    STATUS:       { type: 'select', options: ['未対応', '対応中', '完了'] },
+  },
+  SPECIFICATIONS: {
+    TOROKU_DATE:  { type: 'date' },
+    STATUS:       { type: 'select', options: ['未着手', '実装中', '完了', '却下'] },
+  },
+  APPLICATIONS: {
+    TOROKU_DATE:  { type: 'date' },
+    KANRYO_DATE:  { type: 'date' },
+  },
+  ENVIRONMENTS: {
+    DEPLOY_PLAN_DATE: { type: 'date' },
+    DEPLOY_DONE_DATE: { type: 'date' },
+    KANKYO:  { type: 'select', options: ['開発', 'ステージング', '本番', 'テスト'] },
+    TOKYO:   { type: 'select', options: ['', '稼働中', '停止中', '構築中'] },
+    OSAKA:   { type: 'select', options: ['', '稼働中', '停止中', '構築中'] },
+  },
+}
+
+export const COLUMN_LINKS = {
+  REQUIREMENTS: {
+    ANKEN_NAME: { table: 'PROJECTS', filterCol: 'ANKEN_NAME' },
+  },
+  SPECIFICATIONS: {
+    YOQYU_ID: { table: 'REQUIREMENTS', filterCol: 'YOQYU_ID' },
+  },
+  ENVIRONMENTS: {
+    APP_ID: { table: 'APPLICATIONS', filterCol: 'APP_ID' },
+  },
+}
+
+export function fieldDef(tableName, colName) {
+  return FIELD_DEFS[tableName]?.[colName] || { type: 'text' }
+}
+
 export function tableLabel(tableName) {
   return TABLE_LABELS[tableName] || tableName
 }
 
 export function colLabel(tableName, colName) {
   return COLUMN_LABELS[tableName]?.[colName] || colName
+}
+
+export function columnLink(tableName, colName) {
+  return COLUMN_LINKS[tableName]?.[colName] || null
 }

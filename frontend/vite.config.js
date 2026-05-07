@@ -20,4 +20,8 @@ export default defineConfig({
       '/api': 'http://localhost:8080',
     },
   },
+  build: {
+    outDir: '../db-management/src/main/resources/static',
+    emptyOutDir: true,
+  },
 })

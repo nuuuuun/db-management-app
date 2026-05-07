@@ -1,7 +1,22 @@
 -- ============================================================
+-- ユーザー初期データ（パスワードはBCryptハッシュ: "password"）
+-- ============================================================
+INSERT INTO users (username, password, role)
+SELECT 'admin', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'ADMIN'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'admin');
+
+INSERT INTO users (username, password, role)
+SELECT 'editor', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'EDITOR'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'editor');
+
+INSERT INTO users (username, password, role)
+SELECT 'viewer', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'VIEWER'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'viewer');
+
+-- ============================================================
 -- 案件管理
 -- ============================================================
-INSERT INTO PROJECTS (TOROKU_DATE, ANKEN_ID, ANKEN_NAME, JIRA_LINK, TR_JIRA_LINK, KOUTEI, STATUS, GAIYOU, ITAKU_NO) VALUES
+INSERT INTO projects (TOROKU_DATE, ANKEN_ID, ANKEN_NAME, JIRA_LINK, TR_JIRA_LINK, KOUTEI, STATUS, GAIYOU, ITAKU_NO) VALUES
 ('2024-04-01', 'ANK-001', '販売管理システム刷新',     'https://jira.example.com/ANK-001', 'https://tr-jira.example.com/TR-001', '設計',   '進行中', '既存販売管理システムをクラウドに移行する案件',           'ITK-2024-001'),
 ('2024-05-10', 'ANK-002', '顧客ポータル構築',         'https://jira.example.com/ANK-002', NULL,                                  '要件定義','提案中', '顧客向け自己サービスポータルの新規開発',                 NULL),
 ('2023-10-01', 'ANK-003', '在庫管理API開発',          'https://jira.example.com/ANK-003', 'https://tr-jira.example.com/TR-003', 'リリース','完了',   'REST APIによる在庫照会・更新機能の開発',                 'ITK-2023-009'),
@@ -126,7 +141,7 @@ INSERT INTO PROJECTS (TOROKU_DATE, ANKEN_ID, ANKEN_NAME, JIRA_LINK, TR_JIRA_LINK
 -- ============================================================
 -- 要求管理
 -- ============================================================
-INSERT INTO REQUIREMENTS (TOROKU_DATE, ANKEN_NAME, YOQYU_MOTO, YOQYU_ID, YOQYU_SHIYOU, YOQYU_NAME, STATUS, HAIKEI, YOQYU_GAIYOU, JIRA_LINK, SHIRYO_LINK) VALUES
+INSERT INTO requirements (TOROKU_DATE, ANKEN_NAME, YOQYU_MOTO, YOQYU_ID, YOQYU_SHIYOU, YOQYU_NAME, STATUS, HAIKEI, YOQYU_GAIYOU, JIRA_LINK, SHIRYO_LINK) VALUES
 ('2024-04-05', '販売管理システム刷新',     '営業部',       'YQY-001', '認証仕様v1.0',   'ユーザー認証機能',   '完了',   'セキュリティ強化のため既存ログインを刷新',           'SSO対応のメールアドレス+パスワード認証', 'https://jira.example.com/YQY-001', 'https://docs.example.com/auth-spec'),
 ('2024-04-10', '販売管理システム刷新',     '管理部',       'YQY-002', '帳票仕様v2.1',   '売上レポート出力',   '対応中', '月次決算に向けてPDF帳票が必要',                     '月次・週次・日次の売上集計をPDF出力',   'https://jira.example.com/YQY-002', NULL),
 ('2024-04-15', '販売管理システム刷新',     '営業部',       'YQY-003', 'CSVインポート仕様','CSV一括インポート',  '未対応', '商品登録作業の効率化が急務',                         '商品マスタをCSVで一括登録',            'https://jira.example.com/YQY-003', 'https://docs.example.com/csv-spec'),
@@ -146,7 +161,7 @@ INSERT INTO REQUIREMENTS (TOROKU_DATE, ANKEN_NAME, YOQYU_MOTO, YOQYU_ID, YOQYU_S
 -- ============================================================
 -- 要件管理
 -- ============================================================
-INSERT INTO SPECIFICATIONS (TOROKU_DATE, YOQYU_ID, YOKEN_ID, YOKEN_GAIYOU, JIRA_LINK, STATUS, BIKO) VALUES
+INSERT INTO specifications (TOROKU_DATE, YOQYU_ID, YOKEN_ID, YOKEN_GAIYOU, JIRA_LINK, STATUS, BIKO) VALUES
 ('2024-04-08', 'YQY-001', 'YKN-001', 'メールアドレス+パスワードによるログイン画面の実装',              'https://jira.example.com/YKN-001', '完了',   NULL),
 ('2024-04-08', 'YQY-001', 'YKN-002', 'ログイン成功時にJWTを発行しAuthorizationヘッダーで返却',       'https://jira.example.com/YKN-002', '完了',   '有効期限24時間'),
 ('2024-04-09', 'YQY-001', 'YKN-003', 'パスワードはBCrypt強度12でハッシュ化して保存',                  'https://jira.example.com/YKN-003', '完了',   NULL),
@@ -166,7 +181,7 @@ INSERT INTO SPECIFICATIONS (TOROKU_DATE, YOQYU_ID, YOKEN_ID, YOKEN_GAIYOU, JIRA_
 -- ============================================================
 -- アプリ管理
 -- ============================================================
-INSERT INTO APPLICATIONS (TOROKU_DATE, APP_ID, APP_NAME, KANRYO_DATE, BIKO, DIFF_VER, CVOS_VER, KTS_VER) VALUES
+INSERT INTO applications (TOROKU_DATE, APP_ID, APP_NAME, KANRYO_DATE, BIKO, DIFF_VER, CVOS_VER, KTS_VER) VALUES
 ('2024-04-01', 'APP-001', '販売管理フロントエンド',   '2024-12-01', NULL,                'v1.2.0',  'v3.1.0',  'v2.0.0'),
 ('2024-04-01', 'APP-002', '販売管理バックエンド',     '2024-12-01', 'H2→MySQL移行予定', 'v1.2.0',  'v3.1.0',  'v2.0.0'),
 ('2023-10-01', 'APP-003', '在庫管理API',              '2024-03-31', NULL,                'v2.0.1',  'v2.5.0',  'v1.8.0'),
@@ -181,7 +196,7 @@ INSERT INTO APPLICATIONS (TOROKU_DATE, APP_ID, APP_NAME, KANRYO_DATE, BIKO, DIFF
 -- ============================================================
 -- 環境管理
 -- ============================================================
-INSERT INTO ENVIRONMENTS (ENV_ID, KANKYO, EDABAN, ENV_NAME, DEPLOY_PLAN_DATE, DEPLOY_DONE_DATE, APP_ID, APP_NAME, TOKYO, OSAKA) VALUES
+INSERT INTO environments (ENV_ID, KANKYO, EDABAN, ENV_NAME, DEPLOY_PLAN_DATE, DEPLOY_DONE_DATE, APP_ID, APP_NAME, TOKYO, OSAKA) VALUES
 ('ENV-001', '開発',       '01', 'sales-front-dev',       NULL,         NULL,         'APP-001', '販売管理フロントエンド',   '稼働中', NULL),
 ('ENV-002', '本番',       '01', 'sales-front-prod',      '2024-12-01', '2024-12-01', 'APP-001', '販売管理フロントエンド',   '稼働中', '稼働中'),
 ('ENV-003', '開発',       '01', 'sales-api-dev',         NULL,         NULL,         'APP-002', '販売管理バックエンド',     '稼働中', NULL),
@@ -202,3 +217,81 @@ INSERT INTO ENVIRONMENTS (ENV_ID, KANKYO, EDABAN, ENV_NAME, DEPLOY_PLAN_DATE, DE
 ('ENV-018', '本番',       '01', 'booking-front-prod',    '2023-12-31', '2023-12-31', 'APP-010', '予約管理フロントエンド',   '稼働中', '稼働中'),
 ('ENV-019', 'ステージング','01', 'sales-front-stg',       '2024-11-01', '2024-11-10', 'APP-001', '販売管理フロントエンド',   '停止中', NULL),
 ('ENV-020', 'ステージング','01', 'inventory-api-stg',     '2024-03-15', '2024-03-20', 'APP-003', '在庫管理API',              '稼働中', NULL);
+
+-- ============================================================
+-- 要求管理 追加データ (YQY-016 〜 YQY-100) ※リンク確認用
+-- ============================================================
+INSERT INTO requirements (TOROKU_DATE, ANKEN_NAME, YOQYU_MOTO, YOQYU_ID, YOQYU_SHIYOU, YOQYU_NAME, STATUS, HAIKEI, YOQYU_GAIYOU, JIRA_LINK)
+SELECT
+  ('2024-01-01'::date + ((n * 7) % 365)),
+  (ARRAY[
+    '販売管理システム刷新', '顧客ポータル構築', '在庫管理API開発', '人事管理システム導入', 'ECサイトリニューアル',
+    '物流トラッキングシステム', 'モバイルアプリ開発', 'データ分析基盤構築', '基幹システムクラウド移行', 'CRM導入支援',
+    '帳票自動生成システム', 'APIゲートウェイ構築', 'ダッシュボード開発', 'IoTデータ収集基盤', 'AIチャットボット開発',
+    'コンテナ化推進', 'マイクロサービス化', 'DevSecOps推進', 'マルチクラウド管理', '多要素認証導入'
+  ])[((n - 16) % 20) + 1],
+  (ARRAY['IT推進部', '管理部', '営業部', 'セキュリティ部', 'SREチーム', 'データ分析部', 'ITチーム', 'QAチーム'])[((n - 16) % 8) + 1],
+  'YQY-' || LPAD(n::text, 3, '0'),
+  '仕様書v' || ((n - 16) / 10 + 1) || '.0',
+  '機能要求-' || n,
+  (ARRAY['未対応', '対応中', '完了'])[(n % 3) + 1],
+  'システム改善に向けた要求項目 No.' || n,
+  '機能要求の概要内容 No.' || n,
+  'https://jira.example.com/YQY-' || LPAD(n::text, 3, '0')
+FROM generate_series(16, 100) AS n;
+
+-- ============================================================
+-- 要件管理 追加データ (YKN-016 〜 YKN-100)
+-- ============================================================
+INSERT INTO specifications (TOROKU_DATE, YOQYU_ID, YOKEN_ID, YOKEN_GAIYOU, JIRA_LINK, STATUS, BIKO)
+SELECT
+  ('2024-01-01'::date + ((n * 5) % 365)),
+  'YQY-' || LPAD(n::text, 3, '0'),
+  'YKN-' || LPAD(n::text, 3, '0'),
+  '要件詳細仕様 No.' || n || ' の実装内容。対応する要求IDはYQY-' || LPAD(n::text, 3, '0'),
+  'https://jira.example.com/YKN-' || LPAD(n::text, 3, '0'),
+  (ARRAY['未着手', '実装中', '完了', '却下'])[((n - 16) % 4) + 1],
+  NULL
+FROM generate_series(16, 100) AS n;
+
+-- ============================================================
+-- アプリ管理 追加データ (APP-011 〜 APP-100)
+-- ============================================================
+INSERT INTO applications (TOROKU_DATE, APP_ID, APP_NAME, KANRYO_DATE, BIKO, DIFF_VER, CVOS_VER, KTS_VER)
+SELECT
+  ('2024-01-01'::date + ((n * 11) % 365)),
+  'APP-' || LPAD(n::text, 3, '0'),
+  (ARRAY[
+    'APIゲートウェイサービス', '帳票生成バックエンド', 'ダッシュボードAPI', 'IoTデータコレクター',
+    'モバイルAPIサーバー', 'AIチャットボットAPI', 'コンテナ管理サービス', '認証認可サービス',
+    'DevSecOpsパイプライン', 'マルチクラウド管理API', 'MFA認証サービス', 'CI/CDオーケストレーター',
+    'フロントエンドSPA', 'データカタログAPI', 'プロダクト分析バックエンド', 'テスト自動化サービス',
+    'SLAモニタリングAPI', 'EDI変換エンジン', 'プライバシー管理API', 'CRM連携アダプター',
+    'BIレポートサービス', 'コード品質管理サービス', 'ログ集約サービス', '通知配信サービス',
+    '設定管理サービス', 'ファイルストレージAPI', 'バッチ処理エンジン', 'メッセージングブローカー',
+    'ドキュメント管理API', 'ユーザー管理サービス'
+  ])[((n - 11) % 30) + 1],
+  CASE WHEN n % 3 = 0 THEN ('2024-06-01'::date + ((n * 17) % 180)) ELSE NULL END,
+  NULL,
+  'v' || (n / 20 + 1) || '.' || (n % 10) || '.0',
+  'v3.' || (n % 5) || '.0',
+  'v2.' || (n % 4) || '.0'
+FROM generate_series(11, 100) AS n;
+
+-- ============================================================
+-- 環境管理 追加データ (ENV-021 〜 ENV-100) ※APP_IDはAPP-001〜APP-100に対応
+-- ============================================================
+INSERT INTO environments (ENV_ID, KANKYO, EDABAN, ENV_NAME, DEPLOY_PLAN_DATE, DEPLOY_DONE_DATE, APP_ID, APP_NAME, TOKYO, OSAKA)
+SELECT
+  'ENV-' || LPAD(n::text, 3, '0'),
+  (ARRAY['開発', 'ステージング', '本番', 'テスト'])[((n - 21) % 4) + 1],
+  '0' || (((n - 21) / 4 % 3) + 1),
+  (ARRAY['app', 'svc', 'api', 'sys'])[((n - 21) % 4) + 1] || '-' || LPAD(((n - 21) % 30 + 1)::text, 3, '0') || '-' || (ARRAY['dev', 'stg', 'prod', 'test'])[((n - 21) % 4) + 1],
+  CASE WHEN (n - 21) % 4 >= 1 THEN ('2024-04-01'::date + ((n * 13) % 270)) ELSE NULL END,
+  CASE WHEN (n - 21) % 4 >= 2 THEN ('2024-04-15'::date + ((n * 13) % 270)) ELSE NULL END,
+  a.app_id,
+  a.app_name,
+  (ARRAY['稼働中', '構築中', '稼働中', NULL])[((n - 21) % 4) + 1],
+  CASE WHEN (n - 21) % 4 = 2 THEN '稼働中' ELSE NULL END
+FROM generate_series(21, 100) AS n
+JOIN applications a ON a.app_id = 'APP-' || LPAD(((n - 21) % 100 + 1)::text, 3, '0');

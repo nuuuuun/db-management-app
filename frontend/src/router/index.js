@@ -9,6 +9,7 @@ const router = createRouter({
     { path: '/', name: 'home', component: HomeView, meta: { requiresAuth: true } },
     { path: '/about', name: 'about', component: () => import('../views/AboutView.vue') },
     { path: '/users', name: 'users', component: () => import('../views/UsersView.vue'), meta: { requiresAuth: true } },
+    { path: '/users/register', name: 'register', component: () => import('../views/RegisterView.vue'), meta: { requiresAuth: true } },
     { path: '/tables', name: 'tables', component: () => import('../views/TablesView.vue'), meta: { requiresAuth: true } },
     { path: '/tables/:name', name: 'table-detail', component: () => import('../views/TableDetailView.vue'), meta: { requiresAuth: true } },
     { path: '/tables/:name/import', name: 'csv-import', component: () => import('../views/CsvImportView.vue'), meta: { requiresAuth: true } },

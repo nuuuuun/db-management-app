@@ -7,45 +7,89 @@ Write-Host "  DB Management App - Local Startup" -ForegroundColor Cyan
 Write-Host "======================================" -ForegroundColor Cyan
 Write-Host ""
 
+# --- Find PostgreSQL binaries ---
+$pgBin = $null
+
+# Search common install locations (newest first)
+$pgSearchPaths = @(
+    "C:\Program Files\PostgreSQL\17\bin",
+    "C:\Program Files\PostgreSQL\16\bin",
+    "C:\Program Files\PostgreSQL\15\bin",
+    "C:\Program Files\PostgreSQL\14\bin"
+)
+
+foreach ($path in $pgSearchPaths) {
+    if (Test-Path (Join-Path $path "pg_isready.exe")) {
+        $pgBin = $path
+        break
+    }
+}
+
+# Also check if already in PATH
+if (-not $pgBin) {
+    try {
+        $null = Get-Command pg_isready -ErrorAction Stop
+        $pgBin = "PATH"
+    } catch {}
+}
+
 # --- Check PostgreSQL ---
 Write-Host "[1/4] Checking PostgreSQL..." -ForegroundColor Yellow
 
 $pgReady = $false
-try {
-    $null = & pg_isready -h localhost -p 5432 2>&1
-    if ($LASTEXITCODE -eq 0) { $pgReady = $true }
-} catch {}
 
-if (-not $pgReady) {
+if ($pgBin -and $pgBin -ne "PATH") {
+    $pgIsReady = Join-Path $pgBin "pg_isready.exe"
     try {
-        $null = & psql -U postgres -c "SELECT 1" 2>&1
+        $null = & $pgIsReady -h localhost -p 5432 2>&1
+        if ($LASTEXITCODE -eq 0) { $pgReady = $true }
+    } catch {}
+} elseif ($pgBin -eq "PATH") {
+    try {
+        $null = & pg_isready -h localhost -p 5432 2>&1
         if ($LASTEXITCODE -eq 0) { $pgReady = $true }
     } catch {}
 }
 
 if (-not $pgReady) {
     Write-Host ""
-    Write-Host "[ERROR] Cannot connect to PostgreSQL." -ForegroundColor Red
-    Write-Host "  1. Make sure PostgreSQL is installed." -ForegroundColor Red
-    Write-Host "  2. Start PostgreSQL service: services.msc -> postgresql -> Start" -ForegroundColor Red
+    Write-Host "[ERROR] Cannot connect to PostgreSQL on localhost:5432." -ForegroundColor Red
+    if (-not $pgBin) {
+        Write-Host "  PostgreSQL not found in common locations." -ForegroundColor Red
+        Write-Host "  Searched: C:\Program Files\PostgreSQL\{14-17}\bin" -ForegroundColor Red
+        Write-Host "  Please install PostgreSQL or add its bin folder to PATH." -ForegroundColor Red
+    } else {
+        Write-Host "  PostgreSQL binary found but service may not be running." -ForegroundColor Red
+        Write-Host "  Open services.msc and start: postgresql-x64-17 (or similar)" -ForegroundColor Red
+    }
     Write-Host ""
     exit 1
 }
 Write-Host "  PostgreSQL OK" -ForegroundColor Green
+
+# --- Resolve psql path ---
+if ($pgBin -and $pgBin -ne "PATH") {
+    $psql = Join-Path $pgBin "psql.exe"
+} else {
+    $psql = "psql"
+}
+
+# Use default postgres password to avoid interactive prompt
+$env:PGPASSWORD = "postgres"
 
 # --- Create database if not exists ---
 Write-Host "[2/4] Checking database 'dbmanagement'..." -ForegroundColor Yellow
 
 $dbExists = $false
 try {
-    $dbCheck = & psql -U postgres -lqt 2>&1
+    $dbCheck = & $psql -U postgres -h localhost -lqt 2>&1
     if ($dbCheck -match "dbmanagement") { $dbExists = $true }
 } catch {}
 
 if (-not $dbExists) {
     Write-Host "  Database not found. Creating..." -ForegroundColor Yellow
     try {
-        & psql -U postgres -c "CREATE DATABASE dbmanagement;" 2>&1
+        & $psql -U postgres -h localhost -c "CREATE DATABASE dbmanagement;" 2>&1
         Write-Host "  Database created." -ForegroundColor Green
     } catch {
         Write-Host ""
@@ -64,7 +108,6 @@ if (-not $dbExists) {
 Write-Host "[3/4] Building frontend..." -ForegroundColor Yellow
 
 $frontendDir = Join-Path $ROOT "frontend"
-$staticDir   = Join-Path $ROOT "db-management\src\main\resources\static"
 
 Push-Location $frontendDir
 try {
@@ -73,18 +116,12 @@ try {
         & npm install --silent
     }
     Write-Host "  Running npm run build..." -ForegroundColor Yellow
-    & npm run build -- --silent
+    & npm run build
     if ($LASTEXITCODE -ne 0) { throw "Frontend build failed" }
+    Write-Host "  Frontend build OK" -ForegroundColor Green
 } finally {
     Pop-Location
 }
-
-if (Test-Path $staticDir) {
-    Remove-Item "$staticDir\*" -Recurse -Force
-}
-New-Item -ItemType Directory -Path $staticDir -Force | Out-Null
-Copy-Item "$frontendDir\dist\*" $staticDir -Recurse -Force
-Write-Host "  Frontend build OK" -ForegroundColor Green
 
 # --- Start Spring Boot ---
 Write-Host "[4/4] Starting Spring Boot..." -ForegroundColor Yellow

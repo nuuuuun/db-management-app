@@ -45,6 +45,7 @@ suzuki,suzuki@example.com,EDITOR</pre>
 
 <script>
 import api from '../api'
+import { extractError } from '../utils/error'
 
 export default {
   name: 'CsvImportView',
@@ -80,7 +81,7 @@ export default {
         })
         this.result = res.data
       } catch (e) {
-        this.error = e.response?.data?.error || 'インポートに失敗しました'
+        this.error = extractError(e)
       } finally {
         this.loading = false
       }

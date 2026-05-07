@@ -39,6 +39,7 @@
 
 <script>
 import axios from '../api'
+import { extractError } from '../utils/error'
 import { tableLabel, colLabel } from '../utils/labels'
 
 export default {
@@ -75,7 +76,7 @@ export default {
         await axios.put(`/api/tables/${this.tableName}/rows/${this.rowId}`, body)
         this.$router.push(`/tables/${this.tableName}`)
       } catch (e) {
-        alert('保存に失敗しました: ' + e.message)
+        alert('保存に失敗しました: ' + extractError(e))
         this.loading = false
       }
     },

@@ -29,16 +29,27 @@ public class TableController {
     private OperationHistoryService operationHistoryService;
 
     private static final List<String> TABLE_ORDER = List.of(
-        "PROJECTS", "REQUIREMENTS", "SPECIFICATIONS", "APPLICATIONS", "ENVIRONMENTS"
+        "PROJECTS", "REQUIREMENTS", "SPECIFICATIONS", "APPLICATIONS", "ENVIRONMENTS", "OPERATION_HISTORY"
     );
+
+    private static final Set<String> ALLOWED_TABLES = Set.of(
+        "PROJECTS", "REQUIREMENTS", "SPECIFICATIONS", "APPLICATIONS", "ENVIRONMENTS", "OPERATION_HISTORY"
+    );
+
+    private boolean isAllowed(String tableName) {
+        return ALLOWED_TABLES.contains(tableName.toUpperCase());
+    }
 
     @GetMapping
     public List<String> getTables() throws Exception {
         List<String> all = new ArrayList<>();
         try (var conn = dataSource.getConnection()) {
             DatabaseMetaData meta = conn.getMetaData();
-            try (ResultSet rs = meta.getTables(null, "PUBLIC", "%", new String[]{"TABLE"})) {
-                while (rs.next()) all.add(rs.getString("TABLE_NAME"));
+            try (ResultSet rs = meta.getTables(null, "public", "%", new String[]{"TABLE"})) {
+                while (rs.next()) {
+                    String name = rs.getString("TABLE_NAME").toUpperCase();
+                    if (ALLOWED_TABLES.contains(name)) all.add(name);
+                }
             }
         }
         List<String> ordered = new ArrayList<>(TABLE_ORDER);
@@ -61,10 +72,11 @@ public class TableController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String search,
+            @RequestParam(required = false) String filterCol,
             @RequestParam(required = false) String sortCol,
             @RequestParam(defaultValue = "asc") String sortDir) throws Exception {
 
-        if (!getTables().contains(tableName.toUpperCase())) {
+        if (!isAllowed(tableName) || !getTables().contains(tableName.toUpperCase())) {
             return ResponseEntity.notFound().build();
         }
         size = Math.min(size, 100);
@@ -72,16 +84,21 @@ public class TableController {
         String upper = tableName.toUpperCase();
         List<String> columns = fetchColumns(upper);
 
-        // WHERE句（全カラムをキーワード検索）
+        // WHERE句（全カラムまたは指定カラムでキーワード検索）
         String where = "";
         List<Object> params = new ArrayList<>();
         if (search != null && !search.isBlank()) {
             String like = "%" + search.toLowerCase() + "%";
-            String conditions = columns.stream()
-                    .map(c -> "LOWER(CAST(" + c + " AS VARCHAR)) LIKE ?")
-                    .collect(Collectors.joining(" OR "));
-            where = " WHERE " + conditions;
-            columns.forEach(c -> params.add(like));
+            if (filterCol != null && !filterCol.isBlank() && columns.contains(filterCol.toUpperCase())) {
+                where = " WHERE LOWER(CAST(" + filterCol.toUpperCase() + " AS VARCHAR)) LIKE ?";
+                params.add(like);
+            } else {
+                String conditions = columns.stream()
+                        .map(c -> "LOWER(CAST(" + c + " AS VARCHAR)) LIKE ?")
+                        .collect(Collectors.joining(" OR "));
+                where = " WHERE " + conditions;
+                columns.forEach(c -> params.add(like));
+            }
         }
 
         // ORDER BY句（カラム名をホワイトリスト検証）
@@ -125,8 +142,13 @@ public class TableController {
 
         List<Map<String, Object>> filteredRows = rows.stream()
                 .map(row -> {
-                    Map<String, Object> filtered = new LinkedHashMap<>(row);
-                    maskedCols.forEach(filtered::remove);
+                    Map<String, Object> filtered = new LinkedHashMap<>();
+                    row.forEach((k, v) -> {
+                        String upperKey = k.toUpperCase();
+                        if (!maskedCols.contains(upperKey)) {
+                            filtered.put(upperKey, v);
+                        }
+                    });
                     return filtered;
                 })
                 .collect(Collectors.toList());
@@ -150,7 +172,7 @@ public class TableController {
             return ResponseEntity.status(403).body(Map.of("error", "権限がありません"));
         }
         String upper = tableName.toUpperCase();
-        if (!getTables().contains(upper)) {
+        if (!isAllowed(upper) || !getTables().contains(upper)) {
             return ResponseEntity.badRequest().body(Map.of("error", "テーブルが存在しません"));
         }
 
@@ -185,7 +207,7 @@ public class TableController {
             return ResponseEntity.status(403).body(Map.of("error", "権限がありません"));
         }
         String upper = tableName.toUpperCase();
-        if (!getTables().contains(upper)) {
+        if (!isAllowed(upper) || !getTables().contains(upper)) {
             return ResponseEntity.badRequest().body(Map.of("error", "テーブルが存在しません"));
         }
 
@@ -239,7 +261,7 @@ public class TableController {
             return ResponseEntity.status(403).body(Map.of("error", "権限がありません"));
         }
         String upper = tableName.toUpperCase();
-        if (!getTables().contains(upper)) {
+        if (!isAllowed(upper) || !getTables().contains(upper)) {
             return ResponseEntity.badRequest().body(Map.of("error", "テーブルが存在しません"));
         }
 
@@ -262,8 +284,8 @@ public class TableController {
     private String getPrimaryKeyColumn(String tableName) throws Exception {
         try (var conn = dataSource.getConnection()) {
             DatabaseMetaData meta = conn.getMetaData();
-            try (ResultSet rs = meta.getPrimaryKeys(null, "PUBLIC", tableName)) {
-                if (rs.next()) return rs.getString("COLUMN_NAME");
+            try (ResultSet rs = meta.getPrimaryKeys(null, "public", tableName.toLowerCase())) {
+                if (rs.next()) return rs.getString("COLUMN_NAME").toUpperCase();
             }
         }
         return "ID";
@@ -273,8 +295,8 @@ public class TableController {
         List<String> columns = new ArrayList<>();
         try (var conn = dataSource.getConnection()) {
             DatabaseMetaData meta = conn.getMetaData();
-            try (ResultSet rs = meta.getColumns(null, "PUBLIC", tableName, "%")) {
-                while (rs.next()) columns.add(rs.getString("COLUMN_NAME"));
+            try (ResultSet rs = meta.getColumns(null, "public", tableName.toLowerCase(), "%")) {
+                while (rs.next()) columns.add(rs.getString("COLUMN_NAME").toUpperCase());
             }
         }
         return columns;

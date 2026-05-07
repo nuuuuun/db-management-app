@@ -27,6 +27,14 @@ public class CsvBulkController {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private MaskedColumnRepository maskedColumnRepository;
+
+    // 業務テーブルのみ許可（管理テーブルを除外）
+    private static final Set<String> ALLOWED_TABLES = Set.of(
+        "PROJECTS", "REQUIREMENTS", "SPECIFICATIONS", "APPLICATIONS", "ENVIRONMENTS"
+    );
+
     // 全テーブルを1つのCSVファイルでエクスポート
     @GetMapping("/export/all")
     public void exportAll(HttpServletResponse response) throws Exception {
@@ -40,15 +48,31 @@ public class CsvBulkController {
 
         PrintWriter writer = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8));
 
-        for (String table : getTables()) {
+        String role = SecurityUtils.getCurrentRole();
+
+        for (String table : getAllowedTables()) {
             List<String> columns = fetchColumns(table);
+
+            // マスク処理：ロールに応じてカラムを除外
+            Set<String> maskedCols = new HashSet<>();
+            if (!"ADMIN".equals(role)) {
+                List<String> rolesToCheck = "VIEWER".equals(role)
+                        ? List.of("VIEWER", "EDITOR")
+                        : List.of("EDITOR");
+                maskedColumnRepository.findByTableNameAndRoleIn(table, rolesToCheck)
+                        .stream().map(MaskedColumn::getColumnName).forEach(maskedCols::add);
+            }
+            List<String> visibleColumns = columns.stream()
+                    .filter(c -> !maskedCols.contains(c))
+                    .collect(Collectors.toList());
+
             List<Map<String, Object>> rows = jdbcTemplate.queryForList("SELECT * FROM " + table);
 
             writer.println("#TABLE:" + table);
-            writer.println(String.join(",", columns));
+            writer.println(String.join(",", visibleColumns));
 
             for (Map<String, Object> row : rows) {
-                String line = columns.stream()
+                String line = visibleColumns.stream()
                         .map(col -> escapeCsv(row.get(col)))
                         .collect(Collectors.joining(","));
                 writer.println(line);
@@ -68,7 +92,6 @@ public class CsvBulkController {
             return ResponseEntity.status(403).body(Map.of("error", "権限がありません"));
         }
 
-        List<String> validTables = getTables();
         Map<String, Object> results = new LinkedHashMap<>();
 
         String content = new String(file.getBytes(), StandardCharsets.UTF_8)
@@ -86,8 +109,8 @@ public class CsvBulkController {
             String tableName = section.substring(0, newlineIdx).trim().toUpperCase();
             String csvContent = section.substring(newlineIdx + 1);
 
-            if (!validTables.contains(tableName)) {
-                results.put(tableName, Map.of("skipped", "テーブルが存在しません"));
+            if (!ALLOWED_TABLES.contains(tableName)) {
+                results.put(tableName, Map.of("skipped", "対象外のテーブルです"));
                 continue;
             }
 
@@ -132,7 +155,7 @@ public class CsvBulkController {
                         errors.add(Map.of(
                                 "line", record.getRecordNumber(),
                                 "content", rowContent,
-                                "message", e.getMessage() != null ? e.getMessage() : "不明なエラー"
+                                "message", "インポートエラーが発生しました"
                         ));
                     }
                 }
@@ -153,12 +176,15 @@ public class CsvBulkController {
         return s;
     }
 
-    private List<String> getTables() throws Exception {
+    private List<String> getAllowedTables() throws Exception {
         List<String> tables = new ArrayList<>();
         try (var conn = dataSource.getConnection()) {
             DatabaseMetaData meta = conn.getMetaData();
-            try (ResultSet rs = meta.getTables(null, "PUBLIC", "%", new String[]{"TABLE"})) {
-                while (rs.next()) tables.add(rs.getString("TABLE_NAME"));
+            try (ResultSet rs = meta.getTables(null, "public", "%", new String[]{"TABLE"})) {
+                while (rs.next()) {
+                    String name = rs.getString("TABLE_NAME").toUpperCase();
+                    if (ALLOWED_TABLES.contains(name)) tables.add(name);
+                }
             }
         }
         return tables;
@@ -168,8 +194,8 @@ public class CsvBulkController {
         List<String> columns = new ArrayList<>();
         try (var conn = dataSource.getConnection()) {
             DatabaseMetaData meta = conn.getMetaData();
-            try (ResultSet rs = meta.getColumns(null, "PUBLIC", tableName, "%")) {
-                while (rs.next()) columns.add(rs.getString("COLUMN_NAME"));
+            try (ResultSet rs = meta.getColumns(null, "public", tableName.toLowerCase(), "%")) {
+                while (rs.next()) columns.add(rs.getString("COLUMN_NAME").toUpperCase());
             }
         }
         return columns;

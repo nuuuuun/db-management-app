@@ -6,6 +6,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +29,12 @@ public class CsvImportController {
     @Autowired
     private DataSource dataSource;
 
+    // 業務テーブルのみ許可
+    private static final Set<String> ALLOWED_TABLES = Set.of(
+        "PROJECTS", "REQUIREMENTS", "SPECIFICATIONS", "APPLICATIONS", "ENVIRONMENTS"
+    );
+
+    @Transactional
     @PostMapping("/{tableName}")
     public ResponseEntity<?> importCsv(
         @PathVariable String tableName,
@@ -39,9 +46,14 @@ public class CsvImportController {
             return ResponseEntity.status(403).body(Map.of("error", "権限がありません"));
         }
 
+        // overwrite は ADMIN のみ許可
+        if ("overwrite".equals(mode) && !"ADMIN".equals(SecurityUtils.getCurrentRole())) {
+            return ResponseEntity.status(403).body(Map.of("error", "上書きモードは管理者のみ使用できます"));
+        }
+
         String upperTable = tableName.toUpperCase();
-        if (!getValidTables().contains(upperTable)) {
-            return ResponseEntity.badRequest().body(Map.of("error", "テーブルが存在しません"));
+        if (!ALLOWED_TABLES.contains(upperTable)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "対象外のテーブルです"));
         }
 
         List<String> dbColumns = getTableColumns(upperTable);
@@ -54,6 +66,7 @@ public class CsvImportController {
 
             List<String> csvHeaders = new ArrayList<>(parser.getHeaderMap().keySet());
 
+            // 事前バリデーション：全カラム名を確認してから処理開始
             for (String header : csvHeaders) {
                 if (!dbColumns.contains(header.toUpperCase())) {
                     return ResponseEntity.badRequest().body(Map.of("error", "カラム '" + header + "' は存在しません"));
@@ -62,6 +75,7 @@ public class CsvImportController {
 
             List<CSVRecord> records = parser.getRecords();
 
+            // overwrite は全件バリデーション後に削除（途中失敗時は @Transactional でロールバック）
             if ("overwrite".equals(mode)) {
                 jdbcTemplate.execute("DELETE FROM " + upperTable);
             }
@@ -79,23 +93,12 @@ public class CsvImportController {
                     jdbcTemplate.update(sql, values);
                     inserted++;
                 } catch (Exception e) {
-                    errors.add("行 " + record.getRecordNumber() + ": " + e.getMessage());
+                    errors.add("行 " + record.getRecordNumber() + ": インポートエラーが発生しました");
                 }
             }
 
             return ResponseEntity.ok(Map.of("inserted", inserted, "errors", errors));
         }
-    }
-
-    private List<String> getValidTables() throws Exception {
-        List<String> tables = new ArrayList<>();
-        try (var conn = dataSource.getConnection()) {
-            DatabaseMetaData meta = conn.getMetaData();
-            try (ResultSet rs = meta.getTables(null, "PUBLIC", "%", new String[]{"TABLE"})) {
-                while (rs.next()) tables.add(rs.getString("TABLE_NAME"));
-            }
-        }
-        return tables;
     }
 
     private List<String> getTableColumns(String tableName) throws Exception {

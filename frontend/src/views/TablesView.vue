@@ -1,6 +1,9 @@
 <template>
   <div class="tables">
-    <h1>テーブル一覧</h1>
+    <div class="tables-header">
+      <h1>テーブル一覧</h1>
+      <button class="btn-excel-all" @click="downloadAllExcel">全テーブル Excelダウンロード</button>
+    </div>
     <p v-if="loading">読み込み中...</p>
     <p v-else-if="error" style="color:red;">{{ error }}</p>
     <ul v-else class="table-list">
@@ -13,6 +16,7 @@
 
 <script>
 import axios from '../api'
+import { extractError } from '../utils/error'
 import { tableLabel } from '../utils/labels'
 
 export default {
@@ -20,13 +24,28 @@ export default {
   data() {
     return { tables: [], loading: true, error: null }
   },
-  methods: { tableLabel },
+  methods: {
+    tableLabel,
+    async downloadAllExcel() {
+      try {
+        const res = await axios.get('/api/export/excel/all', { responseType: 'blob' })
+        const url = URL.createObjectURL(res.data)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = 'db-export-all.xlsx'
+        a.click()
+        URL.revokeObjectURL(url)
+      } catch (e) {
+        alert('Excelダウンロードに失敗しました: ' + extractError(e))
+      }
+    },
+  },
   async mounted() {
     try {
       const res = await axios.get('/api/tables')
       this.tables = res.data
     } catch (e) {
-      this.error = 'テーブル一覧の取得に失敗しました: ' + e.message
+      this.error = 'テーブル一覧の取得に失敗しました: ' + extractError(e)
     } finally {
       this.loading = false
     }
@@ -36,6 +55,13 @@ export default {
 
 <style scoped>
 .tables { padding: 2rem; }
+.tables-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.tables-header h1 { margin: 0; }
+.btn-excel-all {
+  padding: 8px 18px; border: none; border-radius: 4px; cursor: pointer;
+  font-size: 0.9rem; background: #217346; color: white;
+}
+.btn-excel-all:hover { background: #1a5c38; }
 .table-list {
   list-style: none;
   padding: 0;
