@@ -1,0 +1,10 @@
+======================================
+  DB Management App - Offline Startup
+  (No Maven / npm required)
+======================================
+
+[1/3] Locating JAR...
+
+[ERROR] No JAR found in db-management\target\
+  Run .\scripts\build-jar.ps1 on an internet-connected PC first,
+  then copy the entire repository (including target/) here.
