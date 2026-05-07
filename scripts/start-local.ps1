@@ -133,7 +133,7 @@ Write-Host ""
 $backendDir = Join-Path $ROOT "db-management"
 Push-Location $backendDir
 try {
-    & .\mvnw spring-boot:run
+    & .\mvnw --offline spring-boot:run
 } finally {
     Pop-Location
 }
