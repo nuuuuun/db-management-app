@@ -33,7 +33,7 @@ Write-Host "[2/2] Building fat JAR (Spring Boot)..." -ForegroundColor Yellow
 $backendDir = Join-Path $ROOT "db-management"
 Push-Location $backendDir
 try {
-    & .\mvnw clean package -DskipTests
+    & .\mvnw --offline clean package -DskipTests
     if ($LASTEXITCODE -ne 0) { throw "Maven build failed" }
 } finally {
     Pop-Location
