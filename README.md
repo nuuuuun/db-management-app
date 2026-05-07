@@ -37,6 +37,32 @@ PostgreSQL をローカルにインストールして直接起動する方法。
 
 ---
 
+### プロキシ制限のある社内ネットワークで起動（オフライン版）
+
+Maven/npm が使えないネットワーク向け。事前にJARをビルドして持ち込む方法。
+
+**手順:**
+
+**① インターネット接続がある環境で（1回だけ）:**
+```powershell
+.\scripts\build-jar.ps1
+```
+`db-management\target\*.jar` が生成される。リポジトリごと（target/含む）を社内PCにコピー。
+
+**② 社内PC（プロキシ制限あり）での前提条件:**
+- [PostgreSQL 14以上](https://www.postgresql.org/download/) がインストール済みで起動していること
+- [JDK 21 LTS](https://adoptium.net/) がインストール済みであること
+- Node.js / Maven / Docker は**不要**
+
+**③ 社内PCでの起動:**
+```powershell
+.\scripts\start-jar.ps1
+```
+
+**アクセス:** http://localhost:8080
+
+---
+
 ### Docker起動（AWS移行時に使用）
 
 Docker Desktop がインストール済みの環境向け。本番 / AWS ECS 移行の際に使用。
@@ -77,7 +103,9 @@ db-management-app/
 ├── frontend/               # Vue.js フロントエンド
 ├── scripts/
 │   ├── start-local.ps1     # ローカル起動（ビルド込み）
-│   └── start-dev.ps1       # 開発者向け起動（HMR有効）
+│   ├── start-dev.ps1       # 開発者向け起動（HMR有効）
+│   ├── build-jar.ps1       # オフライン用JARビルド（インターネット環境で実行）
+│   └── start-jar.ps1       # オフライン起動（Maven/npm不要）
 ├── devDoc/                 # 開発・保守ドキュメント
 ├── docker-compose.yml      # Docker起動用（AWS移行時）
 ├── Dockerfile              # Docker イメージビルド定義

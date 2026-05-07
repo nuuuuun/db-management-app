@@ -1,5 +1,6 @@
 # Spring Boot
-db-management/target/
+db-management/target/*
+!db-management/target/*.jar
 db-management/.classpath
 db-management/.project
 db-management/.settings/
