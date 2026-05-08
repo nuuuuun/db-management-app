@@ -347,11 +347,19 @@
     </div>
 
     <div class="step-card">
-      <div class="step-title"><span class="step-num">3</span>リポジトリごとコピーする</div>
+      <div class="step-title"><span class="step-num">3</span>社内PCにファイルを持ち込む</div>
       <div class="step-body">
-        <p><code>db-management-app</code> フォルダ全体（<strong><code>target</code> フォルダを含む</strong>）を社内PCにコピーしてください。</p>
-        <div class="box-warn">⚠️ <code>target</code> フォルダの中にJARが入っています。このフォルダを忘れずにコピーしてください。</div>
-        <p>コピー方法の例：USBドライブ、社内ファイルサーバー経由、など</p>
+        <p>以下のいずれかの方法で社内PCにファイルを用意してください。</p>
+        <div class="box-ok">
+          ✅ <strong>方法A（推奨）：GitHubからZIPダウンロード</strong><br><br>
+          GitHubリポジトリページで <strong>「Code」→「Download ZIP」</strong> をクリックしてダウンロードしてください。<br>
+          ZIPの中にJARファイル（<code>db-management/target/*.jar</code>）が含まれています。<br>
+          解凍してフォルダをそのまま社内PCに移してください。
+        </div>
+        <div class="box-info">
+          💡 <strong>方法B：フォルダごとコピー</strong><br><br>
+          <code>db-management-app</code> フォルダ全体（<code>target</code> フォルダを含む）を USBドライブや社内ファイルサーバー経由でコピーしてください。
+        </div>
       </div>
     </div>
 
@@ -447,8 +455,10 @@
         <span class="faq-icon">▼</span>
       </div>
       <div class="faq-a">
-        インターネット環境で <code>.\scripts\build-jar.ps1</code> を実行してJARを作成していないか、<br>
-        <code>db-management\target\</code> フォルダがコピーされていない可能性があります。<br><br>
+        <code>db-management\target\</code> フォルダに <code>*.jar</code> ファイルがない状態です。<br><br>
+        <strong>対処方法：</strong><br>
+        1. GitHubリポジトリページから「Code」→「Download ZIP」でダウンロードし直す（ZIPにJARが含まれています）<br>
+        2. または、インターネット環境で <code>.\scripts\build-jar.ps1</code> を実行してから、フォルダごとコピーする<br><br>
         確認方法：エクスプローラーで <code>db-management → target</code> フォルダを開き、<code>*.jar</code> ファイルがあるか確認してください。
       </div>
     </div>
