@@ -123,6 +123,29 @@ try {
     Pop-Location
 }
 
+# --- Check Maven cache before running --offline ---
+$parentPom = Join-Path $env:USERPROFILE ".m2\repository\org\springframework\boot\spring-boot-starter-parent\3.4.5\spring-boot-starter-parent-3.4.5.pom"
+if (-not (Test-Path $parentPom)) {
+    $jar = Get-ChildItem (Join-Path $ROOT "db-management\target") -Filter "*.jar" -ErrorAction SilentlyContinue |
+           Where-Object { $_.Name -notlike "*sources*" } |
+           Select-Object -First 1
+    Write-Host ""
+    Write-Host "[ERROR] Maven cache (.m2) is empty on this machine." -ForegroundColor Red
+    Write-Host "  start-local.ps1 requires Maven dependencies cached locally." -ForegroundColor Red
+    if ($jar) {
+        Write-Host ""
+        Write-Host "  A pre-built JAR was found. Use this instead:" -ForegroundColor Yellow
+        Write-Host "  .\scripts\start-jar.ps1" -ForegroundColor Cyan
+    } else {
+        Write-Host ""
+        Write-Host "  Run on an internet-connected PC first:" -ForegroundColor Yellow
+        Write-Host "  .\scripts\build-jar.ps1" -ForegroundColor Cyan
+        Write-Host "  Then use: .\scripts\start-jar.ps1" -ForegroundColor Cyan
+    }
+    Write-Host ""
+    exit 1
+}
+
 # --- Start Spring Boot ---
 Write-Host "[4/4] Starting Spring Boot..." -ForegroundColor Yellow
 Write-Host ""
