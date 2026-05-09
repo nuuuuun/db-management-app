@@ -34,3 +34,12 @@
 [ERROR] For more information about the errors and possible solutions, please read the following articles:
 [ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/ProjectBuildingException
 [ERROR] [Help 2] http://cwiki.apache.org/confluence/display/MAVEN/UnresolvableModelException
+
+
+## 5/9
+Java の TLS ハンドシェイク中にソケットが切断される：java.net.SocketException: Connection reset
+Maven は Maven Central に到達可能（HTTP 200 確認済み）だが、Java/Maven プロセスからの HTTPS 通信が中断
+考えられる原因：
+社内プロキシ/SSL インスペクション → Java の信頼できる CA 証明書チェーンに未登録
+ファイアウォール/IDS ルール → Java プロセスの特定 TLS バージョンを遮断
+ネットワーク設定不足 → Maven の settings.xml でプロキシ設定が必要
