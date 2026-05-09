@@ -82,7 +82,7 @@
 <h3>バックエンド</h3>
 <table>
   <tr><th>技術</th><th>バージョン</th><th>用途</th></tr>
-  <tr><td>Java (OpenJDK)</td><td>21 LTS</td><td>バックエンドランタイム</td></tr>
+  <tr><td>Java (OpenJDK)</td><td>17 LTS</td><td>バックエンドランタイム</td></tr>
   <tr><td>Spring Boot</td><td>3.4.5</td><td>Webフレームワーク</td></tr>
   <tr><td>Spring Security</td><td>（Boot同梱）</td><td>認証・認可・CORS設定</td></tr>
   <tr><td>Spring Data JPA</td><td>（Boot同梱）</td><td>ORM（Userエンティティ管理）</td></tr>
@@ -155,14 +155,14 @@ COPY frontend/ .
 RUN npm ci && npm run build
 
 # Stage 2: バックエンドビルド
-FROM eclipse-temurin:21-jdk-alpine AS backend-build
+FROM eclipse-temurin:17-jdk-alpine AS backend-build
 WORKDIR /app
 COPY db-management/ .
 COPY --from=frontend-build /app/frontend/dist ./src/main/resources/static
 RUN ./mvnw -B package -DskipTests
 
 # Stage 3: 実行イメージ
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=backend-build /app/target/*.jar app.jar
 ENTRYPOINT ["java","-jar","app.jar","--spring.profiles.active=prod"]</pre>
