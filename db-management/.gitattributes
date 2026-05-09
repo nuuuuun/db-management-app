@@ -1,2 +1,6 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
+.mvn/apache-maven-*/bin/mvn text eol=lf
+.mvn/apache-maven-*/bin/mvnDebug text eol=lf
+.mvn/apache-maven-*/bin/mvnyjp text eol=lf
+.mvn/apache-maven-*/bin/*.cmd text eol=crlf

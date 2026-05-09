@@ -70,6 +70,13 @@ switch -wildcard -casesensitive ( $($distributionUrl -replace '^.*/','') ) {
   }
 }
 
+$vendoredMavenHome = Join-Path $scriptDir ".mvn/apache-maven-3.9.14"
+$vendoredMavenCmd = Join-Path $vendoredMavenHome "bin/$MVN_CMD"
+if (Test-Path -Path $vendoredMavenCmd -PathType Leaf) {
+  Write-Output "MVN_CMD=$vendoredMavenCmd"
+  exit 0
+}
+
 # apply MVNW_REPOURL and calculate MAVEN_HOME
 # maven home pattern: ~/.m2/wrapper/dists/{apache-maven-<version>,maven-mvnd-<version>-<platform>}/<hash>
 if ($env:MVNW_REPOURL) {
