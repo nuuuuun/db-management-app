@@ -11,7 +11,7 @@ FROM maven:3.9-eclipse-temurin-17-alpine AS backend-builder
 WORKDIR /build
 COPY db-management/ ./
 COPY --from=frontend-builder /frontend/dist ./src/main/resources/static
-RUN mvn clean package -DskipTests
+RUN mvn clean package -Dmaven.test.skip=true
 
 # Stage 3: Runtime
 FROM eclipse-temurin:17-jre-alpine
